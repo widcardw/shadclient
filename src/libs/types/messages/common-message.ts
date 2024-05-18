@@ -16,9 +16,9 @@ interface CommonReplyMessage extends CommonMessageType {
   type: 'reply'
   data: {
     /**
-     * 消息 id
+     * 消息 id，go cqhttp mock 出来是 number，Lagrange mock 出来是 string
      */
-    id: number
+    id: number | string
   }
 }
 
@@ -29,6 +29,9 @@ interface CommonImageMessage extends CommonMessageType {
      * 图片的路径
      */
     file: string
+    /**
+     * 可能是冗余字段？
+     */
     url?: string
   }
 }

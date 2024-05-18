@@ -17,16 +17,20 @@
         "noParameterAssign": "off"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "useArrowFunction": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noEmptyInterface": "off"
       }
-    }
+    },
+    "ignore": ["node_modules/**", "src/components/ui/**"]
   },
   "formatter": {
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "ignore": ["node_modules/**", "src/components/ui/**"]
   },
   "javascript": {
     "formatter": {

@@ -67,6 +67,10 @@ body {
   @apply bg-background text-foreground;
 }
 
+button {
+  padding-inline: 0;
+  padding-block: 0;
+}
 
 #root {
   height: 100%;

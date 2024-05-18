@@ -1,25 +1,35 @@
 import { ToggleButton } from '@/components/ui/toggle'
-import { connected, isConnecting, setConnection } from '@/libs/states/connection'
+import {
+  connected,
+  isConnecting,
+  setConnection,
+} from '@/libs/states/connection'
 import { Show, type Component } from 'solid-js'
 import { Button } from '../ui/button'
 
+async function toggleConnect(v: boolean) {
+  await setConnection(v)
+}
+
 const ConnectWsButton: Component = () => {
   return (
-    <Show
-      when={!isConnecting()}
-      fallback={
-        <Button variant="ghost" class="px-3">
-          <div class="i-teenyicons:loader-outline animate-spin" />
-        </Button>
-      }
-    >
-      <ToggleButton
-        pressed={connected()}
-        onChange={(pressed) => setConnection(pressed)}
+    <>
+      <Show
+        when={!isConnecting()}
+        fallback={
+          <Button variant="ghost" class="px-3">
+            <div class="i-teenyicons:loader-outline animate-spin" />
+          </Button>
+        }
       >
-        <div class="i-teenyicons:link-outline" />
-      </ToggleButton>
-    </Show>
+        <ToggleButton
+          pressed={connected()}
+          onChange={(pressed) => toggleConnect(pressed)}
+        >
+          <div class="i-teenyicons:link-outline" />
+        </ToggleButton>
+      </Show>
+    </>
   )
 }
 

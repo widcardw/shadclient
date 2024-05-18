@@ -12,6 +12,9 @@ type MultiTypeSentMessage =
   | CommonImageMessage
   | CommonFileMessage
 
+/**
+ * 发送的消息的内容，即 message 属性的内容，不包含整个消息的对象
+ */
 type CqSentMessage = MultiTypeSentMessage | MultiTypeSentMessage[]
 
 function createTextMessage(text: string): CommonTextMessage {

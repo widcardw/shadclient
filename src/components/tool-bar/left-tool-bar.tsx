@@ -5,7 +5,13 @@ import ModeToggle from '../dark-theme/toggle-mode'
 import SettingsDialog from './settings-dialog'
 import { InfoDialog } from './info-dialog'
 import ConnectWsButton from './connect-ws'
-import { setConnection } from '@/libs/states/connection'
+import { runDisconnect, setConnection } from '@/libs/states/connection'
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
+import {
+  SelectedList,
+  selectedList,
+  setSelectedList,
+} from '@/libs/states/select-list'
 
 const LeftToolBar: Component = () => {
   return (
@@ -17,16 +23,32 @@ const LeftToolBar: Component = () => {
         'w-3rem',
       )}
     >
-      <Button variant="ghost" class="px-3">
+      <Button
+        variant={selectedList() === SelectedList.Recent ? 'secondary' : 'ghost'}
+        class="px-3"
+        onClick={() => setSelectedList(SelectedList.Recent)}
+      >
         <div class="i-teenyicons:message-text-alt-outline" />
       </Button>
-      <Button variant="ghost" class="px-3">
+      <Button
+        variant={
+          selectedList() === SelectedList.Friends ? 'secondary' : 'ghost'
+        }
+        class="px-3"
+        onClick={() => setSelectedList(SelectedList.Friends)}
+      >
         <div class="i-teenyicons:user-circle-solid" />
       </Button>
-      <Button variant="ghost" class="px-3">
+      <Button
+        variant={selectedList() === SelectedList.Groups ? 'secondary' : 'ghost'}
+        class="px-3"
+        onClick={() => setSelectedList(SelectedList.Groups)}
+      >
         <div class="i-teenyicons:users-outline" />
       </Button>
+
       <div class="flex-grow" />
+      
       <ConnectWsButton />
       <Button variant="ghost" class="px-3" onClick={() => setConnection(false)}>
         <div class="i-teenyicons:link-remove-outline" />
