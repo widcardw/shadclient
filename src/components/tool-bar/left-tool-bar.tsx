@@ -5,8 +5,7 @@ import ModeToggle from '../dark-theme/toggle-mode'
 import SettingsDialog from './settings-dialog'
 import { InfoDialog } from './info-dialog'
 import ConnectWsButton from './connect-ws'
-import { runDisconnect, setConnection } from '@/libs/states/connection'
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
+import { setConnection } from '@/libs/states/connection'
 import {
   SelectedList,
   selectedList,
@@ -47,10 +46,18 @@ const LeftToolBar: Component = () => {
         <div class="i-teenyicons:users-outline" />
       </Button>
 
+      <Button
+        variant={selectedList() === SelectedList.Notice ? 'secondary' : 'ghost'}
+        class="px-3"
+        onClick={() => setSelectedList(SelectedList.Notice)}
+      >
+        <div class="i-teenyicons:bell-outline" />
+      </Button>
+
       <div class="flex-grow" />
-      
+
       <ConnectWsButton />
-      <Button variant="ghost" class="px-3" onClick={() => setConnection(false)}>
+      <Button variant="ghost" class="px-3" onClick={() => setConnection({ connect: false })}>
         <div class="i-teenyicons:link-remove-outline" />
       </Button>
 

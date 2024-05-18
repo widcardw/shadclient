@@ -24,9 +24,10 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { useStorage } from 'solidjs-use'
+import { WSURL } from '@/libs/config'
 
 const SettingsDialog: Component = () => {
-  const [wsUrl, setWsUrl] = useStorage('wsUrl', 'ws://127.0.0.1:5700')
+  const [wsUrl, setWsUrl] = useStorage('wsUrl', WSURL)
   const [sendBy, setSendBy] = useStorage('sendBy', 'Ctrl Enter')
   const [open, setOpen] = createSignal(false)
 

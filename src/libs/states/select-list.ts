@@ -5,10 +5,11 @@ enum SelectedList {
   Recent = 1,
   Friends = 2,
   Groups = 3,
+  Notice = 4,
 }
 
 /**
- * 当前选中的列表，可选：最近会话、好友、群聊
+ * 当前选中的列表，可选：最近会话、好友、群聊、通知
  */
 const [selectedList, setSelectedList] = createSignal<SelectedList>(SelectedList.None)
 

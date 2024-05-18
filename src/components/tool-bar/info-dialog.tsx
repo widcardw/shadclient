@@ -27,8 +27,8 @@ const InfoDialog: Component = () => {
         <AlertDialogHeader>
           <AlertDialogTitle>Solid CQ Client</AlertDialogTitle>
           <AlertDialogDescription>
-            <p>This is a client for CQ based on go-cqhttp and Solidjs.</p>
-            Edit your configuration in the <div class="inline-block i-teenyicons:cog-outline" /> button
+            <p>This is a client based on Lagrange.Core and Solid-js.</p>
+            Edit your configuration in the settings
             and click on the <div class="inline-block i-teenyicons:link-outline" /> button to connect!
           </AlertDialogDescription>
         </AlertDialogHeader>

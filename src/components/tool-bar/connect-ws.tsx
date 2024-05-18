@@ -6,12 +6,12 @@ import {
 } from '@/libs/states/connection'
 import { Show, type Component } from 'solid-js'
 import { Button } from '../ui/button'
-
-async function toggleConnect(v: boolean) {
-  await setConnection(v)
-}
+import { useLocalStorage } from 'solidjs-use'
+import { WSURL } from '@/libs/config'
 
 const ConnectWsButton: Component = () => {
+  const [wsUrl] = useLocalStorage('wsUrl', WSURL)
+
   return (
     <>
       <Show
@@ -24,7 +24,7 @@ const ConnectWsButton: Component = () => {
       >
         <ToggleButton
           pressed={connected()}
-          onChange={(pressed) => toggleConnect(pressed)}
+          onChange={(connect) => setConnection({ connect, url: wsUrl() })}
         >
           <div class="i-teenyicons:link-outline" />
         </ToggleButton>
