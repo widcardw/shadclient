@@ -12,14 +12,6 @@ interface SingleGroupInfo {
    */
   group_memo?: string
   /**
-   * 建群时间
-   */
-  group_create_time?: number
-  /**
-   * 群等级
-   */
-  group_level?: number
-  /**
    * 成员数
    */
   member_count?: number

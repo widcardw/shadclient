@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
 import { SimpleWebSocket } from '../ws/websocket'
+import { dispatchMessage } from '../types/ws/dispatcher'
 
 const [connected, setConnected] = createSignal(false)
 const toggleConnected = () => setConnected(!connected())
@@ -12,10 +13,7 @@ function runConnect(url: string) {
   setWs(i)
   ws()?.connect()
   ws()?.listen((data) => {
-    if (data.post_type === 'meta_event' && data.meta_event_type === 'heartbeat') return
-    if (data.post_type === 'meta_event' && data.meta_event_type === 'lifecycle' && data.sub_type === 'connect')
-      toast.success('Lifecycle connected!')
-    console.log(data)
+    dispatchMessage(data)
   })
 }
 

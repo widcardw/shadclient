@@ -1,6 +1,7 @@
+import type { SingleFriendInfo } from '@/libs/types/ws/private-user'
 import { createSignal, type Component } from 'solid-js'
 
-const [allFriends, setAllFriends] = createSignal([])
+const [allFriends, setAllFriends] = createSignal<SingleFriendInfo[]>([])
 
 const FriendList: Component = () => {
   return <div>friend list</div>

@@ -1,10 +1,7 @@
-interface PrivateUser {
+interface SingleFriendInfo {
   user_id: number
   nickname: string
-  sex?: string
-  age?: number
+  remark?: string
 }
 
-type SingleFriendInfo = PrivateUser
-
-export type { PrivateUser, SingleFriendInfo }
+export type { SingleFriendInfo }

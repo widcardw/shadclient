@@ -1,3 +1,5 @@
+import type { MultiTypeReceivedMessage } from "./received-message"
+
 interface CommonMessageType {
   type: string
 }
@@ -93,7 +95,16 @@ interface CommonForwardMessage extends CommonMessageType {
   data: {
     id: string
   }
-  details?: any // TODO: ReceivedForwardedMessage
+  details?: any // TODO: CommonNodeMessage[]
+}
+
+interface CommonNodeMessage extends CommonMessageType {
+  type: 'node',
+  data: {
+    user_id: string
+    nickname: string
+    content: MultiTypeReceivedMessage[]
+  }
 }
 
 interface CommonMessageSegment extends CommonMessageType {
@@ -113,4 +124,5 @@ export type {
   CommonReplyMessage,
   CommonTextMessage,
   CommonVideoMessage,
+  CommonNodeMessage,
 }

@@ -1,4 +1,4 @@
-import { Show, type Component } from 'solid-js'
+import { Show, createSignal, type Component } from 'solid-js'
 
 import ColorModer from './components/dark-theme/ColorModeProvider'
 import LeftToolBar from './components/tool-bar/left-tool-bar'
@@ -11,8 +11,14 @@ import {
   ResizableHandle,
   ResizablePanel,
 } from './components/ui/resizable'
+import { TextField, TextFieldRoot } from './components/ui/textfield'
+import { ws } from './libs/states/connection'
+import { WsActions } from './libs/ws/websocket'
 
 const App: Component = () => {
+  const [forwardId, setForwardId] = createSignal(
+    'd7N9hcxquMwUNKx1RTUGEEFu6Uop17nZUQiicsKKnrG+RMBruz9jbEDxRdguWARO',
+  )
   return (
     <>
       <ColorModer>
@@ -24,7 +30,23 @@ const App: Component = () => {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel initialSize={0.7}>
-              <div />
+              <div>
+                <TextFieldRoot>
+                  <TextField
+                    value={forwardId()}
+                    onChange={(e: Event) =>
+                      setForwardId((e.currentTarget as HTMLInputElement).value)
+                    }
+                  />
+                </TextFieldRoot>
+                <Button
+                  onClick={() => {
+                    ws()?.send(WsActions.GetGroupMsgHistory, { message_id: forwardId(), group_id: 1034267197, count: 10 }, `${WsActions.GetGroupMsgHistory}_aaa`)
+                  }}
+                >
+                  get
+                </Button>
+              </div>
             </ResizablePanel>
           </Resizable>
         </Show>
