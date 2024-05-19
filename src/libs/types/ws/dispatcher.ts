@@ -13,6 +13,8 @@ import type {
   AllNoticeWsObject,
   CommonNoticeWsObject,
 } from './notice/common-notice-ws-object'
+import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
+import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -32,13 +34,13 @@ function dispatchMessage(data: any) {
         console.log(d)
         break
       }
+      case 'meta_event': {
+        dispatchMetaWsObject(d)
+        break
+      }
       case 'notice': {
         dispatchNoticeWsObject(d)
         console.log(d)
-        break
-      }
-      case 'meta_event': {
-        dispatchMetaWsObject(d)
         break
       }
       default: {
@@ -55,6 +57,7 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
   if (data.retcode !== 0) {
     toast.error('Error occurred in echo', {
       description: `${data.echo}, retcode: ${data.retcode}`,
+      duration: Number.POSITIVE_INFINITY,
     })
     console.error(data)
     return
@@ -67,9 +70,11 @@ function dispatchCommonWsObject(data: CommonMessageWsObject) {
   const d2 = data as AllMessageWsObject
   switch (d2.message_type) {
     case 'group': {
+      dispatchGroupMessageWsObject(d2)
       break
     }
     case 'private': {
+      dispatchPrivateMessageWsObject(d2)
       break
     }
     default: {

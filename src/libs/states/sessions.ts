@@ -23,21 +23,30 @@ interface GroupConversation extends AbstractConversation {
 
 type ConversationType = PrivateConversation | GroupConversation
 
+// 最近会话列表
 const [recentConversations, setRecentConversations] = createSignal<
   (SingleFriendInfo | SingleGroupInfo)[]
 >([])
 
+// 存储所有好友的对话
 const [friendConvStore, setFriendConvStore] = createStore<
   Record<number, PrivateConversation>
 >({})
+
+// 存储所有群聊的对话
 const [groupConvStore, setGroupConvStore] = createStore<
   Record<number, GroupConversation>
 >({})
+
+// 存储已经发言过的群友的昵称或者名片
 const [groupMemberCard, setGroupMemberCard] = createStore<
   Record<number, Record<number, string>>
 >({})
+
+// 当前主面板显示的聊天
 const [activeConv, setActiveConv] = createSignal<ConversationType>()
 
+// 存储所有转发的消息，现在转发消息感觉还有点 bug
 // const [forwardMap, setForwardMap] = createStore<Record<string, >>()
 
 export {

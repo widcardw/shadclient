@@ -24,7 +24,8 @@ function runDisconnect() {
 }
 
 /**
- * 应当受限于 DOM 中，因为 url 是从 localStorage 中读取的
+ * 设置是否连接应当都用这个接口
+ * 由于 url 是由 localStorage 传入的，因此凡是涉及到 localStorage 的都必须在 DOM 中做
  */
 async function setConnection(config?: { connect: boolean; url?: string }) {
   setIsConnecting(true)
@@ -49,6 +50,7 @@ export {
   toggleConnected,
   isConnecting,
   setIsConnecting,
+  /** 稍作封装的 WebSocket 实例 */
   ws,
   setWs,
 }
