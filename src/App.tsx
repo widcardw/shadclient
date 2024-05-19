@@ -25,10 +25,12 @@ const App: Component = () => {
         <LeftToolBar />
         <Show when={selectedList() !== SelectedList.None}>
           <Resizable style={{ 'flex-grow': 1 }}>
+            {/* 最近会话列表 */}
             <ResizablePanel initialSize={0.3} minSize={0.2}>
               <CurrentConversationList />
             </ResizablePanel>
             <ResizableHandle />
+            {/* 聊天主面板 */}
             <ResizablePanel initialSize={0.7}>
               <div>
                 <TextFieldRoot>

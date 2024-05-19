@@ -1,3 +1,4 @@
+/// 本目录中的类型为 `message` 属性的内容，即只包含了 { type, data } 的对象
 import type { MultiTypeReceivedMessage } from './received-message'
 
 interface CommonMessageType {
