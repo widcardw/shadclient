@@ -56,7 +56,11 @@ const LeftToolBar: Component = () => {
       <div class="flex-grow" />
 
       <ConnectWsButton />
-      <Button variant="ghost" class="px-3" onClick={() => setConnection({ connect: false })}>
+      <Button
+        variant="ghost"
+        class="px-3"
+        onClick={() => setConnection({ connect: false })}
+      >
         <div class="i-teenyicons:link-remove-outline" />
       </Button>
 

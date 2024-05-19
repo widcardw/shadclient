@@ -24,7 +24,9 @@ const ConnectWsButton: Component = () => {
         }
       >
         <ToggleButton
-          class={clsx('data-[pressed]:text-emerald-500 data-[pressed]:hover:text-emerald-400')}
+          class={clsx(
+            'data-[pressed]:text-emerald-500 data-[pressed]:hover:text-emerald-400',
+          )}
           pressed={connected()}
           onChange={(connect) => setConnection({ connect, url: wsUrl() })}
         >

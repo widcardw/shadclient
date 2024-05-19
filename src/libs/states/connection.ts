@@ -26,7 +26,7 @@ function runDisconnect() {
 /**
  * 应当受限于 DOM 中，因为 url 是从 localStorage 中读取的
  */
-async function setConnection(config?: {connect: boolean, url?: string}) {
+async function setConnection(config?: { connect: boolean; url?: string }) {
   setIsConnecting(true)
   return new Promise<void>((resolve) => {
     if (config?.connect && config?.url) {

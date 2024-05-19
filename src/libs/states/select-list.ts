@@ -11,7 +11,9 @@ enum SelectedList {
 /**
  * 当前选中的列表，可选：最近会话、好友、群聊、通知
  */
-const [selectedList, setSelectedList] = createSignal<SelectedList>(SelectedList.None)
+const [selectedList, setSelectedList] = createSignal<SelectedList>(
+  SelectedList.None,
+)
 
 export { SelectedList }
 export { selectedList, setSelectedList }

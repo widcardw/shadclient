@@ -41,7 +41,15 @@ const App: Component = () => {
                 </TextFieldRoot>
                 <Button
                   onClick={() => {
-                    ws()?.send(WsActions.GetGroupMsgHistory, { message_id: forwardId(), group_id: 1034267197, count: 10 }, `${WsActions.GetGroupMsgHistory}_aaa`)
+                    ws()?.send(
+                      WsActions.GetGroupMsgHistory,
+                      {
+                        message_id: forwardId(),
+                        group_id: 1034267197,
+                        count: 10,
+                      },
+                      `${WsActions.GetGroupMsgHistory}_aaa`,
+                    )
                   }}
                 >
                   get

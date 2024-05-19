@@ -14,7 +14,8 @@
       },
       "style": {
         "noNonNullAssertion": "off",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "useImportType": "warn"
       },
       "complexity": {
         "noForEach": "off",
@@ -25,12 +26,13 @@
         "noEmptyInterface": "off"
       }
     },
-    "ignore": ["node_modules/**", "src/components/ui/**"]
+    "ignore": ["node_modules/**"]
   },
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": ["node_modules/**", "src/components/ui/**"]
+    "ignore": ["node_modules/**"],
+    "lineEnding": "lf"
   },
   "javascript": {
     "formatter": {

@@ -18,7 +18,7 @@ const InfoDialog: Component = () => {
     <AlertDialog>
       <AlertDialogTrigger
         as={(props: AlertDialogTriggerProps) => (
-          <Button variant="ghost"  class="px-3" {...props}>
+          <Button variant="ghost" class="px-3" {...props}>
             <div class="i-teenyicons:info-circle-outline" />
           </Button>
         )}
@@ -28,8 +28,9 @@ const InfoDialog: Component = () => {
           <AlertDialogTitle>Solid CQ Client</AlertDialogTitle>
           <AlertDialogDescription>
             <p>This is a client based on Lagrange.Core and Solid-js.</p>
-            Edit your configuration in the settings
-            and click on the <div class="inline-block i-teenyicons:link-outline" /> button to connect!
+            Edit your configuration in the settings and click on the{' '}
+            <div class="inline-block i-teenyicons:link-outline" /> button to
+            connect!
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

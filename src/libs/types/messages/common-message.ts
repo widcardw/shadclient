@@ -1,4 +1,4 @@
-import type { MultiTypeReceivedMessage } from "./received-message"
+import type { MultiTypeReceivedMessage } from './received-message'
 
 interface CommonMessageType {
   type: string
@@ -99,7 +99,7 @@ interface CommonForwardMessage extends CommonMessageType {
 }
 
 interface CommonNodeMessage extends CommonMessageType {
-  type: 'node',
+  type: 'node'
   data: {
     user_id: string
     nickname: string
