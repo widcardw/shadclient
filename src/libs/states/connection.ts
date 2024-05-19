@@ -1,7 +1,6 @@
 import { createSignal } from 'solid-js'
-import { toast } from 'solid-sonner'
-import { SimpleWebSocket } from '../ws/websocket'
 import { dispatchMessage } from '../types/ws/dispatcher'
+import { SimpleWebSocket } from '../ws/websocket'
 
 const [connected, setConnected] = createSignal(false)
 const toggleConnected = () => setConnected(!connected())

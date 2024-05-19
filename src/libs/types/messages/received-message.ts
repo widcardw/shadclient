@@ -1,13 +1,13 @@
 import type {
-  CommonTextMessage,
-  CommonReplyMessage,
-  CommonImageMessage,
   CommonAtMessage,
-  CommonJsonCardMessage,
   CommonFaceMessage,
-  CommonRecordMessage,
-  CommonForwardMessage,
   CommonFileMessage,
+  CommonForwardMessage,
+  CommonImageMessage,
+  CommonJsonCardMessage,
+  CommonRecordMessage,
+  CommonReplyMessage,
+  CommonTextMessage,
   CommonVideoMessage,
 } from './common-message'
 

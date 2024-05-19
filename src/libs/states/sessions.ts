@@ -1,9 +1,9 @@
 import { createSignal } from 'solid-js'
-import type { SingleFriendInfo } from '../types/ws/private-user'
-import type { SingleGroupInfo } from '../types/ws/group-info'
-import type { PrivateMessageWsObject } from '../types/ws/message/private-message-ws-object'
-import type { GroupMessageWsObject } from '../types/ws/message/group-message-ws-object'
 import { createStore } from 'solid-js/store'
+import type { SingleGroupInfo } from '../types/ws/group-info'
+import type { GroupMessageWsObject } from '../types/ws/message/group-message-ws-object'
+import type { PrivateMessageWsObject } from '../types/ws/message/private-message-ws-object'
+import type { SingleFriendInfo } from '../types/ws/private-user'
 
 interface AbstractConversation {
   type: 'group' | 'private'

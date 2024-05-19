@@ -1,10 +1,14 @@
 import { toast } from 'solid-sonner'
 import type { AllWsObject } from './common-ws-object'
 import type { AllEchoTypes } from './echo/common-echo'
+
 import type {
   AllMessageWsObject,
   CommonMessageWsObject,
 } from './message/common-message-ws-object'
+import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
+import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
+
 import type {
   AllMetaEventWsObject,
   CommonMetaEventWsObject,
@@ -13,8 +17,6 @@ import type {
   AllNoticeWsObject,
   CommonNoticeWsObject,
 } from './notice/common-notice-ws-object'
-import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
-import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上

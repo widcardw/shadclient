@@ -26,12 +26,12 @@
         "noEmptyInterface": "off"
       }
     },
-    "ignore": ["node_modules/**"]
+    "ignore": ["node_modules/**", "dist/**", ".vscode/**"]
   },
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": ["node_modules/**"],
+    "ignore": ["node_modules/**", "dist/**", ".vscode/**"],
     "lineEnding": "lf"
   },
   "javascript": {
