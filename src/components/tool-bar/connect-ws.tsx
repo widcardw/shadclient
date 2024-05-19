@@ -8,6 +8,7 @@ import { Show, type Component } from 'solid-js'
 import { Button } from '../ui/button'
 import { useLocalStorage } from 'solidjs-use'
 import { WSURL } from '@/libs/config'
+import clsx from 'clsx'
 
 const ConnectWsButton: Component = () => {
   const [wsUrl] = useLocalStorage('wsUrl', WSURL)
@@ -23,6 +24,7 @@ const ConnectWsButton: Component = () => {
         }
       >
         <ToggleButton
+          class={clsx('data-[pressed]:text-emerald-500 data-[pressed]:hover:text-emerald-400')}
           pressed={connected()}
           onChange={(connect) => setConnection({ connect, url: wsUrl() })}
         >

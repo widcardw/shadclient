@@ -57,9 +57,7 @@ class SimpleWebSocket {
     })
     this.ws.addEventListener('close', function (ev) {
       console.log('connection close', ev)
-      toast.info('Connection closed!', {
-        duration: Number.POSITIVE_INFINITY,
-      })
+      toast.info('Connection closed!')
     })
   }
 

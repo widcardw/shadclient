@@ -17,9 +17,8 @@ const LeftToolBar: Component = () => {
     <div
       class={clsx(
         'h-full',
-        'flex flex-col items-center gap-1 py-1',
+        'flex flex-col items-center gap-1 py-1 px-1',
         'border-r',
-        'w-3rem',
       )}
     >
       <Button
