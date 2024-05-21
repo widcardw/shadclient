@@ -4,7 +4,6 @@ import type { AllEchoTypes } from './echo/common-echo'
 
 import type {
   AllMessageWsObject,
-  CommonMessageWsObject,
 } from './message/common-message-ws-object'
 import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
@@ -15,8 +14,8 @@ import type {
 } from './meta_event/common-meta-ws-object'
 import type {
   AllNoticeWsObject,
-  CommonNoticeWsObject,
 } from './notice/common-notice-ws-object'
+import type { AllRequestWsObject } from './request/common-request-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -32,16 +31,21 @@ function dispatchMessage(data: any) {
     const d = data as AllWsObject
     switch (d.post_type) {
       case 'message': {
-        dispatchCommonWsObject(d)
+        dispatchCommonWsObject(d as AllMessageWsObject)
         console.log(d)
         break
       }
       case 'meta_event': {
-        dispatchMetaWsObject(d)
+        dispatchMetaWsObject(d as AllMetaEventWsObject)
         break
       }
       case 'notice': {
-        dispatchNoticeWsObject(d)
+        dispatchNoticeWsObject(d as AllNoticeWsObject)
+        console.log(d)
+        break
+      }
+      case 'request': {
+        dispatchReuqestWsObject(d as AllRequestWsObject)
         console.log(d)
         break
       }
@@ -68,15 +72,14 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
 }
 
 /** 接收到群聊或者私聊消息，暂时还没写临时会话消息的适配 */
-function dispatchCommonWsObject(data: CommonMessageWsObject) {
-  const d2 = data as AllMessageWsObject
-  switch (d2.message_type) {
+function dispatchCommonWsObject(data: AllMessageWsObject) {
+  switch (data.message_type) {
     case 'group': {
-      dispatchGroupMessageWsObject(d2)
+      dispatchGroupMessageWsObject(data)
       break
     }
     case 'private': {
-      dispatchPrivateMessageWsObject(d2)
+      dispatchPrivateMessageWsObject(data)
       break
     }
     default: {
@@ -86,9 +89,8 @@ function dispatchCommonWsObject(data: CommonMessageWsObject) {
 }
 
 /** 接收到通知，包括好友申请、撤回消息、文件上传、拍一拍 */
-function dispatchNoticeWsObject(data: CommonNoticeWsObject) {
-  const d2 = data as AllNoticeWsObject
-  switch (d2.notice_type) {
+function dispatchNoticeWsObject(data: AllNoticeWsObject) {
+  switch (data.notice_type) {
     case 'friend_add': {
       break
     }
@@ -109,6 +111,21 @@ function dispatchNoticeWsObject(data: CommonNoticeWsObject) {
     }
     default: {
       console.log('Received unsupported notice ws object', data)
+    }
+  }
+}
+
+/** 好友添加请求的处理，或者是群邀请的处理 */
+function dispatchReuqestWsObject(data: AllRequestWsObject) {
+  switch (data.request_type) {
+    case 'friend': {
+      break
+    }
+    case 'group': {
+      break
+    }
+    default: {
+      console.log('Unsupported request ws object', data)
     }
   }
 }
