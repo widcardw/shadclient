@@ -1,9 +1,9 @@
 // refer to src/libs/ws/websocket.ts WsActions
 
-import { DELIMITER } from '@/libs/config'
 import type { WsActions } from '@/libs/ws/websocket'
 import type { DeleteMsgEcho } from './delete-msg-echo'
 import type { ForwardedEcho } from './forwarded-echo'
+import type { FriendAddRequestEcho } from './friend-add-request-echo'
 import type { FriendListEcho } from './friend-list-echo'
 import type { FriendHistoryEcho } from './get-friend-history-echo'
 import type { GroupHistoryEcho } from './get-group-history-echo'
@@ -33,6 +33,7 @@ type AllEchoTypes =
   | GroupRootFilesEcho
   | GroupFileUrlEcho
   | GroupFilesByFolderEcho
+  | FriendAddRequestEcho
 
 interface BaseEcho {
   action: WsActions
