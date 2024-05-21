@@ -1,18 +1,19 @@
 // refer to src/libs/ws/websocket.ts WsActions
 
 import { DELIMITER } from '@/libs/config'
+import type { WsActions } from '@/libs/ws/websocket'
 import type { DeleteMsgEcho } from './delete-msg-echo'
 import type { ForwardedEcho } from './forwarded-echo'
 import type { FriendListEcho } from './friend-list-echo'
-import type { GroupListEcho } from './group-list-echo'
 import type { FriendHistoryEcho } from './get-friend-history-echo'
 import type { GroupHistoryEcho } from './get-group-history-echo'
-import type { SendMsgEcho } from './send-msg-echo'
 import type {
   GroupFileUrlEcho,
   GroupFilesByFolderEcho,
   GroupRootFilesEcho,
 } from './group-files-echo'
+import type { GroupListEcho } from './group-list-echo'
+import type { SendMsgEcho } from './send-msg-echo'
 
 // echo will be concated into string and then returned by server
 interface CommonEchoMessage {
@@ -33,9 +34,15 @@ type AllEchoTypes =
   | GroupFileUrlEcho
   | GroupFilesByFolderEcho
 
-function buildEcho(...args: string[]) {
-  return args.concat(DELIMITER)
+interface BaseEcho {
+  action: WsActions
 }
 
-export type { CommonEchoMessage, AllEchoTypes }
+type EchoedObject = BaseEcho & Record<string, any>
+
+function buildEcho(action: WsActions, obj: Record<string, any>) {
+  return JSON.stringify(Object.assign(obj, { action }))
+}
+
+export type { CommonEchoMessage, AllEchoTypes, EchoedObject }
 export { buildEcho }

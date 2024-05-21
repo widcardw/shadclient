@@ -1,18 +1,18 @@
-import { Show, createSignal, type Component } from 'solid-js'
+import { type Component, Show, createSignal } from 'solid-js'
 
+import CurrentConversationList from './components/conversation-list/current-conv'
 import ColorModer from './components/dark-theme/ColorModeProvider'
 import LeftToolBar from './components/tool-bar/left-tool-bar'
 import { Button } from './components/ui/button'
-import { Toaster } from './components/ui/sonner'
-import { SelectedList, selectedList } from './libs/states/select-list'
-import CurrentConversationList from './components/conversation-list/current-conv'
 import {
   Resizable,
   ResizableHandle,
   ResizablePanel,
 } from './components/ui/resizable'
+import { Toaster } from './components/ui/sonner'
 import { TextField, TextFieldRoot } from './components/ui/textfield'
 import { ws } from './libs/states/connection'
+import { SelectedList, selectedList } from './libs/states/select-list'
 import { WsActions } from './libs/ws/websocket'
 
 const App: Component = () => {
@@ -50,7 +50,7 @@ const App: Component = () => {
                         group_id: 1034267197,
                         count: 10,
                       },
-                      `${WsActions.GetGroupMsgHistory}_aaa`,
+                      { forwardId: forwardId() },
                     )
                   }}
                 >
