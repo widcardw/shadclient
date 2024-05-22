@@ -2,20 +2,49 @@ import { toast } from 'solid-sonner'
 import type { AllWsObject } from './common-ws-object'
 import type { AllEchoTypes } from './echo/common-echo'
 
-import type {
-  AllMessageWsObject,
-} from './message/common-message-ws-object'
+import type { AllMessageWsObject } from './message/common-message-ws-object'
 import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
 import { WsActions } from '@/libs/ws/websocket'
+import {
+  type DeleteMsgEcho,
+  dispatchDeleteMsgEcho,
+} from './echo/delete-msg-echo'
+import {
+  type ForwardedEcho,
+  dispatchForwardedEcho,
+} from './echo/forwarded-echo'
+import {
+  type FriendListEcho,
+  dispatchGetFriendListEcho,
+} from './echo/friend-list-echo'
+import {
+  type FriendHistoryEcho,
+  dispatchGetFriendHistoryEcho,
+} from './echo/get-friend-history-echo'
+import {
+  type GroupHistoryEcho,
+  dispatchGroupHistoryEcho,
+} from './echo/get-group-history-echo'
+import {
+  type GroupFileUrlEcho,
+  type GroupFilesByFolderEcho,
+  type GroupRootFilesEcho,
+  dispatchGroupFileUrlEcho,
+  dispatchGroupFilesByFolderEcho,
+  dispatchGroupRootFilesEcho,
+} from './echo/group-files-echo'
+import {
+  type GroupListEcho,
+  dispatchGroupListEcho,
+} from './echo/group-list-echo'
+import { type SendMsgEcho, dispatchSendMsgEcho } from './echo/send-msg-echo'
 import type {
   AllMetaEventWsObject,
   CommonMetaEventWsObject,
 } from './meta_event/common-meta-ws-object'
-import type {
-  AllNoticeWsObject,
-} from './notice/common-notice-ws-object'
+import type { AllNoticeWsObject } from './notice/common-notice-ws-object'
 import { dispatchGroupFileNoticeWsObject } from './notice/group-file-notice-ws-object'
 import { dispatchGroupRecallNoticeWsObject } from './notice/group-recall-notice-ws-object'
 import { dispatchPrivateFileNoticeWsObject } from './notice/private-file-notice-ws-object'
@@ -23,6 +52,7 @@ import { dispatchPrivateRecallNoticeWsObject } from './notice/private-recall-not
 import type { AllRequestWsObject } from './request/common-request-ws-object'
 import { dispatchFriendAddRequestWsObject } from './request/friend-add-request-ws-object'
 import { dispatchGroupAddRequestWsObject } from './request/group-add-request-ws-object'
+import { dispatchPrivatePokeNoticeWsObject } from './notice/private-poke-notice-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -62,6 +92,7 @@ function dispatchMessage(data: any) {
         break
       }
       default: {
+        toast.error('Received unsupported post type')
         console.log('Received unsupported post type', data)
       }
     }
@@ -77,54 +108,65 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       description: `${data.echo}, retcode: ${data.retcode}`,
       duration: Number.POSITIVE_INFINITY,
     })
-    console.error(data)
+    console.error('Error occured in echo', data)
     return
   }
   // TODO: 按照一定的规则划分 echo，其内容是 JSON.stringify 的字符串，具体请查看 buildEcho
   switch (data.echo.action) {
     case WsActions.DeleteMsg: {
+      dispatchDeleteMsgEcho(data as DeleteMsgEcho)
       break
     }
     case WsActions.GetForwardMsg: {
+      dispatchForwardedEcho(data as ForwardedEcho)
       break
     }
     case WsActions.GetFriendList: {
+      dispatchGetFriendListEcho(data as FriendListEcho)
       break
     }
     case WsActions.GetFriendMsgHistory: {
+      dispatchGetFriendHistoryEcho(data as FriendHistoryEcho)
       break
     }
     case WsActions.GetGroupFileUrl: {
+      dispatchGroupFileUrlEcho(data as GroupFileUrlEcho)
       break
     }
     case WsActions.GetGroupFilesByFolder: {
+      dispatchGroupFilesByFolderEcho(data as GroupFilesByFolderEcho)
       break
     }
     case WsActions.GetGroupList: {
+      dispatchGroupListEcho(data as GroupListEcho)
       break
     }
     case WsActions.GetGroupMsgHistory: {
+      dispatchGroupHistoryEcho(data as GroupHistoryEcho)
       break
     }
     case WsActions.GetGroupRootFiles: {
+      dispatchGroupRootFilesEcho(data as GroupRootFilesEcho)
       break
     }
     case WsActions.GetMsg: {
       break
     }
-    case WsActions.SendGroupMsg: {
-      break
-    }
+    case WsActions.SendGroupMsg:
     case WsActions.SendPrivateMsg: {
+      dispatchSendMsgEcho(data as SendMsgEcho)
       break
     }
     case WsActions.UploadGroupFile: {
+      // TODO
       break
     }
     case WsActions.UploadPrivateFile: {
+      // TODO
       break
     }
     default: {
+      toast.error('Received unknown echo object')
       console.error('Received unknown echo object', data)
     }
   }
@@ -171,7 +213,7 @@ function dispatchNoticeWsObject(data: AllNoticeWsObject) {
       break
     }
     case 'poke': {
-      // TODO
+      dispatchPrivatePokeNoticeWsObject(data)
       break
     }
     default: {

@@ -22,7 +22,7 @@ function dispatch(data: PrivatePokeNoticeWsObject) {
     post_type: 'message',
     message_type: 'private',
     sub_type: 'normal',
-    message_id: -1,
+    message_id: 0,
     user_id,
     message: [createTextMessage('拍了拍你')],
     raw_message: '',
