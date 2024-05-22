@@ -1,3 +1,4 @@
+import { toast } from 'solid-sonner'
 import type { CommonNoticeWsObject } from './common-notice-ws-object'
 
 interface FriendAddNoticeWsObject extends CommonNoticeWsObject {
@@ -7,4 +8,9 @@ interface FriendAddNoticeWsObject extends CommonNoticeWsObject {
   self_id: number
 }
 
+function dispatch(data: FriendAddNoticeWsObject) {
+  toast(`Added ${data.user_id} into friends!`)
+}
+
 export type { FriendAddNoticeWsObject }
+export { dispatch as dispatchFriendAddNotice }

@@ -79,7 +79,7 @@ export const AlertDialogTitle = <T extends ValidComponent = 'h2'>(
 
   return (
     <AlertDialogPrimitive.Title
-      class={cn('text-lg font-semibold', local.class)}
+      class={cn('text-lg font-semibold m-0', local.class)}
       {...rest}
     />
   )

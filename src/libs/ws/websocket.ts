@@ -4,34 +4,35 @@ import { type EchoedObject, buildEcho } from '../types/ws/echo/common-echo'
 
 // WebSocket 发送请求参考 https://github.com/botuniverse/onebot-11/blob/master/communication/ws.md
 enum WsActions {
+  Unknown = 0,
   /** 发送私聊 { user_id: number, message: CqSentMessage } */
-  SendPrivateMsg = 0,
+  SendPrivateMsg = 1,
   /** 发送群聊 { group_id: number, message: CqSentMessage } */
-  SendGroupMsg = 1,
+  SendGroupMsg = 2,
   /** 获取消息 { message_id number } */
-  GetMsg = 2,
+  GetMsg = 3,
   /** 获取合并转发消息 { id: string } 原来 go-cqhttp 是 { message_id: string } */
-  GetForwardMsg = 3,
+  GetForwardMsg = 4,
   /** 撤回消息 { msg_id: number } */
-  DeleteMsg = 4,
+  DeleteMsg = 5,
   /** 获取好友列表 无参数 */
-  GetFriendList = 5,
+  GetFriendList = 6,
   /** 获取群聊列表 无参数 */
-  GetGroupList = 6,
+  GetGroupList = 7,
   /** 获取群历史消息 { message_id: number, group_id: number, count: number } go-cqhttp 为 { message_seq: number, group_id: number } */
-  GetGroupMsgHistory = 7,
+  GetGroupMsgHistory = 8,
   /** 获取好友历史消息 { user_id: number, message_id: number, count: number } */
-  GetFriendMsgHistory = 8,
+  GetFriendMsgHistory = 9,
   /** 获取群文件根目录 { group_id: number } */
-  GetGroupRootFiles = 9,
+  GetGroupRootFiles = 10,
   /**  获取群文件列表 { group_id: number, folder_id: string } */
-  GetGroupFilesByFolder = 10,
+  GetGroupFilesByFolder = 11,
   /** 获取文件的下载地址 { group_id: number, file_id: string, busid: number } */
-  GetGroupFileUrl = 11,
+  GetGroupFileUrl = 12,
   /** 上传群文件 { group_id: number, file: 本地文件路径, name: string, folder: 父目录 id } */
-  UploadGroupFile = 12,
+  UploadGroupFile = 13,
   /** 上传私聊文件 { user_id: number, file: 本地文件路径, name: string } */
-  UploadPrivateFile = 13,
+  UploadPrivateFile = 14,
 }
 
 const WsActionToApi: Record<WsActions, string> = {
@@ -49,6 +50,7 @@ const WsActionToApi: Record<WsActions, string> = {
   [WsActions.SendPrivateMsg]: 'send_private_msg',
   [WsActions.UploadGroupFile]: 'upload_group_file',
   [WsActions.UploadPrivateFile]: 'upload_private_file',
+  [WsActions.Unknown]: ''
 }
 
 class SimpleWebSocket {
@@ -93,12 +95,12 @@ class SimpleWebSocket {
     if (this.ws) this.ws.close()
   }
 
-  send(action: WsActions, params?: any, echo?: Record<string, any>) {
+  send(action: WsActions, params: any, echo: Record<string, any>) {
     this.ws.send(
       JSON.stringify({
         action: WsActionToApi[action],
         params,
-        echo: echo && buildEcho(action, echo),
+        echo: buildEcho(action, echo),
       }),
     )
   }

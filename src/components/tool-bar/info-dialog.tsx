@@ -1,5 +1,3 @@
-import type { Component } from 'solid-js'
-import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +10,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
+import type { Component } from 'solid-js'
 
 const InfoDialog: Component = () => {
   return (

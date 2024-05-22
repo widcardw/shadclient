@@ -1,16 +1,18 @@
-import clsx from 'clsx'
-import type { Component } from 'solid-js'
-import { Button } from '../ui/button'
-import ModeToggle from '../dark-theme/toggle-mode'
-import SettingsDialog from './settings-dialog'
-import { InfoDialog } from './info-dialog'
-import ConnectWsButton from './connect-ws'
 import { setConnection } from '@/libs/states/connection'
+import { unreadCount } from '@/libs/states/requests'
 import {
   SelectedList,
   selectedList,
   setSelectedList,
 } from '@/libs/states/select-list'
+import clsx from 'clsx'
+import { type Component, Match, Switch } from 'solid-js'
+import ModeToggle from '../dark-theme/toggle-mode'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import ConnectWsButton from './connect-ws'
+import { InfoDialog } from './info-dialog'
+import SettingsDialog from './settings-dialog'
 
 const LeftToolBar: Component = () => {
   return (
@@ -51,6 +53,18 @@ const LeftToolBar: Component = () => {
         onClick={() => setSelectedList(SelectedList.Notice)}
       >
         <div class="i-teenyicons:bell-outline" />
+        <Switch>
+          <Match when={unreadCount() > 0 && unreadCount() <= 99}>
+            <Badge class="px-2 py-1 absolute scale-50 transform-origin-tr">
+              {unreadCount()}
+            </Badge>
+          </Match>
+          <Match when={unreadCount() > 99}>
+            <Badge class="px-2 py-1 absolute scale-50 transform-origin-tr">
+              99+
+            </Badge>
+          </Match>
+        </Switch>
       </Button>
 
       <div class="flex-grow" />

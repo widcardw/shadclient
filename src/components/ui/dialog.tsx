@@ -87,7 +87,7 @@ export const DialogTitle = <T extends ValidComponent = 'h2'>(
 
   return (
     <DialogPrimitive.Title
-      class={cn('text-lg font-semibold text-foreground', local.class)}
+      class={cn('text-lg font-semibold text-foreground m-0', local.class)}
       {...rest}
     />
   )

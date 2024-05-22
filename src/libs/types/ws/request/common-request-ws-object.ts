@@ -9,6 +9,7 @@ interface CommonRequestWsObject extends CommonWsObject {
   request_type: 'friend' | 'group'
   comment: string
   flag: string
+  read?: boolean
 }
 
 type AllRequestWsObject = FriendAddRequestWsObject | GroupAddRequestWsObject

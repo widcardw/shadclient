@@ -1,4 +1,6 @@
 // refer to src/libs/ws/websocket.ts WsActions
+// echo in this folder are all **responses** of the sent messages
+// the sent message should follow the Lagrange `API`, and they should end with `Body` // TODO
 
 import type { WsActions } from '@/libs/ws/websocket'
 import type { DeleteMsgEcho } from './delete-msg-echo'
@@ -19,7 +21,7 @@ import type { SendMsgEcho } from './send-msg-echo'
 interface CommonEchoMessage {
   status: string
   retcode: number
-  echo: string
+  echo: EchoedObject // when it is received, it should be parsed into a json object
 }
 
 type AllEchoTypes =

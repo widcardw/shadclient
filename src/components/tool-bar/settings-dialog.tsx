@@ -1,6 +1,6 @@
-import { createSignal, type Component } from 'solid-js'
+import { type Component, createSignal } from 'solid-js'
 
-import type { DialogTriggerProps } from '@kobalte/core/dialog'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -11,20 +11,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import {
-  TextField,
-  TextFieldLabel,
-  TextFieldRoot,
-} from '@/components/ui/textfield'
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { useStorage } from 'solidjs-use'
+import {
+  TextField,
+  TextFieldLabel,
+  TextFieldRoot,
+} from '@/components/ui/textfield'
 import { WSURL } from '@/libs/config'
+import type { DialogTriggerProps } from '@kobalte/core/dialog'
+import { useStorage } from 'solidjs-use'
 
 const SettingsDialog: Component = () => {
   const [wsUrl, setWsUrl] = useStorage('wsUrl', WSURL)
@@ -42,7 +42,7 @@ const SettingsDialog: Component = () => {
       />
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle class="fw-600">Edit profile</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>

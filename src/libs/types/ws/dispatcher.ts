@@ -8,6 +8,7 @@ import type {
 import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
+import { WsActions } from '@/libs/ws/websocket'
 import type {
   AllMetaEventWsObject,
   CommonMetaEventWsObject,
@@ -15,7 +16,13 @@ import type {
 import type {
   AllNoticeWsObject,
 } from './notice/common-notice-ws-object'
+import { dispatchGroupFileNoticeWsObject } from './notice/group-file-notice-ws-object'
+import { dispatchGroupRecallNoticeWsObject } from './notice/group-recall-notice-ws-object'
+import { dispatchPrivateFileNoticeWsObject } from './notice/private-file-notice-ws-object'
+import { dispatchPrivateRecallNoticeWsObject } from './notice/private-recall-notice-ws-object'
 import type { AllRequestWsObject } from './request/common-request-ws-object'
+import { dispatchFriendAddRequestWsObject } from './request/friend-add-request-ws-object'
+import { dispatchGroupAddRequestWsObject } from './request/group-add-request-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -25,6 +32,11 @@ function dispatchMessage(data: any) {
   // if the message contains `echo`, it will be handled by `echo` handlers
   if (Object.hasOwn(data, 'echo')) {
     const d = data as AllEchoTypes
+    try {
+      d.echo = JSON.parse(data.echo)
+    } catch (e) {
+      d.echo = { action: WsActions.Unknown }
+    }
     dispatchEchoWsObject(d)
     console.log(d)
   } else if (Object.hasOwn(data, 'post_type')) {
@@ -68,7 +80,54 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
     console.error(data)
     return
   }
-  // TODO: 按照一定的规则划分 echo，还要考虑一下，要不要把 echo 的内容变成一个 JSON 字符串，这样可能效率并不高
+  // TODO: 按照一定的规则划分 echo，其内容是 JSON.stringify 的字符串，具体请查看 buildEcho
+  switch (data.echo.action) {
+    case WsActions.DeleteMsg: {
+      break
+    }
+    case WsActions.GetForwardMsg: {
+      break
+    }
+    case WsActions.GetFriendList: {
+      break
+    }
+    case WsActions.GetFriendMsgHistory: {
+      break
+    }
+    case WsActions.GetGroupFileUrl: {
+      break
+    }
+    case WsActions.GetGroupFilesByFolder: {
+      break
+    }
+    case WsActions.GetGroupList: {
+      break
+    }
+    case WsActions.GetGroupMsgHistory: {
+      break
+    }
+    case WsActions.GetGroupRootFiles: {
+      break
+    }
+    case WsActions.GetMsg: {
+      break
+    }
+    case WsActions.SendGroupMsg: {
+      break
+    }
+    case WsActions.SendPrivateMsg: {
+      break
+    }
+    case WsActions.UploadGroupFile: {
+      break
+    }
+    case WsActions.UploadPrivateFile: {
+      break
+    }
+    default: {
+      console.error('Received unknown echo object', data)
+    }
+  }
 }
 
 /** 接收到群聊或者私聊消息，暂时还没写临时会话消息的适配 */
@@ -88,25 +147,31 @@ function dispatchCommonWsObject(data: AllMessageWsObject) {
   }
 }
 
-/** 接收到通知，包括好友申请、撤回消息、文件上传、拍一拍 */
+/** 接收到通知，包括好友添加、撤回消息、文件上传、拍一拍 */
 function dispatchNoticeWsObject(data: AllNoticeWsObject) {
   switch (data.notice_type) {
     case 'friend_add': {
+      // TODO: 可能只需要 toast 一下？不知道这是什么 api
       break
     }
     case 'friend_recall': {
+      dispatchPrivateRecallNoticeWsObject(data)
       break
     }
     case 'group_recall': {
+      dispatchGroupRecallNoticeWsObject(data)
       break
     }
     case 'group_upload': {
+      dispatchGroupFileNoticeWsObject(data)
       break
     }
     case 'offline_file': {
+      dispatchPrivateFileNoticeWsObject(data)
       break
     }
     case 'poke': {
+      // TODO
       break
     }
     default: {
@@ -119,13 +184,15 @@ function dispatchNoticeWsObject(data: AllNoticeWsObject) {
 function dispatchReuqestWsObject(data: AllRequestWsObject) {
   switch (data.request_type) {
     case 'friend': {
+      dispatchFriendAddRequestWsObject(data)
       break
     }
     case 'group': {
+      dispatchGroupAddRequestWsObject(data)
       break
     }
     default: {
-      console.log('Unsupported request ws object', data)
+      console.log('Received unsupported request ws object', data)
     }
   }
 }
