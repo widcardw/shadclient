@@ -1,8 +1,8 @@
-import type { CqReceivedMessage } from '../../messages/received-message'
-import type { CommonMessageWsObject } from './common-message-ws-object'
-import type { GroupUser } from '../group-user'
-import { groupConvStore, setGroupConvStore } from '@/libs/states/sessions'
 import { allGroups } from '@/components/conversation-list/group-list'
+import { groupConvStore, setGroupConvStore, setGroupMemberCard } from '@/libs/states/sessions'
+import type { CqReceivedMessage } from '../../messages/received-message'
+import type { GroupUser } from '../group-user'
+import type { CommonMessageWsObject } from './common-message-ws-object'
 
 interface GroupMessageWsObject extends CommonMessageWsObject {
   message_type: 'group'
@@ -25,7 +25,11 @@ function getGroupName(group_id: number): string {
 }
 
 function dispatch(data: GroupMessageWsObject) {
-  const { group_id } = data
+  const { group_id, sender } = data
+
+  // 缓存已经发送过消息的用户的 card/nickname，用于被 @ 时将他显示出来
+  setGroupMemberCard(group_id, sender.user_id, sender.card || sender.nickname)
+
   const session = groupConvStore[group_id]
   if (session) {
     // // 处理群聊名称，但每次有消息进来的时候都处理一次有点逆天，不知道有没有什么好的办法

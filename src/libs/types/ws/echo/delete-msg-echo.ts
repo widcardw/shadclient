@@ -1,9 +1,18 @@
-import type { CommonEchoMessage } from './common-echo'
+import type { WsActions } from '@/libs/ws/websocket'
+import { toast } from 'solid-sonner'
+import type { CommonEchoMessage, EchoedObject } from './common-echo'
 
-interface DeleteMsgEcho extends CommonEchoMessage {}
-
-function dispatch(data: DeleteMsgEcho) {
-  
+interface DeleteMsgEcho extends CommonEchoMessage {
+  echo: DeleteMsgCarried
 }
 
-export type { DeleteMsgEcho }
+interface DeleteMsgCarried extends EchoedObject {
+  action: WsActions.DeleteMsg
+}
+
+function dispatch(data: DeleteMsgEcho) {
+  toast('Recalled a message.')
+}
+
+export type { DeleteMsgEcho, DeleteMsgCarried }
+export { dispatch as dispatchDeleteMsgEcho }
