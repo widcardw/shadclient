@@ -163,10 +163,12 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
     }
     case WsActions.UploadGroupFile: {
       // TODO
+      toast.success('Successfully sent file to the group!')
       break
     }
     case WsActions.UploadPrivateFile: {
       // TODO
+      toast.success('Successfully sent file to the friend!')
       break
     }
     case WsActions.GetGroupInfo: {
@@ -174,9 +176,14 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       break
     }
     case WsActions.SetFriendAddRequest: {
+      // TODO
+      // toast.success('Successfully added friend!')
+      // setAllFriends(prev => [...prev, data.data.user_id])
       break
     }
     case WsActions.SetGroupAddRequest: {
+      // TODO
+      // toast.success('Successfully added group!')
       break
     }
     default: {
