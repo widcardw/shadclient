@@ -6,7 +6,8 @@ import type { AllMessageWsObject } from './message/common-message-ws-object'
 import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
-import { WsActions } from '@/libs/ws/websocket'
+import { ws } from '@/libs/states/connection'
+import { WsActionToApi, WsActions } from '@/libs/ws/websocket'
 import {
   type DeleteMsgEcho,
   dispatchDeleteMsgEcho,
@@ -48,11 +49,11 @@ import type { AllNoticeWsObject } from './notice/common-notice-ws-object'
 import { dispatchGroupFileNoticeWsObject } from './notice/group-file-notice-ws-object'
 import { dispatchGroupRecallNoticeWsObject } from './notice/group-recall-notice-ws-object'
 import { dispatchPrivateFileNoticeWsObject } from './notice/private-file-notice-ws-object'
+import { dispatchPrivatePokeNoticeWsObject } from './notice/private-poke-notice-ws-object'
 import { dispatchPrivateRecallNoticeWsObject } from './notice/private-recall-notice-ws-object'
 import type { AllRequestWsObject } from './request/common-request-ws-object'
 import { dispatchFriendAddRequestWsObject } from './request/friend-add-request-ws-object'
 import { dispatchGroupAddRequestWsObject } from './request/group-add-request-ws-object'
-import { dispatchPrivatePokeNoticeWsObject } from './notice/private-poke-notice-ws-object'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -105,7 +106,9 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
   // echo 的内容可能会比较复杂，甚至还包含了是否发送成功
   if (data.retcode !== 0) {
     toast.error('Error occurred in echo', {
-      description: `${data.echo}, retcode: ${data.retcode}`,
+      description: `${WsActionToApi[data.echo.action]}, retcode: ${
+        data.retcode
+      }`,
       duration: Number.POSITIVE_INFINITY,
     })
     console.error('Error occured in echo', data)
@@ -244,7 +247,13 @@ function dispatchMetaWsObject(data: CommonMetaEventWsObject) {
   const d2 = data as AllMetaEventWsObject
   switch (d2.meta_event_type) {
     case 'lifecycle': {
-      toast.success('Lifecycle successfully created!')
+      if (d2.sub_type === 'connect') {
+        toast.success('Lifecycle successfully created!')
+        ws()?.send(WsActions.GetFriendList, {}, {})
+        ws()?.send(WsActions.GetGroupList, {}, {})
+      } else {
+        toast(`Onebot ${d2.sub_type}`)
+      }
       break
     }
     case 'heartbeat': {

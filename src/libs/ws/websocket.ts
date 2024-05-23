@@ -38,7 +38,7 @@ enum WsActions {
 const WsActionToApi: Record<WsActions, string> = {
   [WsActions.DeleteMsg]: 'delete_msg',
   [WsActions.GetForwardMsg]: 'get_forward_msg',
-  [WsActions.GetFriendList]: 'get_friedn_list',
+  [WsActions.GetFriendList]: 'get_friend_list',
   [WsActions.GetFriendMsgHistory]: 'get_friend_msg_history',
   [WsActions.GetGroupFileUrl]: 'get_group_file_url',
   [WsActions.GetGroupFilesByFolder]: 'get_group_files_by_folder',
@@ -96,6 +96,11 @@ class SimpleWebSocket {
   }
 
   send(action: WsActions, params: any, echo: Record<string, any>) {
+    console.log('Send data', {
+      action: WsActionToApi[action],
+      params,
+      echo: buildEcho(action, echo),
+    })
     this.ws.send(
       JSON.stringify({
         action: WsActionToApi[action],

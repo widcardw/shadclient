@@ -9,16 +9,9 @@ const [groupRequests, setGroupRequests] = createSignal<
   GroupAddRequestWsObject[]
 >([])
 
-const unreadCount = createMemo(
-  () =>
-    friendRequests().filter((i) => i.read !== true).length +
-    groupRequests().filter((i) => i.read !== true).length,
-)
-
 export {
   friendRequests,
   setFriendRequests,
   groupRequests,
   setGroupRequests,
-  unreadCount,
 }

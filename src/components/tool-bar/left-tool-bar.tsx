@@ -1,12 +1,12 @@
 import { setConnection } from '@/libs/states/connection'
-import { unreadCount } from '@/libs/states/requests'
+import { friendRequests, groupRequests } from '@/libs/states/requests'
 import {
   SelectedList,
   selectedList,
   setSelectedList,
 } from '@/libs/states/select-list'
 import clsx from 'clsx'
-import { type Component, Match, Switch } from 'solid-js'
+import { type Component, Match, Switch, createMemo } from 'solid-js'
 import ModeToggle from '../dark-theme/toggle-mode'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -15,6 +15,13 @@ import { InfoDialog } from './info-dialog'
 import SettingsDialog from './settings-dialog'
 
 const LeftToolBar: Component = () => {
+
+  const unreadCount = createMemo(
+    () =>
+      friendRequests().filter((i) => i.read !== true).length +
+      groupRequests().filter((i) => i.read !== true).length,
+  )
+
   return (
     <div
       class={clsx(

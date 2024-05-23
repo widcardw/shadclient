@@ -1,5 +1,10 @@
 import { allGroups } from '@/components/conversation-list/group-list'
-import { groupConvStore, setGroupConvStore, setGroupMemberCard } from '@/libs/states/sessions'
+import {
+  groupConvStore,
+  groupMemberCard,
+  setGroupConvStore,
+  setGroupMemberCard,
+} from '@/libs/states/sessions'
 import type { CqReceivedMessage } from '../../messages/received-message'
 import type { GroupUser } from '../group-user'
 import type { CommonMessageWsObject } from './common-message-ws-object'
@@ -21,14 +26,21 @@ interface GroupMessageWsObject extends CommonMessageWsObject {
 }
 
 function getGroupName(group_id: number): string {
-  return allGroups()?.find(g => g.group_id === group_id)?.group_name || `群聊-${group_id}`
+  return (
+    allGroups()?.find((g) => g.group_id === group_id)?.group_name ||
+    `群聊-${group_id}`
+  )
 }
 
 function dispatch(data: GroupMessageWsObject) {
   const { group_id, sender } = data
 
   // 缓存已经发送过消息的用户的 card/nickname，用于被 @ 时将他显示出来
-  setGroupMemberCard(group_id, sender.user_id, sender.card || sender.nickname)
+  if (!groupMemberCard[group_id]?.[sender.user_id]) {
+    setGroupMemberCard(group_id, {
+      [sender.user_id]: sender.card || sender.nickname,
+    })
+  }
 
   const session = groupConvStore[group_id]
   if (session) {
@@ -37,7 +49,7 @@ function dispatch(data: GroupMessageWsObject) {
     //   setGroupConvStore(group_id, 'nick', getGroupName(group_id))
     // }
     // 将消息添加到会话
-    setGroupConvStore(group_id, 'list', prev => [...prev, data])
+    setGroupConvStore(group_id, 'list', (prev) => [...prev, data])
     return
   }
 
@@ -46,7 +58,7 @@ function dispatch(data: GroupMessageWsObject) {
     type: 'group',
     nick: getGroupName(group_id),
     list: [data],
-    id: group_id
+    id: group_id,
   })
 }
 
