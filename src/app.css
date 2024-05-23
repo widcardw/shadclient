@@ -81,6 +81,10 @@ input {
   font-family: var(--font-sans);
 }
 
+hr {
+  margin: 0;
+}
+
 #root {
   height: 100%;
   display: flex;

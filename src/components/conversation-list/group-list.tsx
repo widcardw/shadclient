@@ -32,7 +32,7 @@ const GroupList: Component = () => {
       </TextFieldRoot>
       <Separator />
       <div class="grid gap-1 p-1 of-y-auto">
-        <Show when={filteredGroup().length > 0} fallback="No friends">
+        <Show when={filteredGroup().length > 0}>
           <For each={filteredGroup()}>
             {(group) => (
               <Button variant="ghost" class="block w-full text-left">

@@ -1,5 +1,10 @@
 import { ws } from '@/libs/states/connection'
-import { friendRequests, groupRequests } from '@/libs/states/requests'
+import {
+  friendRequests,
+  groupRequests,
+  setFriendRequests,
+  setGroupRequests,
+} from '@/libs/states/requests'
 import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
 import { getGroupName } from '@/libs/types/ws/message/group-message-ws-object'
 import { RequestStatus } from '@/libs/types/ws/request/common-request-ws-object'
@@ -9,7 +14,6 @@ import { WsActions } from '@/libs/ws/websocket'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
 import { type Component, For, Show, createSignal, onMount } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 import {
   Dialog,
@@ -41,11 +45,20 @@ const FriendRequestConfirmDialog: Component<{ r: FriendAddRequestWsObject }> = (
       { flag: props.r.flag, approve: true, remark: remarkName() },
       {},
     )
+    setFriendRequests((prev) => {
+      const index = prev.findIndex((r) => r.flag === props.r.flag)
+      prev[index].status = RequestStatus.Accepted
+      return prev
+    })
   }
   return (
     <Dialog>
       <DialogTrigger
-        as={(props: DialogTriggerProps) => <Button {...props}>Accept</Button>}
+        as={(props: DialogTriggerProps) => (
+          <Button size="sm" {...props}>
+            Accept
+          </Button>
+        )}
       />
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
@@ -81,13 +94,13 @@ const GroupAddRequestDesc: Component<{ r: GroupAddRequestWsObject }> = (
   props,
 ) => {
   return (
-    <>
-      <AlertTitle>
+    <div>
+      <div class="font-bold">
         {props.r.user_id} request to join the group{' '}
         {getGroupName(props.r.group_id)}
-      </AlertTitle>
-      <AlertDescription>{props.r.comment}</AlertDescription>
-    </>
+      </div>
+      <div>{props.r.comment}</div>
+    </div>
   )
 }
 
@@ -98,23 +111,26 @@ const [inviteStore, setInviteStore] = createStore<
 const GroupInviteDesc: Component<{ r: GroupAddRequestWsObject }> = (props) => {
   onMount(() => {
     if (inviteStore[props.r.group_id] !== undefined) return
-    // TODO
+    // TODO: 请求发送失败
     ws()?.send(
       WsActions.GetGroupInfo,
-      { group_id: props.r.group_id },
+      { group_id: props.r.group_id, no_cache: true },
       { group_id: props.r.group_id },
     )
   })
 
   return (
-    <>
-      <AlertTitle>
+    <div>
+      <div class="font-bold">
         {props.r.user_id} invites you to join the group{' '}
-        {inviteStore[props.r.group_id].group_name} {props.r.group_id}
-        {inviteStore[props.r.group_id].member_count && ` (${inviteStore[props.r.group_id].member_count} members)`}
-      </AlertTitle>
-      <AlertDescription>{props.r.comment}</AlertDescription>
-    </>
+        <Show when={inviteStore[props.r.group_id]} fallback={props.r.group_id}>
+          {inviteStore[props.r.group_id].group_name} {props.r.group_id}
+          {inviteStore[props.r.group_id].member_count &&
+            ` (${inviteStore[props.r.group_id].member_count} members)`}
+        </Show>
+      </div>
+      <div>{props.r.comment}</div>
+    </div>
   )
 }
 
@@ -134,13 +150,18 @@ const GroupRejectDialog: Component<{ r: GroupAddRequestWsObject }> = (
       },
       {},
     )
+    setGroupRequests((prev) => {
+      const index = prev.findIndex((r) => r.flag === props.r.flag)
+      prev[index].status = RequestStatus.Rejected
+      return prev
+    })
   }
 
   return (
     <Dialog>
       <DialogTrigger
         as={(props: DialogTriggerProps) => (
-          <Button variant="destructive" {...props}>
+          <Button size="sm" variant="destructive" {...props}>
             Reject
           </Button>
         )}
@@ -166,7 +187,12 @@ const GroupRejectDialog: Component<{ r: GroupAddRequestWsObject }> = (
           </TextFieldRoot>
         </div>
         <DialogFooter>
-          <Button type="submit" variant="destructive" onClick={sendReject}>
+          <Button
+            size="sm"
+            type="submit"
+            variant="destructive"
+            onClick={sendReject}
+          >
             Confirm
           </Button>
         </DialogFooter>
@@ -177,65 +203,83 @@ const GroupRejectDialog: Component<{ r: GroupAddRequestWsObject }> = (
 
 const NoticePanel: Component = () => {
   return (
-    <div class="of-y-auto p-1 grid gap-1">
+    <div class="of-y-auto p-4 w-full flex flex-col gap-4">
+      {/* 好友请求 */}
       <For each={friendRequests()}>
         {(r) => (
-          <Alert>
-            <AlertTitle>
-              {r.comment}({r.user_id})
-            </AlertTitle>
-            <AlertDescription>
-              Request to be added as a friend.
-            </AlertDescription>
-            <Show
-              when={r.status === RequestStatus.Unread}
-              fallback={<OperatedButton status={r.status!} />}
-            >
-              <FriendRequestConfirmDialog r={r} />
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  ws()?.send(
-                    WsActions.SetFriendAddRequest,
-                    { flag: r.flag, approve: false },
-                    {},
-                  )
-                }}
+          <div class="border border-rounded bg-background p-4 flex justify-between items-center h-20">
+            <div>
+              <div class="font-bold">
+                {r.comment}({r.user_id})
+              </div>
+              <div>Request to be added as a friend.</div>
+            </div>
+            <div class="flex gap-2">
+              <Show
+                when={r.status === RequestStatus.Unread}
+                fallback={<OperatedButton status={r.status!} />}
               >
-                Reject
-              </Button>
-            </Show>
-          </Alert>
+                <FriendRequestConfirmDialog r={r} />
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => {
+                    ws()?.send(
+                      WsActions.SetFriendAddRequest,
+                      { flag: r.flag, approve: false },
+                      {},
+                    )
+                    setFriendRequests((prev) => {
+                      const index = prev.findIndex((q) => q.flag === r.flag)
+                      prev[index].status = RequestStatus.Rejected
+                      return prev
+                    })
+                  }}
+                >
+                  Reject
+                </Button>
+              </Show>
+            </div>
+          </div>
         )}
       </For>
 
+      {/* 加群请求 */}
       <For each={groupRequests()}>
         {(r) => (
-          <Alert>
+          <div class="border border-rounded bg-background p-4 flex justify-between items-center h-20">
             <Show
               when={r.sub_type === 'add'}
               fallback={<GroupInviteDesc r={r} />}
             >
               <GroupAddRequestDesc r={r} />
             </Show>
-            <Show
-              when={r.status === RequestStatus.Unread}
-              fallback={<OperatedButton status={r.status!} />}
-            >
-              <Button
-                onClick={() => {
-                  ws()?.send(
-                    WsActions.SetGroupAddRequest,
-                    { flag: r.flag, approve: true, sub_type: r.sub_type },
-                    {},
-                  )
-                }}
+            <div class="flex gap-2">
+              <Show
+                when={r.status === RequestStatus.Unread}
+                fallback={<OperatedButton status={r.status!} />}
               >
-                Accept
-              </Button>
-              <GroupRejectDialog r={r} />
-            </Show>
-          </Alert>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    ws()?.send(
+                      WsActions.SetGroupAddRequest,
+                      { flag: r.flag, approve: true, sub_type: r.sub_type },
+                      {},
+                    )
+                    setGroupRequests((prev) => {
+                      const index = prev.findIndex((q) => q.flag === r.flag)
+                      prev[index].status = RequestStatus.Accepted
+                      return prev
+                    })
+                  }}
+                >
+                  Accept
+                </Button>
+                <GroupRejectDialog r={r} />
+              </Show>
+            </div>
+          </div>
         )}
       </For>
     </div>

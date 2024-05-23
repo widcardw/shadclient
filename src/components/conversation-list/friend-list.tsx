@@ -32,7 +32,7 @@ const FriendList: Component = () => {
       </TextFieldRoot>
       <Separator />
       <div class="grid gap-1 p-1 of-y-auto">
-        <Show when={filteredFriends().length > 0} fallback="No friends">
+        <Show when={filteredFriends().length > 0}>
           <For each={filteredFriends()}>
             {(friend) => (
               <Button variant="ghost" class="block w-full text-left">
