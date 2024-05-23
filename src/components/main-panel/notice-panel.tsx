@@ -43,7 +43,7 @@ const FriendRequestConfirmDialog: Component<{ r: FriendAddRequestWsObject }> = (
     ws()?.send(
       WsActions.SetFriendAddRequest,
       { flag: props.r.flag, approve: true, remark: remarkName() },
-      {},
+      { user_id: props.r.user_id, remark: remarkName() },
     )
     setFriendRequests(
       (p) => p.flag === props.r.flag,

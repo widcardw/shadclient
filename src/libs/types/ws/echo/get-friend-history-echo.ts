@@ -1,14 +1,14 @@
 import { setFriendConvStore } from '@/libs/states/sessions'
 import type { WsActions } from '@/libs/ws/websocket'
 import type { PrivateMessageWsObject } from '../message/private-message-ws-object'
-import type { CommonEchoMessage } from './common-echo'
+import type { CommonEchoMessage, EchoedObject } from './common-echo'
 
 interface FriendHistoryEcho extends CommonEchoMessage {
   data: { messages: PrivateMessageWsObject[] }
   echo: FriendHistoryEchoCarried
 }
 
-interface FriendHistoryEchoCarried {
+interface FriendHistoryEchoCarried extends EchoedObject {
   action: WsActions.GetFriendMsgHistory
   user_id: number
 }

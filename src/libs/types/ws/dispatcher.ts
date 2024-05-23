@@ -17,6 +17,7 @@ import {
   type ForwardedEcho,
   dispatchForwardedEcho,
 } from './echo/forwarded-echo'
+import { type FriendAddRequestEcho, dispatchFriendAddRequestEcho } from './echo/friend-add-request-echo'
 import {
   type FriendListEcho,
   dispatchGetFriendListEcho,
@@ -69,7 +70,8 @@ function dispatchMessage(data: any) {
     try {
       d.echo = JSON.parse(data.echo)
     } catch (e) {
-      d.echo = { action: WsActions.Unknown }
+      // d.echo = { action: WsActions.Unknown }
+      console.error('Error occured when parsing echo!', e)
     }
     dispatchEchoWsObject(d)
     console.log(d)
@@ -154,6 +156,7 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       break
     }
     case WsActions.GetMsg: {
+      // TODO
       break
     }
     case WsActions.SendGroupMsg:
@@ -176,14 +179,12 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       break
     }
     case WsActions.SetFriendAddRequest: {
-      // TODO
-      // toast.success('Successfully added friend!')
-      // setAllFriends(prev => [...prev, data.data.user_id])
+      dispatchFriendAddRequestEcho(data as FriendAddRequestEcho)
       break
     }
     case WsActions.SetGroupAddRequest: {
       // TODO
-      // toast.success('Successfully added group!')
+      toast.success('Successfully added group!')
       break
     }
     default: {

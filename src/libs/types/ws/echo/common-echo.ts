@@ -10,6 +10,8 @@ import type { FriendListEcho } from './friend-list-echo'
 import type { FriendHistoryEcho } from './get-friend-history-echo'
 import type { GroupHistoryEcho } from './get-group-history-echo'
 import type { GetGroupInfoEcho } from './get-group-info-echo'
+import type { GetMsgEcho } from './get-msg-echo'
+import type { GroupAddRequestEcho } from './group-add-request-echo'
 import type {
   GroupFileUrlEcho,
   GroupFilesByFolderEcho,
@@ -17,6 +19,8 @@ import type {
 } from './group-files-echo'
 import type { GroupListEcho } from './group-list-echo'
 import type { SendMsgEcho } from './send-msg-echo'
+import type { UploadGroupFileEcho } from './upload-group-file-echo'
+import type { UploadPrivateFileEcho } from './upload-private-file-echo'
 
 // echo will be concated into string and then returned by server
 interface CommonEchoMessage {
@@ -38,6 +42,10 @@ type AllEchoTypes =
   | GroupFilesByFolderEcho
   | GetGroupInfoEcho
   | FriendAddRequestEcho
+  | GroupAddRequestEcho
+  | GetMsgEcho
+  | UploadGroupFileEcho
+  | UploadPrivateFileEcho
 
 interface BaseEcho {
   action: WsActions

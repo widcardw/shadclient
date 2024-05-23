@@ -9,7 +9,7 @@ interface GroupHistoryEcho extends CommonEchoMessage {
 }
 
 interface GroupHistoryEchoCarried extends EchoedObject {
-  echo: WsActions
+  action: WsActions.GetGroupMsgHistory
   group_id: number
 }
 
