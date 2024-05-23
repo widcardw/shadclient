@@ -1,4 +1,7 @@
-interface SingleGroupInfo {
+import type { AbstractInfo, UnifyInfoType } from "./unify-info"
+
+interface SingleGroupInfo extends AbstractInfo {
+  type: UnifyInfoType.Group
   /**
    * 群号
    */

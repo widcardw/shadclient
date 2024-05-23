@@ -1,5 +1,5 @@
 import { setGroupRequests } from '@/libs/states/requests'
-import type { CommonRequestWsObject } from './common-request-ws-object'
+import { type CommonRequestWsObject, RequestStatus } from './common-request-ws-object'
 
 interface GroupAddRequestWsObject extends CommonRequestWsObject {
   request_type: 'group'
@@ -9,7 +9,7 @@ interface GroupAddRequestWsObject extends CommonRequestWsObject {
 
 function dispatch(data: GroupAddRequestWsObject) {
   // add the notice to notice tab, and set the remark of this new friend
-  setGroupRequests((prev) => [{ ...data, read: false }, ...prev])
+  setGroupRequests((prev) => [{ ...data, status: RequestStatus.Unread }, ...prev])
 }
 
 export type { GroupAddRequestWsObject }

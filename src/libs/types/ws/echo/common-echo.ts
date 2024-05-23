@@ -9,6 +9,7 @@ import type { FriendAddRequestEcho } from './friend-add-request-echo'
 import type { FriendListEcho } from './friend-list-echo'
 import type { FriendHistoryEcho } from './get-friend-history-echo'
 import type { GroupHistoryEcho } from './get-group-history-echo'
+import type { GetGroupInfoEcho } from './get-group-info-echo'
 import type {
   GroupFileUrlEcho,
   GroupFilesByFolderEcho,
@@ -35,6 +36,7 @@ type AllEchoTypes =
   | GroupRootFilesEcho
   | GroupFileUrlEcho
   | GroupFilesByFolderEcho
+  | GetGroupInfoEcho
   | FriendAddRequestEcho
 
 interface BaseEcho {

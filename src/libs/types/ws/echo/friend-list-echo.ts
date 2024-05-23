@@ -1,6 +1,6 @@
 import { setAllFriends } from '@/components/conversation-list/friend-list'
 import type { WsActions } from '@/libs/ws/websocket'
-import type { SingleFriendInfo } from '../private-user'
+import type { SingleFriendInfo } from '../private-user-info'
 import type { CommonEchoMessage, EchoedObject } from './common-echo'
 
 interface FriendListEcho extends CommonEchoMessage {

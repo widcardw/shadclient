@@ -13,13 +13,13 @@ import { Button } from '../ui/button'
 import ConnectWsButton from './connect-ws'
 import { InfoDialog } from './info-dialog'
 import SettingsDialog from './settings-dialog'
+import { RequestStatus } from '@/libs/types/ws/request/common-request-ws-object'
 
 const LeftToolBar: Component = () => {
-
   const unreadCount = createMemo(
     () =>
-      friendRequests().filter((i) => i.read !== true).length +
-      groupRequests().filter((i) => i.read !== true).length,
+      friendRequests().filter((i) => i.status === RequestStatus.Unread).length +
+      groupRequests().filter((i) => i.status === RequestStatus.Unread).length,
   )
 
   return (

@@ -3,7 +3,8 @@ import { createStore } from 'solid-js/store'
 import type { SingleGroupInfo } from '../types/ws/group-info'
 import type { GroupMessageWsObject } from '../types/ws/message/group-message-ws-object'
 import type { PrivateMessageWsObject } from '../types/ws/message/private-message-ws-object'
-import type { SingleFriendInfo } from '../types/ws/private-user'
+import type { SingleFriendInfo } from '../types/ws/private-user-info'
+import type { UnifyInfo } from '../types/ws/unify-info'
 
 interface AbstractConversation {
   type: 'group' | 'private'
@@ -24,8 +25,8 @@ interface GroupConversation extends AbstractConversation {
 type ConversationType = PrivateConversation | GroupConversation
 
 // 最近会话列表
-const [recentConversations, setRecentConversations] = createSignal<
-  (SingleFriendInfo | SingleGroupInfo)[]
+const [recentList, setRecentList] = createSignal<
+  UnifyInfo[]
 >([])
 
 // 存储所有好友的对话
@@ -51,8 +52,8 @@ const [activeConv, setActiveConv] = createSignal<ConversationType>()
 
 export {
   /** 最近打开的消息记录，仅包含“是谁”，不包含聊天内容 */
-  recentConversations,
-  setRecentConversations,
+  recentList,
+  setRecentList,
   /** 与好友聊天的记录 */
   friendConvStore,
   setFriendConvStore,

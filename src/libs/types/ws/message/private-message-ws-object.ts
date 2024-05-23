@@ -1,8 +1,8 @@
-import type { CqReceivedMessage } from '../../messages/received-message'
-import type { CommonMessageWsObject } from './common-message-ws-object'
-import type { SingleFriendInfo } from '../private-user'
-import { friendConvStore, setFriendConvStore } from '@/libs/states/sessions'
 import { allFriends } from '@/components/conversation-list/friend-list'
+import { friendConvStore, setFriendConvStore } from '@/libs/states/sessions'
+import type { CqReceivedMessage } from '../../messages/received-message'
+import type { SingleFriendInfo } from '../private-user-info'
+import type { CommonMessageWsObject } from './common-message-ws-object'
 
 interface PrivateMessageWsObject extends CommonMessageWsObject {
   message_type: 'private'

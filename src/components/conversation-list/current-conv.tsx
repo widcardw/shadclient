@@ -1,9 +1,8 @@
 import { SelectedList, selectedList } from '@/libs/states/select-list'
-import { Match, Switch, type Component } from 'solid-js'
-import RecentConversationList from './recent-conv'
+import { type Component, Match, Switch } from 'solid-js'
 import FriendList from './friend-list'
 import GroupList from './group-list'
-import NoticeList from './notice-list'
+import RecentConversationList from './recent-conv'
 
 /**
  * 当前选中的回话列表，逻辑是 switch case，被 Resizable 包裹
@@ -19,9 +18,6 @@ const CurrentConversationList: Component = () => {
       </Match>
       <Match when={selectedList() === SelectedList.Groups}>
         <GroupList />
-      </Match>
-      <Match when={selectedList() === SelectedList.Notice}>
-        <NoticeList />
       </Match>
     </Switch>
   )

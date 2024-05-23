@@ -1,7 +1,8 @@
-import type { SingleFriendInfo } from '@/libs/types/ws/private-user'
+import type { SingleFriendInfo } from '@/libs/types/ws/private-user-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
 import { Button } from '../ui/button'
+import { Separator } from '../ui/separator'
 import { TextField, TextFieldRoot } from '../ui/textfield'
 
 const [allFriends, setAllFriends] = createSignal<SingleFriendInfo[]>([])
@@ -18,17 +19,19 @@ const FriendList: Component = () => {
 
   const debouncedSearch = useDebounceFn((e: InputEvent) => {
     setSearch((e.target as HTMLInputElement).value)
-  }, 1000)
+  }, 500)
 
   return (
-    <div class="grid gap-1 of-auto p-1">
-      <TextFieldRoot class="block w-full sticky">
+    <>
+      <TextFieldRoot class="block w-full sticky p-1">
         <TextField
           placeholder="Search"
           value={search()}
           onInput={(e: InputEvent) => debouncedSearch(e)}
         />
       </TextFieldRoot>
+      <Separator />
+      <div class="grid gap-1 p-1 of-y-auto">
         <Show when={filteredFriends().length > 0} fallback="No friends">
           <For each={filteredFriends()}>
             {(friend) => (
@@ -38,7 +41,8 @@ const FriendList: Component = () => {
             )}
           </For>
         </Show>
-    </div>
+      </div>
+    </>
   )
 }
 

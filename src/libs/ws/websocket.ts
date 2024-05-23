@@ -33,6 +33,12 @@ enum WsActions {
   UploadGroupFile = 13,
   /** 上传私聊文件 { user_id: number, file: 本地文件路径, name: string } */
   UploadPrivateFile = 14,
+  /** 处理加好友请求 { flag: string, approve: boolean, remark?: string } */
+  SetFriendAddRequest = 15,
+  /** 处理加群请求／邀请 { flag: string, approve: boolean, sub_type/type 与上报时的一致, reason?: 拒绝理由 } */
+  SetGroupAddRequest = 16,
+  /** 获取群信息 { group_id: number, no_cache: boolean } */
+  GetGroupInfo = 17,
 }
 
 const WsActionToApi: Record<WsActions, string> = {
@@ -50,6 +56,9 @@ const WsActionToApi: Record<WsActions, string> = {
   [WsActions.SendPrivateMsg]: 'send_private_msg',
   [WsActions.UploadGroupFile]: 'upload_group_file',
   [WsActions.UploadPrivateFile]: 'upload_private_file',
+  [WsActions.SetFriendAddRequest]: 'set_friend_add_request',
+  [WsActions.SetGroupAddRequest]: 'set_group_add_request',
+  [WsActions.GetGroupInfo]: 'get_group_info',
   [WsActions.Unknown]: ''
 }
 

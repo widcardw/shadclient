@@ -2,6 +2,7 @@ import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
 import { Button } from '../ui/button'
+import { Separator } from '../ui/separator'
 import { TextField, TextFieldRoot } from '../ui/textfield'
 
 const [allGroups, setAllGroups] = createSignal<SingleGroupInfo[]>([])
@@ -18,27 +19,30 @@ const GroupList: Component = () => {
 
   const debouncedSearch = useDebounceFn((e: InputEvent) => {
     setSearch((e.target as HTMLInputElement).value)
-  }, 1000)
+  }, 500)
 
   return (
-    <div class="grid gap-1 of-auto p-1">
-      <TextFieldRoot class="block w-full sticky">
+    <>
+      <TextFieldRoot class="block w-full sticky p-1">
         <TextField
           placeholder="Search"
           value={search()}
           onInput={(e: InputEvent) => debouncedSearch(e)}
         />
       </TextFieldRoot>
-        <Show when={filteredGroup().length > 0} fallback="No Groups">
+      <Separator />
+      <div class="grid gap-1 p-1 of-y-auto">
+        <Show when={filteredGroup().length > 0} fallback="No friends">
           <For each={filteredGroup()}>
             {(group) => (
               <Button variant="ghost" class="block w-full text-left">
-                {group.group_memo || group.group_name || group.group_id}
+                {group.group_memo || group.group_name || `群聊 ${group.group_id}`}
               </Button>
             )}
           </For>
         </Show>
-    </div>
+      </div>
+    </>
   )
 }
 

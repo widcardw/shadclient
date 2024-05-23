@@ -3,10 +3,11 @@ import type { AllWsObject } from './common-ws-object'
 import type { AllEchoTypes } from './echo/common-echo'
 
 import type { AllMessageWsObject } from './message/common-message-ws-object'
-import { dispatchGroupMessageWsObject } from './message/group-message-ws-object'
+import { dispatchGroupMessageWsObject, getGroupName } from './message/group-message-ws-object'
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
 import { ws } from '@/libs/states/connection'
+import { recentList, setRecentList } from '@/libs/states/sessions'
 import { WsActionToApi, WsActions } from '@/libs/ws/websocket'
 import {
   type DeleteMsgEcho,
@@ -28,6 +29,7 @@ import {
   type GroupHistoryEcho,
   dispatchGroupHistoryEcho,
 } from './echo/get-group-history-echo'
+import { type GetGroupInfoEcho, dispatchGetGroupInfoEcho } from './echo/get-group-info-echo'
 import {
   type GroupFileUrlEcho,
   type GroupFilesByFolderEcho,
@@ -54,6 +56,7 @@ import { dispatchPrivateRecallNoticeWsObject } from './notice/private-recall-not
 import type { AllRequestWsObject } from './request/common-request-ws-object'
 import { dispatchFriendAddRequestWsObject } from './request/friend-add-request-ws-object'
 import { dispatchGroupAddRequestWsObject } from './request/group-add-request-ws-object'
+import { UnifyInfoType } from './unify-info'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -106,9 +109,7 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
   // echo 的内容可能会比较复杂，甚至还包含了是否发送成功
   if (data.retcode !== 0) {
     toast.error('Error occurred in echo', {
-      description: `${WsActionToApi[data.echo.action]}, retcode: ${
-        data.retcode
-      }`,
+      description: `${WsActionToApi[data.echo.action]}, retcode: ${data.retcode}`,
       duration: Number.POSITIVE_INFINITY,
     })
     console.error('Error occured in echo', data)
@@ -168,6 +169,16 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       // TODO
       break
     }
+    case WsActions.GetGroupInfo: {
+      dispatchGetGroupInfoEcho(data as GetGroupInfoEcho)
+      break
+    }
+    case WsActions.SetFriendAddRequest: {
+      break
+    }
+    case WsActions.SetGroupAddRequest: {
+      break
+    }
     default: {
       toast.error('Received unknown echo object')
       console.error('Received unknown echo object', data)
@@ -179,11 +190,17 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
 function dispatchCommonWsObject(data: AllMessageWsObject) {
   switch (data.message_type) {
     case 'group': {
+      const group_id = data.group_id
       dispatchGroupMessageWsObject(data)
+      if (!recentList().find(i => i.type === UnifyInfoType.Group && i.group_id === group_id))
+        setRecentList(prev => [...prev, { type: UnifyInfoType.Group, group_id, group_name: getGroupName(group_id) }])
       break
     }
     case 'private': {
+      const user_id = data.user_id
       dispatchPrivateMessageWsObject(data)
+      if (!recentList().find(i => i.type === UnifyInfoType.Private && i.user_id === data.user_id))
+        setRecentList(prev => [...prev, { type: UnifyInfoType.Private, user_id, nickname: data.sender.nickname }])
       break
     }
     default: {
@@ -249,6 +266,7 @@ function dispatchMetaWsObject(data: CommonMetaEventWsObject) {
     case 'lifecycle': {
       if (d2.sub_type === 'connect') {
         toast.success('Lifecycle successfully created!')
+        // 获取好友和群组列表
         ws()?.send(WsActions.GetFriendList, {}, {})
         ws()?.send(WsActions.GetGroupList, {}, {})
       } else {
