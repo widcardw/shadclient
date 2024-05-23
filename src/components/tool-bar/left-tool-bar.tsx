@@ -5,6 +5,7 @@ import {
   selectedList,
   setSelectedList,
 } from '@/libs/states/select-list'
+import { RequestStatus } from '@/libs/types/ws/request/common-request-ws-object'
 import clsx from 'clsx'
 import { type Component, Match, Switch, createMemo } from 'solid-js'
 import ModeToggle from '../dark-theme/toggle-mode'
@@ -13,13 +14,12 @@ import { Button } from '../ui/button'
 import ConnectWsButton from './connect-ws'
 import { InfoDialog } from './info-dialog'
 import SettingsDialog from './settings-dialog'
-import { RequestStatus } from '@/libs/types/ws/request/common-request-ws-object'
 
 const LeftToolBar: Component = () => {
   const unreadCount = createMemo(
     () =>
-      friendRequests().filter((i) => i.status === RequestStatus.Unread).length +
-      groupRequests().filter((i) => i.status === RequestStatus.Unread).length,
+      friendRequests.filter((i) => i.status === RequestStatus.Unread).length +
+      groupRequests.filter((i) => i.status === RequestStatus.Unread).length,
   )
 
   return (

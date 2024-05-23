@@ -45,11 +45,11 @@ const FriendRequestConfirmDialog: Component<{ r: FriendAddRequestWsObject }> = (
       { flag: props.r.flag, approve: true, remark: remarkName() },
       {},
     )
-    setFriendRequests((prev) => {
-      const index = prev.findIndex((r) => r.flag === props.r.flag)
-      prev[index].status = RequestStatus.Accepted
-      return prev
-    })
+    setFriendRequests(
+      (p) => p.flag === props.r.flag,
+      'status',
+      RequestStatus.Accepted,
+    )
   }
   return (
     <Dialog>
@@ -70,7 +70,7 @@ const FriendRequestConfirmDialog: Component<{ r: FriendAddRequestWsObject }> = (
         </DialogHeader>
         <div class="grid gap-4 py-4">
           <TextFieldRoot class="grid grid-cols-3 items-center gap-4 md:grid-cols-4">
-            <TextFieldLabel class="text-right">Remark Name</TextFieldLabel>
+            <TextFieldLabel class="text-right">Remark</TextFieldLabel>
             <TextField
               class="col-span-2 md:col-span-3"
               value={remarkName()}
@@ -87,6 +87,31 @@ const FriendRequestConfirmDialog: Component<{ r: FriendAddRequestWsObject }> = (
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const FriendRequestRejectButton: Component<{ r: FriendAddRequestWsObject }> = (
+  props,
+) => {
+  return (
+    <Button
+      size="sm"
+      variant="destructive"
+      onClick={() => {
+        ws()?.send(
+          WsActions.SetFriendAddRequest,
+          { flag: props.r.flag, approve: false },
+          {},
+        )
+        setFriendRequests(
+          (p) => p.flag === props.r.flag,
+          'status',
+          RequestStatus.Rejected,
+        )
+      }}
+    >
+      Reject
+    </Button>
   )
 }
 
@@ -134,6 +159,30 @@ const GroupInviteDesc: Component<{ r: GroupAddRequestWsObject }> = (props) => {
   )
 }
 
+const GroupConfirmButton: Component<{ r: GroupAddRequestWsObject }> = (
+  props,
+) => {
+  return (
+    <Button
+      size="sm"
+      onClick={() => {
+        ws()?.send(
+          WsActions.SetGroupAddRequest,
+          { flag: props.r.flag, approve: true, sub_type: props.r.sub_type },
+          {},
+        )
+        setGroupRequests(
+          (p) => p.flag === props.r.flag,
+          'status',
+          RequestStatus.Accepted,
+        )
+      }}
+    >
+      Accept
+    </Button>
+  )
+}
+
 const GroupRejectDialog: Component<{ r: GroupAddRequestWsObject }> = (
   props,
 ) => {
@@ -150,11 +199,11 @@ const GroupRejectDialog: Component<{ r: GroupAddRequestWsObject }> = (
       },
       {},
     )
-    setGroupRequests((prev) => {
-      const index = prev.findIndex((r) => r.flag === props.r.flag)
-      prev[index].status = RequestStatus.Rejected
-      return prev
-    })
+    setGroupRequests(
+      (p) => p.flag === props.r.flag,
+      'status',
+      RequestStatus.Rejected,
+    )
   }
 
   return (
@@ -205,7 +254,7 @@ const NoticePanel: Component = () => {
   return (
     <div class="of-y-auto p-4 w-full flex flex-col gap-4">
       {/* 好友请求 */}
-      <For each={friendRequests()}>
+      <For each={friendRequests}>
         {(r) => (
           <div class="border border-rounded bg-background p-4 flex justify-between items-center h-20">
             <div>
@@ -220,24 +269,7 @@ const NoticePanel: Component = () => {
                 fallback={<OperatedButton status={r.status!} />}
               >
                 <FriendRequestConfirmDialog r={r} />
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => {
-                    ws()?.send(
-                      WsActions.SetFriendAddRequest,
-                      { flag: r.flag, approve: false },
-                      {},
-                    )
-                    setFriendRequests((prev) => {
-                      const index = prev.findIndex((q) => q.flag === r.flag)
-                      prev[index].status = RequestStatus.Rejected
-                      return prev
-                    })
-                  }}
-                >
-                  Reject
-                </Button>
+                <FriendRequestRejectButton r={r} />
               </Show>
             </div>
           </div>
@@ -245,7 +277,7 @@ const NoticePanel: Component = () => {
       </For>
 
       {/* 加群请求 */}
-      <For each={groupRequests()}>
+      <For each={groupRequests}>
         {(r) => (
           <div class="border border-rounded bg-background p-4 flex justify-between items-center h-20">
             <Show
@@ -259,23 +291,7 @@ const NoticePanel: Component = () => {
                 when={r.status === RequestStatus.Unread}
                 fallback={<OperatedButton status={r.status!} />}
               >
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    ws()?.send(
-                      WsActions.SetGroupAddRequest,
-                      { flag: r.flag, approve: true, sub_type: r.sub_type },
-                      {},
-                    )
-                    setGroupRequests((prev) => {
-                      const index = prev.findIndex((q) => q.flag === r.flag)
-                      prev[index].status = RequestStatus.Accepted
-                      return prev
-                    })
-                  }}
-                >
-                  Accept
-                </Button>
+                <GroupConfirmButton r={r} />
                 <GroupRejectDialog r={r} />
               </Show>
             </div>
