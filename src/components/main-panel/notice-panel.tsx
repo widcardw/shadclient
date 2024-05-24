@@ -25,7 +25,7 @@ const GroupAddRequestDesc: Component<{ r: GroupAddRequestWsObject }> = (
     <div>
       <div class="font-bold">
         {props.r.user_id} request to join the group{' '}
-        {getGroupName(props.r.group_id)}
+        {getGroupName(props.r.group_id)} ({props.r.group_id})
       </div>
       <div>{props.r.comment}</div>
     </div>

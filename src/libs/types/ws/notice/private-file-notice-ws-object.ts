@@ -3,6 +3,7 @@ import { _createFileMessage } from '../../messages/sent-message'
 import { type PrivateMessageWsObject, getPrivateName } from '../message/private-message-ws-object'
 import type { CommonNoticeWsObject } from './common-notice-ws-object'
 import type { FileNotice } from './file-notice'
+import { UnifyInfoType } from '../unify-info'
 
 interface PrivateFileNoticeWsObject extends CommonNoticeWsObject {
   notice_type: 'offline_file'
@@ -25,6 +26,7 @@ function dispatch(data: PrivateFileNoticeWsObject) {
     raw_message: '',
     font: 0,
     sender: {
+      type: UnifyInfoType.Private,
       user_id,
       nickname,
     },

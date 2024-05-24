@@ -1,4 +1,5 @@
 import { createStore } from 'solid-js/store'
+import { RequestStatus } from '../types/ws/request/common-request-ws-object'
 import type { FriendAddRequestWsObject } from '../types/ws/request/friend-add-request-ws-object'
 import type { GroupAddRequestWsObject } from '../types/ws/request/group-add-request-ws-object'
 
