@@ -1,5 +1,5 @@
-import { recentList } from '@/libs/states/sessions'
-import { UnifyInfoType } from '@/libs/types/ws/unify-info'
+import { recentList, setActiveConv, setActiveId, setActiveType } from '@/libs/states/sessions'
+import { type UnifyInfo, UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
 import { Button } from '../ui/button'
@@ -32,6 +32,18 @@ const RecentConversationList: Component = () => {
   const debouncedSearch = useDebounceFn((e: InputEvent) => {
     setSearch((e.target as HTMLInputElement).value)
   }, 500)
+
+  const changeTab = (o: UnifyInfo) => {
+    if (o.type === UnifyInfoType.Group) {
+      // setActiveConv(UnifyInfoType.Group, o.group_id)
+      setActiveType(UnifyInfoType.Group)
+      setActiveId(o.group_id)
+    } else {
+      // setActiveConv(UnifyInfoType.Private, o.user_id)
+      setActiveType(UnifyInfoType.Private)
+      setActiveId(o.user_id)
+    }
+  }
   return (
     <>
       <TextFieldRoot class="block w-full sticky p-1">
@@ -45,19 +57,27 @@ const RecentConversationList: Component = () => {
       <div class="grid gap-1 p-1 of-y-auto">
         <Show when={filteredRecentList().length > 0} fallback="No friends">
           <For each={filteredRecentList()}>
-            {(item) => (
+            {(i) => (
               <Show
-                when={item.type === UnifyInfoType.Private}
+                when={i.type === UnifyInfoType.Private}
                 fallback={
-                  <Button variant="ghost" class="block w-full text-left">
+                  <Button
+                    variant="ghost"
+                    class="block w-full text-left"
+                    onClick={() => changeTab(i)}
+                  >
                     {/* @ts-ignore item type should be Group */}
-                    {item.group_memo || item.group_name || `群聊 ${item.group_id}`}
+                    {i.group_memo || i.group_name || `群聊 ${i.group_id}`}
                   </Button>
                 }
               >
-                <Button variant="ghost" class="block w-full text-left">
+                <Button
+                  variant="ghost"
+                  class="block w-full text-left"
+                  onClick={() => changeTab(i)}
+                >
                   {/* @ts-ignore item type should be Private */}
-                  {item.remark || item.nickname || item.user_id}
+                  {i.remark || i.nickname || i.user_id}
                 </Button>
               </Show>
             )}

@@ -7,7 +7,7 @@ const JsonMessage: Component<CommonJsonCardMessage> = (props) => {
   return (
     <details>
       <summary>JSON</summary>
-      <pre>{transformLink(JSON.stringify(data, null, 2))}</pre>
+      <pre class="whitespace-pre-wrap break-all">{transformLink(JSON.stringify(data, null, 2))}</pre>
     </details>
   )
 }

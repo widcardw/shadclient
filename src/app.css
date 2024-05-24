@@ -75,6 +75,7 @@ button {
   font-family: var(--font-sans);
   padding-inline: 0;
   padding-block: 0;
+  cursor: pointer;
 }
 
 input {

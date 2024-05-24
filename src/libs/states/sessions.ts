@@ -4,7 +4,7 @@ import type { SingleGroupInfo } from '../types/ws/group-info'
 import type { GroupMessageWsObject } from '../types/ws/message/group-message-ws-object'
 import type { PrivateMessageWsObject } from '../types/ws/message/private-message-ws-object'
 import type { SingleFriendInfo } from '../types/ws/private-user-info'
-import type { UnifyInfo } from '../types/ws/unify-info'
+import { type UnifyInfo, UnifyInfoType } from '../types/ws/unify-info'
 
 interface AbstractConversation {
   type: 'group' | 'private'
@@ -44,8 +44,23 @@ const [groupMemberCard, setGroupMemberCard] = createStore<
   Record<number, Record<number, string>>
 >({})
 
+interface ActiveChatType {
+  type: UnifyInfoType
+  id: number
+}
+
 // 当前主面板显示的聊天
-const [activeConv, setActiveConv] = createSignal<ConversationType>()
+// const [activeConv, setActiveConv] = createStore<ActiveChatType>({
+//   type: UnifyInfoType.None,
+//   id: 0,
+// })
+
+const [activeType, setActiveType] = createSignal<UnifyInfoType>(UnifyInfoType.None)
+const [activeId, setActiveId] = createSignal(0)
+const setActiveConv = (t: UnifyInfoType, id: number) => {
+  setActiveType(t)
+  setActiveId(id)
+}
 
 // 存储所有转发的消息，现在转发消息感觉还有点 bug
 // const [forwardMap, setForwardMap] = createStore<Record<string, >>()
@@ -61,8 +76,11 @@ export {
   groupConvStore,
   setGroupConvStore,
   /** 当前主面板显示的聊天，现在是包含了聊天内容的 */
-  activeConv,
+  activeType,
+  activeId,
   setActiveConv,
+  setActiveType,
+  setActiveId,
   /** 群号中对应 QQ 号的用户的昵称 */
   groupMemberCard,
   setGroupMemberCard,

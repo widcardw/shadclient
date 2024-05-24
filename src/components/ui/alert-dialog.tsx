@@ -1,6 +1,8 @@
 import { cn } from '@/libs/cn'
 import * as AlertDialogPrimitive from '@kobalte/core/alert-dialog'
+import type * as ButtonPrimitive from '@kobalte/core/button'
 import type { PolymorphicProps } from '@kobalte/core/polymorphic'
+import type { VariantProps } from 'class-variance-authority'
 import type { ComponentProps, ParentProps, ValidComponent } from 'solid-js'
 import { splitProps } from 'solid-js'
 import { buttonVariants } from './button'
@@ -13,6 +15,11 @@ type AlertDialogContentProps = ParentProps<
     class?: string
   }
 >
+
+type ButtonProps = ButtonPrimitive.ButtonRootProps &
+  VariantProps<typeof buttonVariants> & {
+    class?: string
+  }
 
 export const AlertDialogContent = <T extends ValidComponent = 'div'>(
   props: PolymorphicProps<T, AlertDialogContentProps>,
@@ -130,13 +137,22 @@ export const AlertDialogClose = <T extends ValidComponent = 'button'>(
 }
 
 export const AlertDialogAction = <T extends ValidComponent = 'button'>(
-  props: PolymorphicProps<T, AlertDialogCloseProps>,
+  props: PolymorphicProps<T, AlertDialogCloseProps & ButtonProps>,
 ) => {
-  const [local, rest] = splitProps(props as AlertDialogCloseProps, ['class'])
+  const [local, rest] = splitProps(
+    props as AlertDialogCloseProps & ButtonProps,
+    ['class', 'variant', 'size'],
+  )
 
   return (
     <AlertDialogPrimitive.CloseButton
-      class={cn(buttonVariants(), local.class)}
+      class={cn(
+        buttonVariants({
+          variant: local.variant,
+          size: local.size,
+        }),
+        local.class,
+      )}
       {...rest}
     />
   )

@@ -1,4 +1,15 @@
+import {
+  activeId,
+  activeType,
+  recentList,
+  setActiveConv,
+  setActiveId,
+  setActiveType,
+  setGroupConvStore,
+  setRecentList,
+} from '@/libs/states/sessions'
 import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
+import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
 import { Button } from '../ui/button'
@@ -13,13 +24,33 @@ const GroupList: Component = () => {
     const trimSearch = search().trim()
     if (trimSearch === '') return allGroups()
     return allGroups().filter(
-      (i) => i.group_memo?.includes(trimSearch) || i.group_name.includes(trimSearch)
+      (i) =>
+        i.group_memo?.includes(trimSearch) || i.group_name.includes(trimSearch),
     )
   })
 
   const debouncedSearch = useDebounceFn((e: InputEvent) => {
     setSearch((e.target as HTMLInputElement).value)
   }, 500)
+
+  const addToRecent = (g: SingleGroupInfo) => {
+    if (
+      !recentList().some(
+        (i) => i.type === UnifyInfoType.Group && i.group_id === g.group_id,
+      )
+    ) {
+      setGroupConvStore(g.group_id, {
+        list: [],
+        type: 'group',
+      })
+      setRecentList((prev) => [...prev, { ...g, type: UnifyInfoType.Group }])
+    }
+    // TODO: change tab, change chat panel
+    // setActiveConv(UnifyInfoType.Group, g.group_id)
+    setActiveType(UnifyInfoType.Group)
+    setActiveId(g.group_id)
+    console.log('add group', activeId(), activeType())
+  }
 
   return (
     <>
@@ -35,8 +66,14 @@ const GroupList: Component = () => {
         <Show when={filteredGroup().length > 0}>
           <For each={filteredGroup()}>
             {(group) => (
-              <Button variant="ghost" class="block w-full text-left">
-                {group.group_memo || group.group_name || `群聊 ${group.group_id}`}
+              <Button
+                variant="ghost"
+                class="block w-full text-left"
+                onClick={() => addToRecent(group)}
+              >
+                {group?.group_memo ||
+                  group?.group_name ||
+                  `群聊 ${group.group_id}`}
               </Button>
             )}
           </For>

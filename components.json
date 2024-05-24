@@ -2,13 +2,16 @@
   "$schema": "https://shadcn-solid.com/schema.json",
   "uno": {
     "config": "uno.config.ts",
-    "css": "src/app.css",
-    "baseColor": "zinc",
-    "cssVariables": true,
+    "css": {
+      "path": "src/app.css",
+      "variable": true
+    },
+    "color": "zinc",
     "prefix": ""
   },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/libs/cn"
+  "alias": {
+    "component": "@/components",
+    "cn": "@/libs/cn",
+    "ui": "@/components/ui"
   }
 }
