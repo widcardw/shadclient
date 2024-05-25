@@ -19,7 +19,7 @@ export const Resizable = <T extends ValidComponent = 'div'>(
 ) => {
   const [local, rest] = splitProps(props as ResizableProps, ['class'])
 
-  return <ResizablePrimitive class={cn('size-full', local.class)} {...rest} />
+  return <ResizablePrimitive class={cn('w-full', local.class)} {...rest} />
 }
 
 type ResizableHandleProps = VoidProps<

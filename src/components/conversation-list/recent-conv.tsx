@@ -1,4 +1,9 @@
-import { recentList, setActiveConv, setActiveId, setActiveType } from '@/libs/states/sessions'
+import {
+  recentList,
+  setActiveConv,
+  setActiveId,
+  setActiveType,
+} from '@/libs/states/sessions'
 import { type UnifyInfo, UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
@@ -45,7 +50,7 @@ const RecentConversationList: Component = () => {
     }
   }
   return (
-    <>
+    <div class="h-100vh flex flex-col">
       <TextFieldRoot class="block w-full sticky p-1">
         <TextField
           placeholder="Search"
@@ -54,7 +59,7 @@ const RecentConversationList: Component = () => {
         />
       </TextFieldRoot>
       <Separator />
-      <div class="grid gap-1 p-1 of-y-auto">
+      <div class="flex-grow of-y-auto flex flex-col gap-1 p-1">
         <Show when={filteredRecentList().length > 0} fallback="No friends">
           <For each={filteredRecentList()}>
             {(i) => (
@@ -84,7 +89,7 @@ const RecentConversationList: Component = () => {
           </For>
         </Show>
       </div>
-    </>
+    </div>
   )
 }
 

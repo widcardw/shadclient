@@ -1,3 +1,4 @@
+import { sendEl } from '@/components/chat/InputArea'
 import { setIsSending } from '@/libs/states/semaphore'
 import type { WsActions } from '@/libs/ws/websocket'
 import type { CommonEchoMessage, EchoedObject } from './common-echo'
@@ -13,6 +14,10 @@ interface SendMsgEchoCarried extends EchoedObject {
 
 function dispatch(data: SendMsgEcho) {
   setIsSending(false)
+  const el = sendEl()
+  if (el) {
+    el.value = ''
+  }
 }
 
 export type { SendMsgEcho }

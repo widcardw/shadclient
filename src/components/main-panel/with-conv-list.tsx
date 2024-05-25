@@ -8,9 +8,9 @@ import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
 
 const WithConvList: Component = () => {
   return (
-    <Resizable style={{ 'flex-grow': 1 }}>
+    <Resizable class="h-full flex-grow">
       {/* 最近会话列表 */}
-      <ResizablePanel initialSize={0.2} minSize={0.1}>
+      <ResizablePanel initialSize={0.2} minSize={0.15}>
         <CurrentConversationList />
       </ResizablePanel>
       <ResizableHandle />

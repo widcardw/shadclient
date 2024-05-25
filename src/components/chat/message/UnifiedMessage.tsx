@@ -20,32 +20,32 @@ import { ReplyMessage } from './ReplyMessage'
 import { TextMessage } from './TextMessage'
 import { UnsupportedMessage } from './UnsupportedMessage'
 
-const UnifiedMessage: Component<MultiTypeReceivedMessage> = (props) => {
+const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
   return (
-    <Switch fallback={<UnsupportedMessage {...props} />}>
-      <Match when={props.type === 'text'}>
-        <TextMessage {...(props as CommonTextMessage)} />
+    <Switch fallback={<UnsupportedMessage m={props.m} />}>
+      <Match when={props.m.type === 'text'}>
+        <TextMessage m={props.m as CommonTextMessage} />
       </Match>
-      <Match when={props.type === 'at'}>
-        <AtMessage {...(props as CommonAtMessage)} />
+      <Match when={props.m.type === 'at'}>
+        <AtMessage m={props.m as CommonAtMessage} />
       </Match>
-      <Match when={props.type === 'reply'}>
-        <ReplyMessage {...(props as CommonReplyMessage)} />
+      <Match when={props.m.type === 'reply'}>
+        <ReplyMessage m={props.m as CommonReplyMessage} />
       </Match>
-      <Match when={props.type === 'face'}>
-        <FaceMessage {...(props as CommonFaceMessage)} />
+      <Match when={props.m.type === 'face'}>
+        <FaceMessage m={props.m as CommonFaceMessage} />
       </Match>
-      <Match when={props.type === 'file'}>
-        <FileMessage {...(props as CommonFileMessage)} />
+      <Match when={props.m.type === 'file'}>
+        <FileMessage m={props.m as CommonFileMessage} />
       </Match>
-      <Match when={props.type === 'image'}>
-        <ImageMessage {...(props as CommonImageMessage)} />
+      <Match when={props.m.type === 'image'}>
+        <ImageMessage m={props.m as CommonImageMessage} />
       </Match>
-      <Match when={props.type === 'json'}>
-        <JsonMessage {...(props as CommonJsonCardMessage)} />
+      <Match when={props.m.type === 'json'}>
+        <JsonMessage m={props.m as CommonJsonCardMessage} />
       </Match>
-      <Match when={props.type === 'forward'}>
-        <ForwardMessageFolded {...(props as CommonForwardMessage)} />
+      <Match when={props.m.type === 'forward'}>
+        <ForwardMessageFolded m={props.m as CommonForwardMessage} />
       </Match>
     </Switch>
   )

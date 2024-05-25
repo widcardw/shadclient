@@ -1,7 +1,10 @@
+import { ws } from '@/libs/states/connection'
 import { friendConvStore } from '@/libs/states/sessions'
+import { WsActions } from '@/libs/ws/websocket'
 import { type Component, For, Show, createMemo } from 'solid-js'
 import { allFriends } from '../conversation-list/friend-list'
 import { Button } from '../ui/button'
+import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
 import { Separator } from '../ui/separator'
 import { InputArea } from './InputArea'
 import { OnePieceOfPrivateMessage } from './message/OnePieceOfMessage'
@@ -10,6 +13,19 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
   const friend = createMemo(
     () => allFriends().find((i) => i.user_id === props.uid)!,
   )
+
+  const getPrivateHistory = () => {
+    let first = friendConvStore[friend()!.user_id]?.list?.[0]?.message_id
+    console.log(first)
+    if (first === undefined) {
+      first = 0
+    }
+    ws()?.send(
+      WsActions.GetFriendMsgHistory,
+      { user_id: friend()!.user_id, message_id: first, id: first, count: 17 },
+      { user_id: friend()!.user_id },
+    )
+  }
 
   return (
     <Show when={friend() !== undefined}>
@@ -21,7 +37,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           <div class="font-bold mr-auto flex items-center">
             {friend().remark || friend().nickname} ({friend().user_id})
           </div>
-          <Button variant="ghost">
+          <Button variant="ghost" onClick={getPrivateHistory}>
             <div class="i-teenyicons:history-outline" />
           </Button>
           <Button variant="ghost">
@@ -29,15 +45,28 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           </Button>
         </div>
         <Separator />
-        <div class="flex-grow flex flex-col">
-          <div class="px-2 min-h-70vh max-h-80vh of-y-auto of-hidden flex flex-col gap-2">
+        <Resizable
+          orientation="vertical"
+          class="flex-grow flex flex-col of-y-auto"
+        >
+          <ResizablePanel
+            initialSize={0.6}
+            class="flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2"
+          >
             <For each={friendConvStore[friend().user_id].list}>
-              {(i) => <OnePieceOfPrivateMessage {...i} />}
+              {(i) => <OnePieceOfPrivateMessage m={i} />}
             </For>
-          </div>
-          <Separator />
-          <InputArea />
-        </div>
+            <pre class="hidden">
+              <For each={Object.keys(friendConvStore[friend()!.user_id].list)}>
+                {(i) => <>i: {i}</>}
+              </For>
+            </pre>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel initialSize={0.4}>
+            <InputArea />
+          </ResizablePanel>
+        </Resizable>
       </div>
     </Show>
   )

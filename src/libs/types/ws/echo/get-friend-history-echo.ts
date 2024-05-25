@@ -15,7 +15,7 @@ interface FriendHistoryEchoCarried extends EchoedObject {
 
 function dispatch(data: FriendHistoryEcho) {
   const messages = data.data.messages
-  messages.pop()
+  // messages.pop()
   const user_id = data.echo.user_id
   setFriendConvStore(user_id, 'list', (prev) => [...messages, ...prev])
 }

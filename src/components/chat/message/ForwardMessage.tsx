@@ -14,15 +14,15 @@ import type {
 } from '@/libs/types/messages/common-message'
 import { WsActions } from '@/libs/ws/websocket'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
-import { type Component, For, Show } from 'solid-js'
+import { type Component, For, Show, createSignal } from 'solid-js'
 import { UnifiedMessage } from './UnifiedMessage'
 
-const NodeMessage: Component<CommonNodeMessage> = (props) => {
+const NodeMessage: Component<{ m: CommonNodeMessage }> = (props) => {
   return (
     <div>
-      <div>{props.data.nickname}</div>
+      <div class="text-gray">{props.m.data.nickname}</div>
       {/* Unified Message Segment */}
-      <For each={props.data.content}>{(m) => <UnifiedMessage {...m} />}</For>
+      <For each={props.m.data.content}>{(m) => <UnifiedMessage m={m} />}</For>
     </div>
   )
 }
@@ -30,26 +30,38 @@ const NodeMessage: Component<CommonNodeMessage> = (props) => {
 const ForwardedDialog: Component<{ id: string }> = (props) => {
   // TODO: 点击按钮发送请求获取消息
   const requestForwardedMsg = () => {
+    if (forwardStore[props.id]) return
     console.log('requestForwardedMsg', props.id)
     ws()?.send(WsActions.GetForwardMsg, { id: props.id }, { fid: props.id })
   }
   return (
     <Dialog modal>
       <DialogTrigger
-        as={(props: DialogTriggerProps) => (
-          <Button variant="link" onClick={requestForwardedMsg} {...props}>
-            [合并转发消息]
-          </Button>
-        )}
+        as={(_props: DialogTriggerProps) => {
+          const click =
+            typeof _props.onClick === 'function'
+              ? (ev: MouseEvent) => {
+                  requestForwardedMsg()
+                  /** @ts-ignore merge click events */
+                  _props.onClick?.(ev)
+                }
+              : requestForwardedMsg
+
+          return (
+            <Button variant="outline" {..._props} onClick={click}>
+              [合并转发消息]
+            </Button>
+          )
+        }}
       />
-      <DialogContent class="sm:max-w-[425px] max-h-80vh">
+      <DialogContent class="sm:max-w-[800px]" onInteractOutside={ev => ev.preventDefault()}>
         <DialogHeader>
           <DialogTitle>合并转发消息</DialogTitle>
         </DialogHeader>
-        <div class="of-y-auto flex flex-col gap-2">
+        <div class="max-h-80vh of-y-auto of-hidden flex flex-col gap-2">
           <Show when={forwardStore[props.id]} fallback="加载中">
             <For each={forwardStore[props.id]}>
-              {(m) => <NodeMessage {...m} />}
+              {(m) => <NodeMessage m={m} />}
             </For>
           </Show>
         </div>
@@ -58,8 +70,10 @@ const ForwardedDialog: Component<{ id: string }> = (props) => {
   )
 }
 
-const ForwardMessageFolded: Component<CommonForwardMessage> = (props) => {
-  return <ForwardedDialog id={props.data.id} />
+const ForwardMessageFolded: Component<{ m: CommonForwardMessage }> = (
+  props,
+) => {
+  return <ForwardedDialog id={props.m.data.id} />
 }
 
 export { ForwardMessageFolded }

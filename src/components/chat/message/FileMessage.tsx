@@ -2,17 +2,17 @@ import type { CommonFileMessage } from '@/libs/types/messages/common-message'
 import { beautifyFileSize } from '@/libs/utils/file-size'
 import type { Component } from 'solid-js'
 
-const FileMessage: Component<CommonFileMessage> = (props) => {
-  const size = beautifyFileSize(props.data.size)
+const FileMessage: Component<{ m: CommonFileMessage }> = (props) => {
+  const size = beautifyFileSize(props.m.data.size)
   return (
     <a
-      href={props.data.file}
+      href={props.m.data.file}
       target="_blank"
       class="text-blue"
-      download={props.data.name}
+      download={props.m.data.name}
       rel="noreferrer"
     >
-      [文件] {props.data.name} {size}
+      [文件] {props.m.data.name} {size}
     </a>
   )
 }

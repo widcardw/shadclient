@@ -20,7 +20,7 @@ const [allGroups, setAllGroups] = createSignal<SingleGroupInfo[]>([])
 
 const GroupList: Component = () => {
   const [search, setSearch] = createSignal('')
-  const filteredGroup = createMemo(() => {
+  const filteredGroup = createMemo<SingleGroupInfo[]>(() => {
     const trimSearch = search().trim()
     if (trimSearch === '') return allGroups()
     return allGroups().filter(
@@ -53,7 +53,7 @@ const GroupList: Component = () => {
   }
 
   return (
-    <>
+    <div class="h-100vh flex flex-col">
       <TextFieldRoot class="block w-full sticky p-1">
         <TextField
           placeholder="Search"
@@ -62,13 +62,13 @@ const GroupList: Component = () => {
         />
       </TextFieldRoot>
       <Separator />
-      <div class="grid gap-1 p-1 of-y-auto">
+      <div class="flex-grow of-y-auto flex flex-col gap-1 p-1">
         <Show when={filteredGroup().length > 0}>
           <For each={filteredGroup()}>
             {(group) => (
               <Button
                 variant="ghost"
-                class="block w-full text-left"
+                class="block w-full text-left  whitespace-nowrap overflow-hidden text-ellipsis"
                 onClick={() => addToRecent(group)}
               >
                 {group?.group_memo ||
@@ -79,7 +79,7 @@ const GroupList: Component = () => {
           </For>
         </Show>
       </div>
-    </>
+    </div>
   )
 }
 

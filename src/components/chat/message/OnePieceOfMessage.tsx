@@ -18,26 +18,43 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { ws } from '@/libs/states/connection'
+import { timeToHourMinute } from '@/libs/utils/date-format'
 import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
 
-const OnePieceOfPrivateMessage: Component<PrivateMessageWsObject> = (props) => {
+function roleToColor(role: 'owner' | 'admin' | 'member'): string {
+  switch (role) {
+    case 'owner':
+      return 'text-yellow-500'
+    case 'admin':
+      return 'text-green-600'
+    case 'member':
+      return 'text-blue-500'
+    default:
+      return 'text-gray-500'
+  }
+}
+
+const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
+  props,
+) => {
   const deleteMsg = () => {
-    ws()?.send(WsActions.DeleteMsg, { msg_id: props.message_id }, {})
+    ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
   }
 
   return (
     <div class="one-piece">
       <div title="user info">
-        <span class="text-op-70">
-          {props.sender.remark || props.sender.nickname}{' '}
-          {props.deleted && '[已撤回]'}
+        <span class="op-70">
+          {props.m.sender.remark || props.m.sender.nickname}{' '}
+          {props.m.deleted && '[已撤回]'}
+          <span class="icon">{timeToHourMinute(props.m.time)}</span>
         </span>
         <Button variant="link" class="icon px-3 hover:text-blue">
           <div class="i-teenyicons:at-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
-        <Show when={props.self_id === props.target_id}>
+        <Show when={props.m.self_id === props.m.target_id}>
           <AlertDialog>
             <AlertDialogTrigger
               as={(props: AlertDialogTriggerProps) => (
@@ -68,11 +85,11 @@ const OnePieceOfPrivateMessage: Component<PrivateMessageWsObject> = (props) => {
       </div>
       <div>
         <Show
-          when={Array.isArray(props.message)}
-          fallback={<UnifiedMessage {...(props.message as MultiTypeMsg)} />}
+          when={Array.isArray(props.m.message)}
+          fallback={<UnifiedMessage m={props.m.message as MultiTypeMsg} />}
         >
-          <For each={props.message as MultiTypeMsg[]}>
-            {(i) => <UnifiedMessage {...i} />}
+          <For each={props.m.message as MultiTypeMsg[]}>
+            {(i) => <UnifiedMessage m={i} />}
           </For>
         </Show>
       </div>
@@ -80,18 +97,25 @@ const OnePieceOfPrivateMessage: Component<PrivateMessageWsObject> = (props) => {
   )
 }
 
-const OnePieceOfGroupMessage: Component<GroupMessageWsObject> = (props) => {
+const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
+  props,
+) => {
   const deleteMsg = () => {
-    ws()?.send(WsActions.DeleteMsg, { msg_id: props.message_id }, {})
+    ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
   }
 
   return (
     <div class="one-piece">
       <div title="user info">
-        <span class="text-op-70">
-          [{props.sender.role}]{' '}
-          {props.sender.card || props.sender.nickname}{' '}
-          {props.deleted && '[已撤回]'}
+        <span>
+          <span class={roleToColor(props.m.sender.role)}>
+            [{props.m.sender.role}]
+          </span>{' '}
+          <span class="text-gray-500">
+            {props.m.sender.card || props.m.sender.nickname}{' '}
+            {props.m.deleted && '[已撤回]'}
+            <span class="icon">{timeToHourMinute(props.m.time)}</span>
+          </span>
         </span>
         <Button variant="link" class="icon px-3 hover:text-blue">
           <div class="i-teenyicons:at-outline" />
@@ -100,7 +124,7 @@ const OnePieceOfGroupMessage: Component<GroupMessageWsObject> = (props) => {
           <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
-        <Show when={props.self_id === props.sender.user_id}>
+        <Show when={props.m.self_id === props.m.sender.user_id}>
           <AlertDialog>
             <AlertDialogTrigger
               as={(props: AlertDialogTriggerProps) => (
@@ -131,11 +155,11 @@ const OnePieceOfGroupMessage: Component<GroupMessageWsObject> = (props) => {
       </div>
       <div class="max-w-800px">
         <Show
-          when={Array.isArray(props.message)}
-          fallback={<UnifiedMessage {...(props.message as MultiTypeMsg)} />}
+          when={Array.isArray(props.m.message)}
+          fallback={<UnifiedMessage m={props.m.message as MultiTypeMsg} />}
         >
-          <For each={props.message as MultiTypeMsg[]}>
-            {(i) => <UnifiedMessage {...i} />}
+          <For each={props.m.message as MultiTypeMsg[]}>
+            {(i) => <UnifiedMessage m={i} />}
           </For>
         </Show>
       </div>
@@ -147,10 +171,10 @@ const OnePieceOfMessage: Component<CommonMessageWsObject> = (props) => {
   return (
     <Switch>
       <Match when={props.message_type === 'group'}>
-        <OnePieceOfGroupMessage {...(props as GroupMessageWsObject)} />
+        <OnePieceOfGroupMessage m={props as GroupMessageWsObject} />
       </Match>
       <Match when={props.message_type === 'private'}>
-        <OnePieceOfPrivateMessage {...(props as PrivateMessageWsObject)} />
+        <OnePieceOfPrivateMessage m={props as PrivateMessageWsObject} />
       </Match>
     </Switch>
   )
