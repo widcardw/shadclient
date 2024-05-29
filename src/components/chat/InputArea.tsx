@@ -128,6 +128,24 @@ const InputArea: Component = () => {
     setPastedImgs([])
   }
 
+  const handleKeyDown = (e: TextareaElKeyboardEvent) => {
+    if (e.isComposing) return
+    console.log(e.key, e.shiftKey, e.ctrlKey)
+    if (sendBy() === 'Ctrl Enter') {
+      if (e.ctrlKey && e.key === 'Enter') {
+        sendSimpleMessage()
+        e.preventDefault()
+        return
+      }
+    } else if (sendBy() === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        sendSimpleMessage()
+        e.preventDefault()
+        return
+      }
+    }
+  }
+
   return (
     <div class="flex flex-col h-full">
       <div title="toolbar" class="flex p-1 gap-1">
@@ -184,6 +202,7 @@ const InputArea: Component = () => {
             activeType() === UnifyInfoType.None
           }
           onPaste={onPasteImg}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </div>

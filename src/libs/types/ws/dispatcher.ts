@@ -7,6 +7,7 @@ import { dispatchGroupMessageWsObject, getGroupName } from './message/group-mess
 import { dispatchPrivateMessageWsObject } from './message/private-message-ws-object'
 
 import { ws } from '@/libs/states/connection'
+import { setIsFetchingHistory, setIsSending } from '@/libs/states/semaphore'
 import { recentList, setRecentList } from '@/libs/states/sessions'
 import { WsActionToApi, WsActions } from '@/libs/ws/websocket'
 import {
@@ -115,6 +116,8 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
       duration: Number.POSITIVE_INFINITY,
     })
     console.error('Error occured in echo', data)
+    setIsFetchingHistory(false)
+    setIsSending(false)
     return
   }
   // TODO: 按照一定的规则划分 echo，其内容是 JSON.stringify 的字符串，具体请查看 buildEcho

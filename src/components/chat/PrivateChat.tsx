@@ -1,4 +1,8 @@
 import { ws } from '@/libs/states/connection'
+import {
+  isFetchingHistory,
+  setIsFetchingHistory,
+} from '@/libs/states/semaphore'
 import { friendConvStore } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
 import { type Component, For, Show, createMemo } from 'solid-js'
@@ -15,16 +19,17 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
   )
 
   const getPrivateHistory = () => {
-    let first = friendConvStore[friend()!.user_id]?.list?.[0]?.message_id
-    console.log(first)
-    if (first === undefined) {
-      first = 0
+    const first = friendConvStore[friend()!.user_id]?.list?.[0]?.message_id
+    console.log('get private history, message_id:', first)
+    let body = { user_id: friend()!.user_id, count: 17 }
+    if (first !== undefined) {
+      body = Object.assign(body, { message_id: first, message_seq: first })
     }
-    ws()?.send(
-      WsActions.GetFriendMsgHistory,
-      { user_id: friend()!.user_id, message_id: first, id: first, count: 17 },
-      { user_id: friend()!.user_id },
-    )
+    setIsFetchingHistory(true)
+    ws()?.send(WsActions.GetFriendMsgHistory, body, {
+      user_id: friend()!.user_id,
+      e: first !== undefined,
+    })
   }
 
   return (
@@ -37,7 +42,11 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           <div class="font-bold mr-auto flex items-center">
             {friend().remark || friend().nickname} ({friend().user_id})
           </div>
-          <Button variant="ghost" onClick={getPrivateHistory}>
+          <Button
+            variant="ghost"
+            disabled={isFetchingHistory()}
+            onClick={getPrivateHistory}
+          >
             <div class="i-teenyicons:history-outline" />
           </Button>
           <Button variant="ghost">

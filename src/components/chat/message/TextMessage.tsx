@@ -3,7 +3,7 @@ import { transformLink } from '@/libs/utils/transform-link'
 import type { Component } from 'solid-js'
 
 const TextMessage: Component<{ m: CommonTextMessage }> = (props) => {
-  return <>{transformLink(props.m.data.text)}</>
+  return <span class="whitespace-pre-wrap">{transformLink(props.m.data.text)}</span>
 }
 
 export { TextMessage }

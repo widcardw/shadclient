@@ -109,7 +109,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
       <div title="user info">
         <span>
           <span class={roleToColor(props.m.sender.role)}>
-            [{props.m.sender.role}]
+            [{props.m.self_id === props.m.sender.user_id ? 'me' : props.m.sender.role}]
           </span>{' '}
           <span class="text-gray-500">
             {props.m.sender.card || props.m.sender.nickname}{' '}

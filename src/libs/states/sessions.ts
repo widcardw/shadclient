@@ -9,6 +9,7 @@ import { type UnifyInfo, UnifyInfoType } from '../types/ws/unify-info'
 interface AbstractConversation {
   type: 'group' | 'private'
   id: number
+  unread: number
   nick?: string
 }
 

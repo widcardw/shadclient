@@ -5,7 +5,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ValidComponent, splitProps } from 'solid-js'
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-shadow focus-visible:(outline-none ring-1.5 ring-ring) disabled:(pointer-events-none opacity-50) bg-inherit',
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-shadow focus-visible:(outline-none ring-1.5 ring-ring) disabled:(pointer-events-none opacity-50) bg-inherit whitespace-nowrap text-ellipsis',
   {
     variants: {
       variant: {

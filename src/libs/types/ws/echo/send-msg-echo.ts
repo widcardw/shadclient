@@ -17,6 +17,7 @@ function dispatch(data: SendMsgEcho) {
   const el = sendEl()
   if (el) {
     el.value = ''
+    el.focus()
   }
 }
 

@@ -5,6 +5,7 @@ import {
   setGroupConvStore,
   setGroupMemberCard,
 } from '@/libs/states/sessions'
+import { produce } from 'solid-js/store'
 import type { CqReceivedMessage } from '../../messages/received-message'
 import type { GroupUser } from '../group-user'
 import type { CommonMessageWsObject } from './common-message-ws-object'
@@ -49,7 +50,12 @@ function dispatch(data: GroupMessageWsObject) {
     //   setGroupConvStore(group_id, 'nick', getGroupName(group_id))
     // }
     // 将消息添加到会话
-    setGroupConvStore(group_id, 'list', (prev) => [...prev, data])
+    // setGroupConvStore(group_id, 'list', (prev) => [...prev, data])
+    // setGroupConvStore(group_id, 'unread', (prev) => prev + 1)
+    setGroupConvStore(group_id, produce((conv) => {
+      conv.list = [...conv.list, data]
+      conv.unread = conv.unread + 1
+    }))
     return
   }
 
@@ -58,6 +64,7 @@ function dispatch(data: GroupMessageWsObject) {
     type: 'group',
     nick: getGroupName(group_id),
     list: [data],
+    unread: 1,
     id: group_id,
   })
 }

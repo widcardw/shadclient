@@ -5,6 +5,7 @@ import type {
   CommonForwardMessage,
   CommonImageMessage,
   CommonJsonCardMessage,
+  CommonMarketFaceMessage,
   CommonRecordMessage,
   CommonReplyMessage,
   CommonTextMessage,
@@ -22,6 +23,7 @@ type MultiTypeReceivedMessage =
   | CommonForwardMessage
   | CommonFileMessage
   | CommonVideoMessage
+  | CommonMarketFaceMessage
 
 /**
  * 接收到的消息，应该说是 message 这个属性的内容，而不是整个消息的对象

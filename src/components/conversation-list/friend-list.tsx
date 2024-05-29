@@ -38,7 +38,7 @@ const FriendList: Component = () => {
         (i) => i.type === UnifyInfoType.Private && i.user_id === f.user_id,
       )
     ) {
-      setFriendConvStore(f.user_id, { type: 'private', list: [] })
+      setFriendConvStore(f.user_id, { type: 'private', list: [], unread: 0 })
       setRecentList((prev) => [...prev, { ...f, type: UnifyInfoType.Private }])
     }
     // TODO: change tab, change chat panel

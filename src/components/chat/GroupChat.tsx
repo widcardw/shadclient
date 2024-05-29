@@ -1,4 +1,8 @@
 import { ws } from '@/libs/states/connection'
+import {
+  isFetchingHistory,
+  setIsFetchingHistory,
+} from '@/libs/states/semaphore'
 import { activeId, activeType, groupConvStore } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
 import { type Component, For, Show, createEffect, createMemo } from 'solid-js'
@@ -15,16 +19,17 @@ const GroupChat: Component<{ gid: number }> = (props) => {
   )
 
   const getGroupHistory = () => {
-    let first = groupConvStore[group()!.group_id]?.list?.[0]?.message_id
-    console.log(first)
-    if (first === undefined) {
-      first = 0
+    const first = groupConvStore[group()!.group_id]?.list?.[0]?.message_id
+    console.log('get group history, message_id:', first)
+    let body = { group_id: group()!.group_id, count: 17 }
+    if (first !== undefined) {
+      body = Object.assign(body, { message_id: first, message_seq: first })
     }
-    ws()?.send(
-      WsActions.GetGroupMsgHistory,
-      { group_id: group()!.group_id, message_id: first, id: first, count: 17 },
-      { group_id: group()!.group_id },
-    )
+    setIsFetchingHistory(true)
+    ws()?.send(WsActions.GetGroupMsgHistory, body, {
+      group_id: group()!.group_id,
+      e: first !== undefined,
+    })
   }
 
   return (
@@ -35,7 +40,11 @@ const GroupChat: Component<{ gid: number }> = (props) => {
             {group()!.group_memo || group()!.group_name} ({activeId()},{' '}
             {activeType()}, {groupConvStore[group()!.group_id].list.length})
           </div>
-          <Button variant="ghost" onClick={getGroupHistory}>
+          <Button
+            variant="ghost"
+            disabled={isFetchingHistory()}
+            onClick={getGroupHistory}
+          >
             <div class="i-teenyicons:history-outline" />
           </Button>
           <Button variant="ghost">

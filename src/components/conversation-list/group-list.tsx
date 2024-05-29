@@ -42,6 +42,7 @@ const GroupList: Component = () => {
       setGroupConvStore(g.group_id, {
         list: [],
         type: 'group',
+        unread: 0,
       })
       setRecentList((prev) => [...prev, { ...g, type: UnifyInfoType.Group }])
     }
