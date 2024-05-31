@@ -45,7 +45,7 @@ const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
       <Match when={props.m.type === 'json'}>
         <JsonMessage m={props.m as CommonJsonCardMessage} />
       </Match>
-      <Match when={props.m.type === 'market_face'}>
+      <Match when={props.m.type === 'marketface'}>
         <MarketFaceMessage m={props.m as CommonMarketFaceMessage} />
       </Match>
       <Match when={props.m.type === 'forward'}>

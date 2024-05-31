@@ -76,7 +76,7 @@ interface CommonFaceMessage extends CommonMessageType {
 }
 
 interface CommonMarketFaceMessage extends CommonMessageType {
-  type :'market_face',
+  type :'marketface',
   data: {
     summary: string
     face_id: string

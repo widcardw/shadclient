@@ -5,7 +5,15 @@ import {
 } from '@/libs/states/semaphore'
 import { friendConvStore } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
-import { type Component, For, Show, createMemo } from 'solid-js'
+import {
+  type Component,
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onMount,
+} from 'solid-js'
 import { allFriends } from '../conversation-list/friend-list'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
@@ -32,6 +40,23 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
     })
   }
 
+  const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
+
+  const toBottom = () => {
+    const el = scrollerArea()
+    if (el) {
+      el.scrollTop = el.scrollHeight
+    }
+  }
+
+  onMount(() => {
+    createEffect(() => {
+      if (props.uid) {
+        toBottom()
+      }
+    })
+  })
+
   return (
     <Show when={friend() !== undefined}>
       <div class="w-full h-100vh flex flex-col">
@@ -49,7 +74,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           >
             <div class="i-teenyicons:history-outline" />
           </Button>
-          <Button variant="ghost">
+          <Button variant="ghost" onClick={toBottom}>
             <div class="i-teenyicons:arrow-down-circle-outline" />
           </Button>
         </div>
@@ -59,6 +84,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           class="flex-grow flex flex-col of-y-auto"
         >
           <ResizablePanel
+            ref={(r: HTMLElement) => setScrollerArea(r)}
             initialSize={0.6}
             class="flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2"
           >

@@ -5,7 +5,15 @@ import {
 } from '@/libs/states/semaphore'
 import { activeId, activeType, groupConvStore } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
-import { type Component, For, Show, createEffect, createMemo } from 'solid-js'
+import {
+  type Component,
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onMount,
+} from 'solid-js'
 import { allGroups } from '../conversation-list/group-list'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
@@ -32,6 +40,23 @@ const GroupChat: Component<{ gid: number }> = (props) => {
     })
   }
 
+  const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
+
+  const toBottom = () => {
+    const el = scrollerArea()
+    if (el) {
+      el.scrollTop = el.scrollHeight
+    }
+  }
+
+  onMount(() => {
+    createEffect(() => {
+      if (props.gid) {
+        toBottom()
+      }
+    })
+  })
+
   return (
     <Show when={group() !== undefined}>
       <div class="w-full h-100vh flex flex-col">
@@ -50,7 +75,7 @@ const GroupChat: Component<{ gid: number }> = (props) => {
           <Button variant="ghost">
             <div class="i-teenyicons:folder-outline" />
           </Button>
-          <Button variant="ghost">
+          <Button variant="ghost" onClick={toBottom}>
             <div class="i-teenyicons:arrow-down-circle-outline" />
           </Button>
         </div>
@@ -60,6 +85,7 @@ const GroupChat: Component<{ gid: number }> = (props) => {
           class="flex-grow flex flex-col of-y-auto"
         >
           <ResizablePanel
+            ref={(r: HTMLElement) => setScrollerArea(r)}
             initialSize={0.6}
             class="flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2"
           >

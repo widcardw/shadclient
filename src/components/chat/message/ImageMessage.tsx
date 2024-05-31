@@ -38,7 +38,7 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
             src={props.m.data.url}
             alt="图片"
             referrerPolicy="no-referrer"
-            class="max-w-400px max-h-400px block"
+            class="max-w-400px max-h-400px block cursor-zoom-in"
             {..._props}
           />
         )}

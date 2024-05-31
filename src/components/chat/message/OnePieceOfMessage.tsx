@@ -21,6 +21,7 @@ import { ws } from '@/libs/states/connection'
 import { timeToHourMinute } from '@/libs/utils/date-format'
 import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
+import { sendEl } from '../InputArea'
 
 function roleToColor(role: 'owner' | 'admin' | 'member'): string {
   switch (role) {
@@ -42,16 +43,23 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
     ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
   }
 
+  const addMention = () => {
+    const el = sendEl()
+    if (el) {
+      el.value += `[reply:${props.m.message_id}] `
+    }
+  }
+
   return (
     <div class="one-piece">
-      <div title="user info">
+      <div title="user info" class="flex items-center gap-2">
         <span class="op-70">
           {props.m.sender.remark || props.m.sender.nickname}{' '}
           {props.m.deleted && '[已撤回]'}
           <span class="icon">{timeToHourMinute(props.m.time)}</span>
         </span>
-        <Button variant="link" class="icon px-0 hover:text-blue">
-          <div class="i-teenyicons:at-outline" />
+        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addMention}>
+          <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
         <Show when={props.m.self_id === props.m.target_id}>
@@ -104,6 +112,20 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
     ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
   }
 
+  const addAt = () => {
+    const el = sendEl()
+    if (el) {
+      el.value += `[at:${props.m.sender.user_id}] `
+    }
+  }
+
+  const addMention = () => {
+    const el = sendEl()
+    if (el) {
+      el.value += `[reply:${props.m.message_id}] `
+    }
+  }
+
   return (
     <div class="one-piece">
       <div title="user info" class="flex items-center gap-2">
@@ -117,10 +139,10 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
             <span class="icon">{timeToHourMinute(props.m.time)}</span>
           </span>
         </span>
-        <Button variant="link" class="icon px-0 hover:text-blue">
+        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addAt}>
           <div class="i-teenyicons:at-outline" />
         </Button>
-        <Button variant="link" class="icon px-0 hover:text-blue">
+        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addMention}>
           <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
