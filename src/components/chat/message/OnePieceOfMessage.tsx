@@ -50,7 +50,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
           {props.m.deleted && '[已撤回]'}
           <span class="icon">{timeToHourMinute(props.m.time)}</span>
         </span>
-        <Button variant="link" class="icon px-3 hover:text-blue">
+        <Button variant="link" class="icon px-0 hover:text-blue">
           <div class="i-teenyicons:at-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
@@ -60,7 +60,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
               as={(props: AlertDialogTriggerProps) => (
                 <Button
                   variant="link"
-                  class="icon px-3 hover:text-red"
+                  class="icon px-0 hover:text-red"
                   {...props}
                 >
                   <div class="i-teenyicons:bin-outline" />
@@ -106,21 +106,21 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
 
   return (
     <div class="one-piece">
-      <div title="user info">
+      <div title="user info" class="flex items-center gap-2">
         <span>
           <span class={roleToColor(props.m.sender.role)}>
             [{props.m.self_id === props.m.sender.user_id ? 'me' : props.m.sender.role}]
           </span>{' '}
           <span class="text-gray-500">
             {props.m.sender.card || props.m.sender.nickname}{' '}
-            {props.m.deleted && '[已撤回]'}
+            {props.m.deleted && '[已撤回] '}
             <span class="icon">{timeToHourMinute(props.m.time)}</span>
           </span>
         </span>
-        <Button variant="link" class="icon px-3 hover:text-blue">
+        <Button variant="link" class="icon px-0 hover:text-blue">
           <div class="i-teenyicons:at-outline" />
         </Button>
-        <Button variant="link" class="icon px-3 hover:text-blue">
+        <Button variant="link" class="icon px-0 hover:text-blue">
           <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
@@ -130,7 +130,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
               as={(props: AlertDialogTriggerProps) => (
                 <Button
                   variant="link"
-                  class="icon px-3 hover:accent-red"
+                  class="icon px-0 hover:accent-red"
                   {...props}
                 >
                   <div class="i-teenyicons:bin-outline" />

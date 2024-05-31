@@ -19,7 +19,7 @@ const App: Component = () => {
           </Match>
           <Match when={selectedList() === SelectedList.None}>
             <div class="p-4">
-              Not selected
+              Empty here.
             </div>
           </Match>
         </Switch>
