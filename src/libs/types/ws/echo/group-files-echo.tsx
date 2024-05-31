@@ -74,24 +74,28 @@ interface GroupFileUrlEcho extends CommonEchoMessage {
 
 interface GroupFileUrlEchoCarried extends EchoedObject {
   action: WsActions.GetGroupFileUrl
+  file_name: string
 }
 
 function dispatchGroupFileUrlEcho(data: GroupFileUrlEcho) {
   const url = data.data.url
-  toast(
-    <a
-      href={url}
-      target="_blank"
-      download="file"
-      referrerPolicy="no-referrer"
-      rel="noreferrer"
-    >
-      Click to download
-    </a>,
-    {
-      duration: Number.POSITIVE_INFINITY,
-    },
-  )
+  toast('Download will start in 5s.', {
+    duration: 5000,
+    onAutoClose: (t) => {
+      if (typeof window === 'undefined') {
+        toast('Download failed since window is not available.')
+        return
+      }
+      const el = document.createElement('a')
+      el.href = url // .replace(/^https:\/\/(\d+\.\d+\.\d+\.\d+)/, 'http://$1')
+      el.download = data.echo.file_name
+      el.target = '_blank'
+      el.referrerPolicy = 'no-referrer'
+      el.rel = 'noreferrer'
+      el.click()
+      el.remove()
+    }
+  })
 }
 
 export type {

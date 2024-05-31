@@ -23,8 +23,10 @@ import {
   setCurrentFolder,
 } from '@/libs/states/group-fs'
 import { suffixToIcon } from '@/libs/utils/file-icon-map'
+import { beautifyFileSize } from '@/libs/utils/file-size'
 import { WsActions } from '@/libs/ws/websocket'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
+import clsx from 'clsx'
 import { type Component, For, Show, createMemo } from 'solid-js'
 
 function dateFormater(time: number) {
@@ -73,8 +75,16 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
     setCurrentFolder(folder)
   }
 
+  const requestDownloadFile = (group_id: number, file_id: string, busid: number, file_name: string) => {
+    ws()?.send(
+      WsActions.GetGroupFileUrl,
+      { group_id, file_id, busid },
+      {file_name},
+    )
+  }
+
   return (
-    <Dialog modal>
+    <Dialog>
       <DialogTrigger
         as={(_props: DialogTriggerProps) => {
           const click =
@@ -95,7 +105,6 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
       />
       <DialogContent
         class="max-w-[1280px] of-y-auto"
-        onInteractOutside={(ev) => ev.preventDefault()}
       >
         <DialogHeader>
           <DialogTitle>Group File</DialogTitle>
@@ -137,9 +146,9 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
               <TableRow>
                 <TableHead />
                 <TableHead>Filename</TableHead>
-                <TableHead>Uploader</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Creator</TableHead>
+                <TableHead class="text-right">Size</TableHead>
+                <TableHead class="text-right">Date</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -148,12 +157,12 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
                 {(folder) => (
                   <TableRow>
                     <TableCell  class="text-1rem">
-                      <div class="i-teenyicons:folder-outline" />
+                      <div class="i-teenyicons:folder-outline mx-a" />
                     </TableCell>
                     <TableCell>{folder.folder_name}</TableCell>
-                    <TableCell>{folder.creator_name}</TableCell>
+                    <TableCell>{folder.creator_name || folder.creator}</TableCell>
                     <TableCell />
-                    <TableCell>{dateFormater(folder.create_time)}</TableCell>
+                    <TableCell class="text-right">{dateFormater(folder.create_time)}</TableCell>
                     <TableCell>
                       <Button
                         variant="ghost"
@@ -176,15 +185,15 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
                   <TableRow>
                     <TableCell class="text-1rem">
                       <div
-                        class={suffixToIcon(file.file_name.split('.').pop())}
+                        class={clsx(suffixToIcon(file.file_name.split('.').pop()), 'mx-a')}
                       />
                     </TableCell>
                     <TableCell>{file.file_name}</TableCell>
-                    <TableCell>{file.uploader_name}</TableCell>
-                    <TableCell>{file.file_size}</TableCell>
-                    <TableCell>{dateFormater(file.modify_time)}</TableCell>
+                    <TableCell>{file.uploader_name || file.uploader}</TableCell>
+                    <TableCell class="text-right">{beautifyFileSize(file.file_size)}</TableCell>
+                    <TableCell class="text-right">{dateFormater(file.modify_time)}</TableCell>
                     <TableCell>
-                      <Button variant="ghost">
+                      <Button variant="ghost" onClick={() => requestDownloadFile(props.gid, file.file_id, file.busid, file.file_name)}>
                         <div class="i-teenyicons:download-outline" />
                       </Button>
                     </TableCell>
