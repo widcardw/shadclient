@@ -19,6 +19,7 @@ import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
 import { Separator } from '../ui/separator'
 import { InputArea } from './InputArea'
+import { GroupFsDialog } from './fs/GroupFsDialog'
 import { OnePieceOfGroupMessage } from './message/OnePieceOfMessage'
 
 const GroupChat: Component<{ gid: number }> = (props) => {
@@ -72,9 +73,7 @@ const GroupChat: Component<{ gid: number }> = (props) => {
           >
             <div class="i-teenyicons:history-outline" />
           </Button>
-          <Button variant="ghost">
-            <div class="i-teenyicons:folder-outline" />
-          </Button>
+          <GroupFsDialog gid={activeId()} />
           <Button variant="ghost" onClick={toBottom}>
             <div class="i-teenyicons:arrow-down-circle-outline" />
           </Button>

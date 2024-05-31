@@ -1,4 +1,4 @@
-import { setGroupFsStore } from '@/libs/states/group-fs'
+import { setGroupFsMap, setGroupFsStore } from '@/libs/states/group-fs'
 import type { WsActions } from '@/libs/ws/websocket'
 import { onMount } from 'solid-js'
 import { toast } from 'solid-sonner'
@@ -45,7 +45,8 @@ interface GroupRootFilesEchoCarried extends EchoedObject {
 
 function dispatchGroupRootFilesEcho(data: GroupRootFilesEcho) {
   const group_id = data.echo.group_id
-  setGroupFsStore(group_id.toString(), data.data)
+  setGroupFsStore(group_id, data.data)
+  setGroupFsMap(group_id.toString(), group_id)
 }
 
 interface GroupFilesByFolderEcho extends CommonEchoMessage {
@@ -56,12 +57,14 @@ interface GroupFilesByFolderEcho extends CommonEchoMessage {
 interface GroupFilesByFolderEchoCarried extends EchoedObject {
   action: WsActions.GetGroupFilesByFolder
   group_id: number
-  folder_id: string
+  folder_id: number
+  folder: string
 }
 
 function dispatchGroupFilesByFolderEcho(data: GroupFilesByFolderEcho) {
   const folder_id = data.echo.folder_id
   setGroupFsStore(folder_id, data.data)
+  setGroupFsMap(data.echo.folder, folder_id)
 }
 
 interface GroupFileUrlEcho extends CommonEchoMessage {

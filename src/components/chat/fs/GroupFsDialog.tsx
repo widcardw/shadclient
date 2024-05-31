@@ -1,0 +1,203 @@
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { ws } from '@/libs/states/connection'
+import {
+  currentFolder,
+  groupFsMap,
+  groupFsStore,
+  setCurrentFolder,
+} from '@/libs/states/group-fs'
+import { suffixToIcon } from '@/libs/utils/file-icon-map'
+import { WsActions } from '@/libs/ws/websocket'
+import type { DialogTriggerProps } from '@kobalte/core/dialog'
+import { type Component, For, Show, createMemo } from 'solid-js'
+
+function dateFormater(time: number) {
+  return new Date(time * 1000).toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+}
+
+const GroupFsDialog: Component<{ gid: number }> = (props) => {
+  const currentFolderId = createMemo(() => groupFsMap[currentFolder()])
+  const currentFs = createMemo(() => groupFsStore[currentFolderId()])
+
+  const breadcrumb = createMemo(() => {
+    const slices = currentFolder().split('/')
+    const res = [{ label: 'root', folder: groupFsMap[slices[0]]?.toString() }]
+    for (let i = 1; i < slices.length; i++) {
+      const fullFolder = `${slices[i - 1]}/${slices[i]}`
+      res.push({ label: slices[i], folder: fullFolder })
+    }
+    return res
+  })
+
+  const requestGetRootFolder = (group_id: number) => {
+    if (!groupFsStore[group_id]) {
+      console.log('get root folder', group_id)
+      ws()?.send(WsActions.GetGroupRootFiles, { group_id }, { group_id })
+    }
+    setCurrentFolder(group_id.toString())
+  }
+
+  const requestGetFolder = (
+    group_id: number,
+    folder_id: number,
+    folder: string,
+  ) => {
+    if (!groupFsStore[folder_id]) {
+      console.log('get folder', group_id, folder_id, folder)
+      ws()?.send(
+        WsActions.GetGroupFilesByFolder,
+        { group_id, folder_id },
+        { group_id, folder_id, folder },
+      )
+    }
+    setCurrentFolder(folder)
+  }
+
+  return (
+    <Dialog modal>
+      <DialogTrigger
+        as={(_props: DialogTriggerProps) => {
+          const click =
+            typeof _props.onClick === 'function'
+              ? (ev: MouseEvent) => {
+                  requestGetRootFolder(props.gid)
+                  /** @ts-ignore merge click events */
+                  _props.onClick?.(ev)
+                }
+              : () => requestGetRootFolder(props.gid)
+
+          return (
+            <Button variant="ghost" {..._props} onClick={click}>
+              <div class="i-teenyicons:folder-outline" />
+            </Button>
+          )
+        }}
+      />
+      <DialogContent
+        class="max-w-[1280px] of-y-auto"
+        onInteractOutside={(ev) => ev.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Group File</DialogTitle>
+          <DialogDescription class="flex justify-between">
+            <div class="flex gap-2 items-center">
+              <For each={breadcrumb()}>
+                {(b, i) => (
+                  <>
+                    <Show when={i() !== 0}>/</Show>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentFolder(b.folder)}
+                    >
+                      {b.label}
+                    </Button>
+                  </>
+                )}
+              </For>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                currentFolder().includes('/')
+                  ? requestGetFolder(
+                      props.gid,
+                      currentFolderId(),
+                      currentFolder(),
+                    )
+                  : requestGetRootFolder(props.gid)
+              }
+            >
+              <div class="i-teenyicons:refresh-outline" />
+            </Button>
+          </DialogDescription>
+        </DialogHeader>
+        <div class="max-h-80vh of-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead />
+                <TableHead>Filename</TableHead>
+                <TableHead>Uploader</TableHead>
+                <TableHead>Size</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <For each={currentFs()?.folders}>
+                {(folder) => (
+                  <TableRow>
+                    <TableCell  class="text-1rem">
+                      <div class="i-teenyicons:folder-outline" />
+                    </TableCell>
+                    <TableCell>{folder.folder_name}</TableCell>
+                    <TableCell>{folder.creator_name}</TableCell>
+                    <TableCell />
+                    <TableCell>{dateFormater(folder.create_time)}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        onClick={() =>
+                          requestGetFolder(
+                            props.gid,
+                            folder.folder_id,
+                            `${currentFolder()}/${folder.folder_name}`,
+                          )
+                        }
+                      >
+                        <div class="i-teenyicons:arrow-right-circle-outline" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </For>
+              <For each={currentFs()?.files}>
+                {(file) => (
+                  <TableRow>
+                    <TableCell class="text-1rem">
+                      <div
+                        class={suffixToIcon(file.file_name.split('.').pop())}
+                      />
+                    </TableCell>
+                    <TableCell>{file.file_name}</TableCell>
+                    <TableCell>{file.uploader_name}</TableCell>
+                    <TableCell>{file.file_size}</TableCell>
+                    <TableCell>{dateFormater(file.modify_time)}</TableCell>
+                    <TableCell>
+                      <Button variant="ghost">
+                        <div class="i-teenyicons:download-outline" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </For>
+            </TableBody>
+          </Table>
+        </div>
+        <div class="hidden">{JSON.stringify(groupFsStore)}</div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export { GroupFsDialog }
