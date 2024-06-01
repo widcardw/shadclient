@@ -6,6 +6,7 @@ import type {
   CommonImageMessage,
   CommonJsonCardMessage,
   CommonMarketFaceMessage,
+  CommonRecordMessage,
   CommonReplyMessage,
   CommonTextMessage,
 } from '@/libs/types/messages/common-message'
@@ -17,6 +18,7 @@ import { FileMessage } from './FileMessage'
 import { ForwardMessageFolded } from './ForwardMessage'
 import { ImageMessage } from './ImageMessage'
 import { JsonMessage } from './JsonMessage'
+import { RecordMessage } from './RecordMessage'
 import { ReplyMessage } from './ReplyMessage'
 import { TextMessage } from './TextMessage'
 import { UnsupportedMessage } from './UnsupportedMessage'
@@ -47,6 +49,9 @@ const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
       </Match>
       <Match when={props.m.type === 'marketface'}>
         <MarketFaceMessage m={props.m as CommonMarketFaceMessage} />
+      </Match>
+      <Match when={props.m.type === 'record'}>
+        <RecordMessage m={props.m as CommonRecordMessage} />
       </Match>
       <Match when={props.m.type === 'forward'}>
         <ForwardMessageFolded m={props.m as CommonForwardMessage} />

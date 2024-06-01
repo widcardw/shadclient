@@ -9,6 +9,7 @@ import {
   setRecentList,
 } from '@/libs/states/sessions'
 import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
+import { getGroupName } from '@/libs/types/ws/message/group-message-ws-object'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn } from 'solidjs-use'
@@ -40,6 +41,8 @@ const GroupList: Component = () => {
       )
     ) {
       setGroupConvStore(g.group_id, {
+        id: g.group_id,
+        nick: getGroupName(g.group_id),
         list: [],
         type: 'group',
         unread: 0,

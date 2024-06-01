@@ -3,19 +3,28 @@ import { isSending, setIsSending } from '@/libs/states/semaphore'
 import { activeId, activeType } from '@/libs/states/sessions'
 import type { CommonImageMessage } from '@/libs/types/messages/common-message'
 import {
+  MultiTypeSentMessage,
   createImageMessage,
   createTextMessage,
 } from '@/libs/types/messages/sent-message'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
+import { buildMessage } from '@/libs/utils/message_builder'
 import { WsActions } from '@/libs/ws/websocket'
+import type { PopoverTriggerProps } from '@kobalte/core/popover'
 import clsx from 'clsx'
-import { type Component, Show, createSignal } from 'solid-js'
+import { type Component, For, Show, createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
 import { useStorage } from 'solidjs-use'
 import { FormulaFx } from '../icons/math-icon'
 import { Button } from '../ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../ui/popover'
 import { Separator } from '../ui/separator'
 import { ToggleButton } from '../ui/toggle'
+import { CQ_FACE_IDS, KOISHI_QFACE_BASE_URL } from './message/FaceMessage'
 
 type InputElKeyboardEvent = KeyboardEvent & {
   currentTarget: HTMLInputElement
@@ -55,7 +64,7 @@ const InputArea: Component = () => {
         WsActions.SendGroupMsg,
         {
           group_id: activeId(),
-          message: [createTextMessage(msg)],
+          message: buildMessage(msg),
         },
         {},
       )
@@ -65,7 +74,7 @@ const InputArea: Component = () => {
         WsActions.SendPrivateMsg,
         {
           user_id: activeId(),
-          message: [createTextMessage(msg)],
+          message: buildMessage(msg),
         },
         {},
       )
@@ -146,27 +155,60 @@ const InputArea: Component = () => {
     }
   }
 
+  const handleAddFace = (id: number) => {
+    const el = sendEl()
+    if (el) {
+      el.value += `[CQ:face,id=${id}]`
+    }
+  }
+
   return (
     <div class="flex flex-col h-full">
       <div title="toolbar" class="flex p-1 gap-1">
+        {/* 左侧工具栏 */}
         <Button variant="ghost" class="px-3">
           <div class="i-teenyicons:image-outline" />
         </Button>
         <Button variant="ghost" class="px-3">
           <div class="i-teenyicons:attachment-outline" />
         </Button>
-        <Button variant="ghost" class="px-3">
-          <div class="i-teenyicons:mood-smile-outline" />
-        </Button>
+        <Popover>
+          <PopoverTrigger
+            as={(_props: PopoverTriggerProps) => (
+              <Button variant="ghost" class="px-3" {..._props}>
+                <div class="i-teenyicons:mood-smile-outline" />
+              </Button>
+            )}
+          />
+          <PopoverContent>
+            <div class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden">
+              <For each={CQ_FACE_IDS}>
+                {(id) => (
+                  <Button variant="ghost" class="px-3" onClick={() => handleAddFace(id)}>
+                    <img
+                      class="w-5 h-5"
+                      src={`${KOISHI_QFACE_BASE_URL}${id}.gif`}
+                      alt={`[表情:${id}]`}
+                    />
+                  </Button>
+                )}
+              </For>
+            </div>
+          </PopoverContent>
+        </Popover>
+
         <ToggleButton>
           <FormulaFx />
         </ToggleButton>
         <ToggleButton>
           <div class="i-teenyicons:code-outline" />
         </ToggleButton>
+        {/* 中间备用栏，用于发送图片，文件等 */}
         <div class="flex-grow flex justify-center gap-1 items-center">
           <Show when={pastedImgs().length > 0}>
-            <div>Pasted {pastedImgs().length} image{pastedImgs().length > 1 && 's'}</div>
+            <div>
+              Pasted {pastedImgs().length} image{pastedImgs().length > 1 && 's'}
+            </div>
             <Button variant="secondary" onClick={handleSendImages}>
               Send
             </Button>
@@ -175,6 +217,7 @@ const InputArea: Component = () => {
             </Button>
           </Show>
         </div>
+        {/* 右侧发送，恢复按钮 */}
         <Button variant="ghost" class="px-3" onClick={sendSimpleMessage}>
           <div class="i-teenyicons:send-outline" />
         </Button>
@@ -187,6 +230,7 @@ const InputArea: Component = () => {
         </Button>
       </div>
       <Separator />
+      {/* 输入框 */}
       <div class="flex-1 flex">
         <textarea
           class={clsx(

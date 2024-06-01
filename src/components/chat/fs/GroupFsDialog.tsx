@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -75,11 +76,16 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
     setCurrentFolder(folder)
   }
 
-  const requestDownloadFile = (group_id: number, file_id: string, busid: number, file_name: string) => {
+  const requestDownloadFile = (
+    group_id: number,
+    file_id: string,
+    busid: number,
+    file_name: string,
+  ) => {
     ws()?.send(
       WsActions.GetGroupFileUrl,
       { group_id, file_id, busid },
-      {file_name},
+      { file_name },
     )
   }
 
@@ -103,9 +109,7 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
           )
         }}
       />
-      <DialogContent
-        class="max-w-[1280px] of-y-auto"
-      >
+      <DialogContent class="max-w-[1280px] of-y-auto">
         <DialogHeader>
           <DialogTitle>Group File</DialogTitle>
           <DialogDescription class="flex justify-between">
@@ -140,7 +144,7 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
             </Button>
           </DialogDescription>
         </DialogHeader>
-        <div class="max-h-80vh of-y-auto">
+        <div class="h-80vh of-y-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -153,57 +157,94 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <For each={currentFs()?.folders}>
-                {(folder) => (
-                  <TableRow>
-                    <TableCell  class="text-1rem">
-                      <div class="i-teenyicons:folder-outline mx-a" />
-                    </TableCell>
-                    <TableCell>{folder.folder_name}</TableCell>
-                    <TableCell>{folder.creator_name || folder.creator}</TableCell>
-                    <TableCell />
-                    <TableCell class="text-right">{dateFormater(folder.create_time)}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        onClick={() =>
-                          requestGetFolder(
-                            props.gid,
-                            folder.folder_id,
-                            `${currentFolder()}/${folder.folder_name}`,
-                          )
-                        }
-                      >
-                        <div class="i-teenyicons:arrow-right-circle-outline" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </For>
-              <For each={currentFs()?.files}>
-                {(file) => (
-                  <TableRow>
-                    <TableCell class="text-1rem">
-                      <div
-                        class={clsx(suffixToIcon(file.file_name.split('.').pop()), 'mx-a')}
-                      />
-                    </TableCell>
-                    <TableCell>{file.file_name}</TableCell>
-                    <TableCell>{file.uploader_name || file.uploader}</TableCell>
-                    <TableCell class="text-right">{beautifyFileSize(file.file_size)}</TableCell>
-                    <TableCell class="text-right">{dateFormater(file.modify_time)}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" onClick={() => requestDownloadFile(props.gid, file.file_id, file.busid, file.file_name)}>
-                        <div class="i-teenyicons:download-outline" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </For>
+              <Show
+                when={currentFs()}
+                fallback={
+                  <div class="flex flex-col space-y-2">
+                    <Skeleton class="h-4 w-[600px]" />
+                    <Skeleton class="h-4 w-[550px]" />
+                    <Skeleton class="h-4 w-[500px]" />
+                  </div>
+                }
+              >
+                <For each={currentFs()?.folders}>
+                  {(folder) => (
+                    <TableRow>
+                      <TableCell class="text-1rem">
+                        <div class="i-teenyicons:folder-outline mx-a" />
+                      </TableCell>
+                      <TableCell>{folder.folder_name}</TableCell>
+                      <TableCell>
+                        {folder.creator_name || folder.creator}
+                      </TableCell>
+                      <TableCell />
+                      <TableCell class="text-right">
+                        {dateFormater(folder.create_time)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          onClick={() =>
+                            requestGetFolder(
+                              props.gid,
+                              folder.folder_id,
+                              `${currentFolder()}/${folder.folder_name}`,
+                            )
+                          }
+                        >
+                          <div class="i-teenyicons:arrow-right-circle-outline" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </For>
+                <For each={currentFs()?.files}>
+                  {(file) => (
+                    <TableRow>
+                      <TableCell class="text-1rem">
+                        <div
+                          class={clsx(
+                            suffixToIcon(file.file_name.split('.').pop()),
+                            'mx-a',
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell>{file.file_name}</TableCell>
+                      <TableCell>
+                        {file.uploader_name || file.uploader}
+                      </TableCell>
+                      <TableCell class="text-right">
+                        {beautifyFileSize(file.file_size)}
+                      </TableCell>
+                      <TableCell class="text-right">
+                        {dateFormater(file.modify_time)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          onClick={() =>
+                            requestDownloadFile(
+                              props.gid,
+                              file.file_id,
+                              file.busid,
+                              file.file_name,
+                            )
+                          }
+                        >
+                          <div class="i-teenyicons:download-outline" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </For>
+              </Show>
             </TableBody>
           </Table>
         </div>
-        <div class="hidden">{JSON.stringify(groupFsStore)}</div>
+        <div class="hidden">
+          <For each={Object.keys(currentFs()?.files || [])}>{(i) => i}</For>
+          <For each={Object.keys(currentFs()?.folders || [])}>{(i) => i}</For>
+        </div>
       </DialogContent>
     </Dialog>
   )

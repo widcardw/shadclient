@@ -81,7 +81,7 @@ function dispatchGroupFileUrlEcho(data: GroupFileUrlEcho) {
   const url = data.data.url
   toast('Download will start in 5s.', {
     duration: 5000,
-    onAutoClose: (t) => {
+    onAutoClose: () => {
       if (typeof window === 'undefined') {
         toast('Download failed since window is not available.')
         return

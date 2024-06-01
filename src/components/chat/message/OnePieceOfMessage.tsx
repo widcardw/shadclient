@@ -18,6 +18,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { ws } from '@/libs/states/connection'
+import { activeId } from '@/libs/states/sessions'
+import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { timeToHourMinute } from '@/libs/utils/date-format'
 import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
@@ -40,13 +42,21 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   props,
 ) => {
   const deleteMsg = () => {
-    ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
+    ws()?.send(
+      WsActions.DeleteMsg,
+      { message_id: props.m.message_id },
+      {
+        t: UnifyInfoType.Private,
+        id: activeId(),
+        message_id: props.m.message_id,
+      },
+    )
   }
 
   const addMention = () => {
     const el = sendEl()
     if (el) {
-      el.value += `[reply:${props.m.message_id}] `
+      el.value += `[CQ:reply,id=${props.m.message_id}]`
     }
   }
 
@@ -58,11 +68,19 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
           {props.m.deleted && '[已撤回]'}
           <span class="icon">{timeToHourMinute(props.m.time)}</span>
         </span>
-        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addMention}>
+        <Button
+          variant="link"
+          class="icon px-0 hover:text-blue"
+          onClick={addMention}
+        >
           <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
-        <Show when={props.m.self_id === props.m.target_id}>
+        <Show
+          when={
+            props.m.self_id === props.m.target_id && props.m.deleted !== true
+          }
+        >
           <AlertDialog>
             <AlertDialogTrigger
               as={(props: AlertDialogTriggerProps) => (
@@ -109,20 +127,28 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
   props,
 ) => {
   const deleteMsg = () => {
-    ws()?.send(WsActions.DeleteMsg, { msg_id: props.m.message_id }, {})
+    ws()?.send(
+      WsActions.DeleteMsg,
+      { message_id: props.m.message_id },
+      {
+        t: UnifyInfoType.Group,
+        id: activeId(),
+        message_id: props.m.message_id,
+      },
+    )
   }
 
   const addAt = () => {
     const el = sendEl()
     if (el) {
-      el.value += `[at:${props.m.sender.user_id}] `
+      el.value += `[CQ:at,qq=${props.m.sender.user_id}]`
     }
   }
 
   const addMention = () => {
     const el = sendEl()
     if (el) {
-      el.value += `[reply:${props.m.message_id}] `
+      el.value += `[CQ:reply,id=${props.m.message_id}]`
     }
   }
 
@@ -131,7 +157,11 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
       <div title="user info" class="flex items-center gap-2">
         <span>
           <span class={roleToColor(props.m.sender.role)}>
-            [{props.m.self_id === props.m.sender.user_id ? 'me' : props.m.sender.role}]
+            [
+            {props.m.self_id === props.m.sender.user_id
+              ? 'me'
+              : props.m.sender.role}
+            ]
           </span>{' '}
           <span class="text-gray-500">
             {props.m.sender.card || props.m.sender.nickname}{' '}
@@ -139,14 +169,27 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
             <span class="icon">{timeToHourMinute(props.m.time)}</span>
           </span>
         </span>
-        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addAt}>
+        <Button
+          variant="link"
+          class="icon px-0 hover:text-blue"
+          onClick={addAt}
+        >
           <div class="i-teenyicons:at-outline" />
         </Button>
-        <Button variant="link" class="icon px-0 hover:text-blue" onClick={addMention}>
+        <Button
+          variant="link"
+          class="icon px-0 hover:text-blue"
+          onClick={addMention}
+        >
           <div class="i-teenyicons:attach-outline" />
         </Button>
         {/* 自己发送的消息可撤回 */}
-        <Show when={props.m.self_id === props.m.sender.user_id}>
+        <Show
+          when={
+            props.m.self_id === props.m.sender.user_id &&
+            props.m.deleted !== true
+          }
+        >
           <AlertDialog>
             <AlertDialogTrigger
               as={(props: AlertDialogTriggerProps) => (

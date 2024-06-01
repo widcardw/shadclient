@@ -13,7 +13,7 @@ enum WsActions {
   GetMsg = 3,
   /** 获取合并转发消息 { id: string } 原来 go-cqhttp 是 { message_id: string } */
   GetForwardMsg = 4,
-  /** 撤回消息 { msg_id: number } */
+  /** 撤回消息 { message_id: number } */
   DeleteMsg = 5,
   /** 获取好友列表 无参数 */
   GetFriendList = 6,

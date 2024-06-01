@@ -63,8 +63,9 @@ const GroupChat: Component<{ gid: number }> = (props) => {
       <div class="w-full h-100vh flex flex-col">
         <div class="px-4 py-1 flex items-center">
           <div class="font-bold mr-auto flex items-center">
-            {group()!.group_memo || group()!.group_name} ({activeId()},{' '}
-            {activeType()}, {groupConvStore[group()!.group_id].list.length})
+            {group()?.group_memo || group()?.group_name} (
+            {groupConvStore[group()?.group_id || 0]?.id},{' '}
+            {groupConvStore[group()!.group_id || 0]?.list.length})
           </div>
           <Button
             variant="ghost"
@@ -88,8 +89,8 @@ const GroupChat: Component<{ gid: number }> = (props) => {
             initialSize={0.6}
             class="flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2"
           >
-            <For each={groupConvStore[group()!.group_id].list}>
-              {(i) => <OnePieceOfGroupMessage m={i} />}
+            <For each={groupConvStore[group()?.group_id || 0]?.list}>
+              {(m) => <OnePieceOfGroupMessage m={m} />}
             </For>
             <pre class="hidden">
               <For each={Object.keys(groupConvStore[group()!.group_id].list)}>
