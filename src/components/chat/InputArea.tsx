@@ -17,11 +17,7 @@ import { toast } from 'solid-sonner'
 import { useStorage } from 'solidjs-use'
 import { FormulaFx } from '../icons/math-icon'
 import { Button } from '../ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Separator } from '../ui/separator'
 import { ToggleButton } from '../ui/toggle'
 import { CQ_FACE_IDS, KOISHI_QFACE_BASE_URL } from './message/FaceMessage'
@@ -180,20 +176,22 @@ const InputArea: Component = () => {
               </Button>
             )}
           />
-          <PopoverContent>
-            <div class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden">
-              <For each={CQ_FACE_IDS}>
-                {(id) => (
-                  <Button variant="ghost" class="px-3" onClick={() => handleAddFace(id)}>
-                    <img
-                      class="w-5 h-5"
-                      src={`${KOISHI_QFACE_BASE_URL}${id}.gif`}
-                      alt={`[表情:${id}]`}
-                    />
-                  </Button>
-                )}
-              </For>
-            </div>
+          <PopoverContent withClose={false} class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden">
+            <For each={CQ_FACE_IDS}>
+              {(id) => (
+                <Button
+                  variant="ghost"
+                  class="px-3"
+                  onClick={() => handleAddFace(id)}
+                >
+                  <img
+                    class="w-5 h-5"
+                    src={`${KOISHI_QFACE_BASE_URL}${id}.gif`}
+                    alt={`[表情:${id}]`}
+                  />
+                </Button>
+              )}
+            </For>
           </PopoverContent>
         </Popover>
 
@@ -236,7 +234,8 @@ const InputArea: Component = () => {
           class={clsx(
             'border-none !outline-none resize-none',
             'm0 p4 flex-1 leading-loose',
-            'disabled:op-50',
+            'bg-background',
+            'disabled:bg-secondary/50',
           )}
           ref={(r) => setSendEl(r)}
           placeholder={`${sendBy()} 发送消息`}

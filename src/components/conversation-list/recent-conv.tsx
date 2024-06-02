@@ -1,4 +1,6 @@
 import {
+  activeId,
+  activeType,
   friendConvStore,
   groupConvStore,
   recentList,
@@ -34,7 +36,11 @@ const FriendButton: Component<{ i: SingleFriendInfo }> = (props) => {
   }
   return (
     <Button
-      variant="ghost"
+      variant={
+        activeType() === UnifyInfoType.Private && activeId() === props.i.user_id
+          ? 'secondary'
+          : 'ghost'
+      }
       class="block w-full flex justify-between gap-2"
       onClick={() => changeTab(props.i)}
     >
@@ -55,7 +61,11 @@ const GroupButton: Component<{ i: SingleGroupInfo }> = (props) => {
   }
   return (
     <Button
-      variant="ghost"
+      variant={
+        activeType() === UnifyInfoType.Group && activeId() === props.i.group_id
+          ? 'secondary'
+          : 'ghost'
+      }
       class="block w-full flex justify-between gap-2"
       onClick={() => changeTab(props.i)}
     >
@@ -141,7 +151,10 @@ const RecentConversationList: Component = () => {
       </TextFieldRoot>
       <Separator />
       <div class="flex-grow of-y-auto flex flex-col gap-1 p-1">
-        <Show when={filteredRecentList().length > 0} fallback="No friends">
+        <Show
+          when={filteredRecentList().length > 0}
+          fallback={<div class="p-4">Empty here.</div>}
+        >
           <For each={filteredRecentList()}>
             {(i) => (
               <ContextMenu>

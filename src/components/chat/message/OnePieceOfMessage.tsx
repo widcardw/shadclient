@@ -17,6 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
 import { ws } from '@/libs/states/connection'
 import { activeId } from '@/libs/states/sessions'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
@@ -25,16 +26,16 @@ import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
 import { sendEl } from '../InputArea'
 
-function roleToColor(role: 'owner' | 'admin' | 'member'): string {
+function roleToVariant(role: 'owner' | 'admin' | 'member') {
   switch (role) {
     case 'owner':
-      return 'text-yellow-500'
+      return 'owner'
     case 'admin':
-      return 'text-green-600'
+      return 'admin'
     case 'member':
-      return 'text-blue-500'
+      return 'secondary'
     default:
-      return 'text-gray-500'
+      return 'outline'
   }
 }
 
@@ -155,20 +156,16 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
   return (
     <div class="one-piece">
       <div title="user info" class="flex items-center gap-2">
-        <span>
-          <span class={roleToColor(props.m.sender.role)}>
-            [
-            {props.m.self_id === props.m.sender.user_id
-              ? 'me'
-              : props.m.sender.role}
-            ]
-          </span>{' '}
-          <span class="text-gray-500">
-            {props.m.sender.card || props.m.sender.nickname}{' '}
-            {props.m.deleted && '[已撤回] '}
-            <span class="icon">{timeToHourMinute(props.m.time)}</span>
-          </span>
+        <span class="text-secondary-foreground/50">
+          {props.m.sender.card || props.m.sender.nickname}{' '}
+          {props.m.deleted && '[已撤回] '}
         </span>
+        <Badge variant={roleToVariant(props.m.sender.role)}>
+          {props.m.self_id === props.m.sender.user_id
+            ? 'me'
+            : props.m.sender.role}
+        </Badge>
+        <span class="icon text-secondary-foreground/50">{timeToHourMinute(props.m.time)}</span>
         <Button
           variant="link"
           class="icon px-0 hover:text-blue"

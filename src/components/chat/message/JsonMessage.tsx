@@ -34,7 +34,7 @@ const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
     <a href={props.card.qqdocurl} target="_blank" rel="noreferrer" class="block text-primary">
       <div class="flex items-center gap-2">
         <img
-          class="w-4 h-4"
+          class="w-4 h-4 rounded-2px"
           src={props.card.icon}
           alt="[miniapp]"
           referrerPolicy="no-referrer"
@@ -46,7 +46,7 @@ const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
         src={`https://${props.card.preview}`}
         alt="[preview]"
         referrerPolicy="no-referrer"
-        class="max-w-400px"
+        class="max-w-400px rounded"
       />
     </a>
   )
