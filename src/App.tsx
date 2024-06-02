@@ -4,7 +4,6 @@ import ColorModer from './components/dark-theme/ColorModeProvider'
 import { NoticePanel } from './components/main-panel/notice-panel'
 import { WithConvList } from './components/main-panel/with-conv-list'
 import LeftToolBar from './components/tool-bar/left-tool-bar'
-import { Button } from './components/ui/button'
 import { Toaster } from './components/ui/sonner'
 import { SelectedList, selectedList } from './libs/states/select-list'
 
