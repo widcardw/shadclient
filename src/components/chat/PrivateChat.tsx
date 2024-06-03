@@ -3,7 +3,7 @@ import {
   isFetchingHistory,
   setIsFetchingHistory,
 } from '@/libs/states/semaphore'
-import { friendConvStore } from '@/libs/states/sessions'
+import { friendConvStore, setFriendConvStore } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
 import {
   type Component,
@@ -12,6 +12,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  onCleanup,
   onMount,
 } from 'solid-js'
 import { allFriends } from '../conversation-list/friend-list'
@@ -40,8 +41,22 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
     })
   }
 
-  const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
+  // unread count
+  const [bottomEl, setBottomEl] = createSignal<HTMLDivElement>()
+  const observerCb: IntersectionObserverCallback = (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        setFriendConvStore(props.uid, 'unread', 0)
+        break
+      }
+    }
+  }
+  const observer = new IntersectionObserver(observerCb)
+  onMount(() => observer.observe(bottomEl()!))
+  onCleanup(() => observer.disconnect())
 
+  // scroll to bottom when enter
+  const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
   const toBottom = () => {
     const el = scrollerArea()
     if (el) {
@@ -96,6 +111,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
                 {(i) => <>i: {i}</>}
               </For>
             </pre>
+            <div class="w-full h-1" ref={r => setBottomEl(r)} />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel initialSize={0.4}>
