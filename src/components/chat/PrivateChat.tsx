@@ -15,6 +15,7 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
+import { useIntersectionObserver } from 'solidjs-use'
 import { allFriends } from '../conversation-list/friend-list'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
@@ -43,17 +44,11 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
 
   // unread count
   const [bottomEl, setBottomEl] = createSignal<HTMLDivElement>()
-  const observerCb: IntersectionObserverCallback = (entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        setFriendConvStore(props.uid, 'unread', 0)
-        break
-      }
+  useIntersectionObserver(bottomEl, ([{ isIntersecting }]) => {
+    if (isIntersecting) {
+      setFriendConvStore(props.uid, 'unread', 0)
     }
-  }
-  const observer = new IntersectionObserver(observerCb)
-  onMount(() => observer.observe(bottomEl()!))
-  onCleanup(() => observer.disconnect())
+  })
 
   // scroll to bottom when enter
   const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
@@ -111,7 +106,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
                 {(i) => <>i: {i}</>}
               </For>
             </pre>
-            <div class="w-full h-1" ref={r => setBottomEl(r)} />
+            <div class="w-full h-1" ref={(r) => setBottomEl(r)} />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel initialSize={0.4}>

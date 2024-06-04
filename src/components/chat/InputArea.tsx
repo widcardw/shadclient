@@ -60,7 +60,7 @@ const InputArea: Component = () => {
         WsActions.SendGroupMsg,
         {
           group_id: activeId(),
-          message: buildMessage(msg),
+          message: msg, // buildMessage(msg),
         },
         {},
       )
@@ -70,7 +70,7 @@ const InputArea: Component = () => {
         WsActions.SendPrivateMsg,
         {
           user_id: activeId(),
-          message: buildMessage(msg),
+          message: msg, // buildMessage(msg),
         },
         {},
       )
@@ -154,7 +154,11 @@ const InputArea: Component = () => {
   const handleAddFace = (id: number) => {
     const el = sendEl()
     if (el) {
-      el.value += `[CQ:face,id=${id}]`
+      el.value =
+        // biome-ignore lint/style/useTemplate: long expression
+        el.value.slice(0, el.selectionStart) +
+        `[CQ:face,id=${id}]` +
+        el.value.slice(el.selectionEnd)
     }
   }
 
@@ -176,7 +180,10 @@ const InputArea: Component = () => {
               </Button>
             )}
           />
-          <PopoverContent withClose={false} class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden">
+          <PopoverContent
+            withClose={false}
+            class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden"
+          >
             <For each={CQ_FACE_IDS}>
               {(id) => (
                 <Button

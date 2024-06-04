@@ -28,9 +28,21 @@ const InfoDialog: Component = () => {
           <AlertDialogTitle>Solid CQ Client</AlertDialogTitle>
           <AlertDialogDescription>
             <p>This is a client based on Lagrange.Core and Solid-js.</p>
-            Edit your configuration in the settings and click on the{' '}
-            <div class="inline-block i-teenyicons:link-outline" /> button to
-            connect!
+            <p>
+              Edit your configuration in the settings and click on the link
+              button to connect!
+            </p>
+            <p>
+              Find the source code on{' '}
+              <a
+                href="https://github.com/widcardw/shadclient"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+              .
+            </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -2,6 +2,7 @@ import {
   defineConfig,
   presetIcons,
   presetUno,
+  presetWebFonts,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
@@ -18,6 +19,12 @@ export default defineConfig({
     }),
     presetAnimations(),
     presetIcons(),
+    presetWebFonts({
+      fonts: {
+        sans: 'DM Sans',
+        mono: 'DM Mono',
+      },
+    }),
   ],
   transformers: [transformerVariantGroup(), transformerDirectives()],
   theme: {

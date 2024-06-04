@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 :root {
   --background: 0 0% 100%;
@@ -20,7 +20,8 @@
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 240 5.9% 10%;
-  --font-sans: 'Inter',ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
+  --font-sans: "DM Sans",ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
+  --font-mono: "DM Mono",ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
 
   --radius: 0.5rem;
 }
@@ -89,6 +90,10 @@ hr {
 #root {
   height: 100%;
   display: flex;
+}
+
+code, pre, textarea {
+  font-family: var(--font-mono);
 }
 
 /* 滚动条细化 */

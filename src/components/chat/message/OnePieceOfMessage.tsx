@@ -67,7 +67,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
         <span class="op-70">
           {props.m.sender.remark || props.m.sender.nickname}{' '}
           {props.m.deleted && '[已撤回]'}
-          <span class="icon">{timeToHourMinute(props.m.time)}</span>
+          <span class="icon text-0.875rem font-mono">{timeToHourMinute(props.m.time)}</span>
         </span>
         <Button
           variant="link"
@@ -165,7 +165,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
             ? 'me'
             : props.m.sender.role}
         </Badge>
-        <span class="icon text-secondary-foreground/50">{timeToHourMinute(props.m.time)}</span>
+        <span class="icon font-mono text-0.875rem text-secondary-foreground/50">{timeToHourMinute(props.m.time)}</span>
         <Button
           variant="link"
           class="icon px-0 hover:text-blue"
