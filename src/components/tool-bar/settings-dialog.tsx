@@ -29,6 +29,7 @@ import { useStorage } from 'solidjs-use'
 const SettingsDialog: Component = () => {
   const [wsUrl, setWsUrl] = useStorage('wsUrl', WSURL)
   const [sendBy, setSendBy] = useStorage('sendBy', 'Ctrl Enter')
+  const [ClampSize, setClampSize] = useStorage('clamp-size', 100)
   const [open, setOpen] = createSignal(false)
 
   return (
@@ -77,6 +78,18 @@ const SettingsDialog: Component = () => {
               </SelectTrigger>
               <SelectContent />
             </Select>
+          </TextFieldRoot>
+          <TextFieldRoot class="grid grid-cols-3 items-center gap-4 md:grid-cols-4">
+            <TextFieldLabel class="text-right">Preload count</TextFieldLabel>
+            <TextField
+              class="col-span-2 md:col-span-3"
+              value={ClampSize()}
+              onChange={(e: Event) =>
+                setClampSize(
+                  Number((e.target as HTMLInputElement).value || '100'),
+                )
+              }
+            />
           </TextFieldRoot>
         </div>
         <DialogFooter>

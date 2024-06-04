@@ -3,7 +3,12 @@ import {
   isFetchingHistory,
   setIsFetchingHistory,
 } from '@/libs/states/semaphore'
-import { activeId, activeType, groupConvStore, setGroupConvStore } from '@/libs/states/sessions'
+import {
+  activeId,
+  activeType,
+  groupConvStore,
+  setGroupConvStore,
+} from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
 import clsx from 'clsx'
 import {
@@ -13,10 +18,9 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onMount,
 } from 'solid-js'
-import { useIntersectionObserver } from 'solidjs-use'
+import { useIntersectionObserver, useStorage } from 'solidjs-use'
 import { allGroups } from '../conversation-list/group-list'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
@@ -43,6 +47,19 @@ const GroupChat: Component<{ gid: number }> = (props) => {
       e: first !== undefined,
     })
   }
+
+  // clamp messages
+  const [singleClampSize] = useStorage('clamp-size', 100)
+  const [clampIds, setClampIds] = createSignal(
+    Array.from({ length: singleClampSize() }, (_, i) => i),
+  )
+  const [topEl, setTopEl] = createSignal<HTMLDivElement>()
+  useIntersectionObserver(topEl, ([{ isIntersecting }]) => {
+    if (isIntersecting) {
+      const length = Math.min(clampIds().length + 20)
+      setClampIds(Array.from({ length }, (_, i) => i))
+    }
+  })
 
   // unread
   const [bottomEl, setBottomEl] = createSignal<HTMLDivElement>()
@@ -98,17 +115,33 @@ const GroupChat: Component<{ gid: number }> = (props) => {
           <ResizablePanel
             ref={(r: HTMLElement) => setScrollerArea(r)}
             initialSize={0.6}
-            class={clsx("flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2")}
+            class={clsx(
+              'flex-grow of-y-auto of-hidden flex flex-col space-y-2 p-2',
+            )}
           >
-            <For each={groupConvStore[group()?.group_id || 0]?.list}>
-              {(m) => <OnePieceOfGroupMessage m={m} />}
+            <div class="w-full h-1px m-0" ref={(r) => setTopEl(r)} />
+            <For
+              each={clampIds().slice(
+                0,
+                groupConvStore[group()?.group_id || 0].list.length || 0,
+              )}
+            >
+              {(i) => {
+                const l = groupConvStore[group()?.group_id || 0].list.length
+                const idx = l - Math.min(clampIds().length, l) + i
+                return (
+                  <OnePieceOfGroupMessage
+                    m={groupConvStore[group()?.group_id || 0]?.list[idx]}
+                  />
+                )
+              }}
             </For>
             <pre class="hidden">
               <For each={Object.keys(groupConvStore[group()!.group_id].list)}>
                 {(i) => <>i: {i}</>}
               </For>
             </pre>
-            <div class="w-full h-1" ref={r => setBottomEl(r)} />
+            <div class="w-full h-1px m-0" ref={(r) => setBottomEl(r)} />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel initialSize={0.4}>
