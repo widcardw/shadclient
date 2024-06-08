@@ -26,19 +26,31 @@ interface GroupConversation extends AbstractConversation {
 type ConversationType = PrivateConversation | GroupConversation
 
 // 最近会话列表
-const [recentList, setRecentList] = createSignal<
-  UnifyInfo[]
->([])
+const [recentList, setRecentList] = createSignal<UnifyInfo[]>([])
 
 // 存储所有好友的对话
 const [friendConvStore, setFriendConvStore] = createStore<
   Record<number, PrivateConversation>
 >({})
 
+function cleanUpFriendHistoryTo(uid: number, count: number) {
+  setFriendConvStore(uid, 'list', (prev) => {
+    if (prev.length <= count) return prev
+    return prev.slice(prev.length - count)
+  })
+}
+
 // 存储所有群聊的对话
 const [groupConvStore, setGroupConvStore] = createStore<
   Record<number, GroupConversation>
 >({})
+
+function cleanUpGroupHistoryTo(gid: number, count: number) {
+  setGroupConvStore(gid, 'list', (prev) => {
+    if (prev.length <= count) return prev
+    return prev.slice(prev.length - count)
+  })
+}
 
 // 存储已经发言过的群友的昵称或者名片
 const [groupMemberCard, setGroupMemberCard] = createStore<
@@ -56,7 +68,9 @@ interface ActiveChatType {
 //   id: 0,
 // })
 
-const [activeType, setActiveType] = createSignal<UnifyInfoType>(UnifyInfoType.None)
+const [activeType, setActiveType] = createSignal<UnifyInfoType>(
+  UnifyInfoType.None,
+)
 const [activeId, setActiveId] = createSignal(0)
 const setActiveConv = (t: UnifyInfoType, id: number) => {
   setActiveType(t)
@@ -85,5 +99,7 @@ export {
   /** 群号中对应 QQ 号的用户的昵称 */
   groupMemberCard,
   setGroupMemberCard,
+  cleanUpFriendHistoryTo,
+  cleanUpGroupHistoryTo,
 }
 export type { PrivateConversation, GroupConversation, ConversationType }

@@ -103,16 +103,30 @@ code, pre, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #77777730;
+  background-color: #77777760;
   background-clip: padding-box;
   min-height: 28px;
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #77777740;
+  background-color: #77777770;
 }
 
 ::-webkit-scrollbar-track-piece {
   background-color: transparent;
+}
+
+a {
+  /* color: var(--accent); */
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25rem;
+  color: var(--accent);
+  transition: 0.1s;
+}
+
+a:hover {
+  text-decoration-thickness: 1px;
+  text-decoration-style: solid;
 }

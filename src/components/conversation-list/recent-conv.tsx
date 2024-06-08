@@ -1,6 +1,8 @@
 import {
   activeId,
   activeType,
+  cleanUpFriendHistoryTo,
+  cleanUpGroupHistoryTo,
   friendConvStore,
   groupConvStore,
   recentList,
@@ -12,10 +14,23 @@ import {
   setRecentList,
 } from '@/libs/states/sessions'
 import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
+import { getGroupName } from '@/libs/types/ws/message/group-message-ws-object'
 import type { SingleFriendInfo } from '@/libs/types/ws/private-user-info'
 import { type UnifyInfo, UnifyInfoType } from '@/libs/types/ws/unify-info'
+import type { AlertDialogTitleProps } from '@kobalte/core/alert-dialog'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
-import { useDebounceFn } from 'solidjs-use'
+import { useDebounceFn, useStorage } from 'solidjs-use'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogClose,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog'
 import { Button } from '../ui/button'
 import {
   ContextMenu,
@@ -58,6 +73,9 @@ const GroupButton: Component<{ i: SingleGroupInfo }> = (props) => {
     setActiveType(UnifyInfoType.Group)
     setActiveId(o.group_id)
     setGroupConvStore(o.group_id, 'unread', 0)
+    if (groupConvStore[o.group_id]?.nick?.startsWith('群聊')) {
+      setGroupConvStore(o.group_id, 'nick', getGroupName(o.group_id))
+    }
   }
   return (
     <Button
@@ -112,7 +130,7 @@ const RecentConversationList: Component = () => {
     }
   }
 
-  const removeFromList = (o: UnifyInfo) => {
+  const hideList = (o: UnifyInfo) => {
     let idx = -1
     if (o.type === UnifyInfoType.Private) {
       idx = recentList().findIndex(
@@ -130,13 +148,23 @@ const RecentConversationList: Component = () => {
   }
 
   const removeAndDeleteHistory = (o: UnifyInfo) => {
-    const idx = removeFromList(o)
+    const idx = hideList(o)
     if (idx !== -1) {
       if (o.type === UnifyInfoType.Private) {
         setFriendConvStore(o.user_id, 'list', [])
       } else {
         setGroupConvStore(o.group_id, 'list', [])
       }
+    }
+  }
+
+  const [clampSize] = useStorage('clamp-size', 60)
+
+  const cleanHistory = (o: UnifyInfo) => {
+    if (o.type === UnifyInfoType.Private) {
+      cleanUpFriendHistoryTo(o.user_id, clampSize())
+    } else if (o.type === UnifyInfoType.Group) {
+      cleanUpGroupHistoryTo(o.group_id, clampSize())
     }
   }
 
@@ -171,13 +199,13 @@ const RecentConversationList: Component = () => {
                     Mark as read
                   </ContextMenuItem>
                   <ContextMenuSeparator />
-                  <ContextMenuItem inset onClick={() => removeFromList(i)}>
-                    Remove
+                  <ContextMenuItem inset onClick={() => hideList(i)}>
+                    Hide
                   </ContextMenuItem>
-                  <ContextMenuItem
-                    inset
-                    onClick={() => removeAndDeleteHistory(i)}
-                  >
+                  <ContextMenuItem inset class="text-red" onClick={() => cleanHistory(i)}>
+                    Clean history to {clampSize()} msgs
+                  </ContextMenuItem>
+                  <ContextMenuItem inset class="text-red" onClick={() => removeAndDeleteHistory(i)}>
                     Remove and delete history
                   </ContextMenuItem>
                 </ContextMenuContent>

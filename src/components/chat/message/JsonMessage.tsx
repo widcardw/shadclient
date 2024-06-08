@@ -29,9 +29,19 @@ interface JsonCardDataType {
   meta: Record<string, JsonCardDetail>
 }
 
+function formatPreviewUrl(url: string) {
+  if (url.startsWith('http')) return url
+  return `https://${url}`
+}
+
 const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
   return (
-    <a href={props.card.qqdocurl} target="_blank" rel="noreferrer" class="block text-primary">
+    <a
+      href={props.card.qqdocurl}
+      target="_blank"
+      rel="noreferrer"
+      class="block text-primary"
+    >
       <div class="flex items-center gap-2">
         <img
           class="w-4 h-4 rounded-2px"
@@ -43,7 +53,7 @@ const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
       </div>
       <div>{props.card.desc}</div>
       <img
-        src={`https://${props.card.preview}`}
+        src={formatPreviewUrl(props.card.preview)}
         alt="[preview]"
         referrerPolicy="no-referrer"
         class="max-w-400px rounded"

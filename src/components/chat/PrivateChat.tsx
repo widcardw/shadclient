@@ -3,25 +3,37 @@ import {
   isFetchingHistory,
   setIsFetchingHistory,
 } from '@/libs/states/semaphore'
-import { friendConvStore, setFriendConvStore } from '@/libs/states/sessions'
+import {
+  cleanUpFriendHistoryTo,
+  friendConvStore,
+  setFriendConvStore,
+} from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
+import clsx from 'clsx'
 import {
   type Component,
   For,
   Show,
-  createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onMount,
 } from 'solid-js'
-import { useIntersectionObserver } from 'solidjs-use'
+import {
+  toAccessor,
+  useIntersectionObserver,
+  useScroll,
+  useStorage,
+  whenever,
+} from 'solidjs-use'
 import { allFriends } from '../conversation-list/friend-list'
+import { CarbonClean } from '../icons/cleanup-icon'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
 import { Separator } from '../ui/separator'
 import { InputArea } from './InputArea'
 import { OnePieceOfPrivateMessage } from './message/OnePieceOfMessage'
+
+import './scroller.css'
 
 const PrivateChat: Component<{ uid: number }> = (props) => {
   const friend = createMemo(
@@ -52,6 +64,7 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
 
   // scroll to bottom when enter
   const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
+  const { arrivedState, directions } = useScroll(scrollerArea)
   const toBottom = () => {
     const el = scrollerArea()
     if (el) {
@@ -60,12 +73,22 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
   }
 
   onMount(() => {
-    createEffect(() => {
-      if (props.uid) {
-        toBottom()
-      }
-    })
+    whenever(
+      toAccessor(() => props.uid),
+      toBottom,
+      { defer: true },
+    )
+    whenever(
+      toAccessor(() => arrivedState.bottom && directions.bottom),
+      () => {
+        if (friendConvStore[props.uid])
+          setFriendConvStore(props.uid, 'unread', 0)
+      },
+      { defer: true },
+    )
   })
+
+  const [clampSize] = useStorage('clamp-size', 100)
 
   return (
     <Show when={friend() !== undefined}>
@@ -84,6 +107,12 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           >
             <div class="i-teenyicons:history-outline" />
           </Button>
+          <Button
+            variant="ghost"
+            onClick={() => cleanUpFriendHistoryTo(props.uid, clampSize())}
+          >
+            <CarbonClean />
+          </Button>
           <Button variant="ghost" onClick={toBottom}>
             <div class="i-teenyicons:arrow-down-circle-outline" />
           </Button>
@@ -96,17 +125,19 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
           <ResizablePanel
             ref={(r: HTMLElement) => setScrollerArea(r)}
             initialSize={0.6}
-            class="flex-grow of-y-auto of-hidden flex flex-col gap-2 p-2"
+            class={clsx(
+              'flex-grow of-y-auto of-hidden flex flex-col space-y-3 p-2',
+              'scroller',
+            )}
           >
             <For each={friendConvStore[friend().user_id].list}>
               {(i) => <OnePieceOfPrivateMessage m={i} />}
             </For>
-            <pre class="hidden">
+            {/* <pre class="hidden">
               <For each={Object.keys(friendConvStore[friend()!.user_id].list)}>
                 {(i) => <>i: {i}</>}
               </For>
-            </pre>
-            <div class="w-full h-1" ref={(r) => setBottomEl(r)} />
+            </pre> */}
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel initialSize={0.4}>

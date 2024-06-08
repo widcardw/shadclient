@@ -6,8 +6,13 @@ import type { Component } from 'solid-js'
 const AtMessage: Component<{ m: CommonAtMessage }> = (props) => {
   return (
     <>
-      {activeType() === UnifyInfoType.Group &&
-        `@${groupMemberCard[activeId()]?.[props.m.data.qq] || props.m.data.qq}`}
+      {activeType() === UnifyInfoType.Group
+        ? props.m.data.qq === 0
+          ? 'all'
+          : `@${
+              groupMemberCard[activeId()]?.[props.m.data.qq] || props.m.data.qq
+            }`
+        : ''}
     </>
   )
 }

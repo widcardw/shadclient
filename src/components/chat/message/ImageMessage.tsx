@@ -10,7 +10,13 @@ import {
 import type { CommonImageMessage } from '@/libs/types/messages/common-message'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
 import clsx from 'clsx'
-import { type Component, createSignal } from 'solid-js'
+import { type Component, Match, Show, Switch, createSignal } from 'solid-js'
+
+enum ImageLoadingStatus {
+  Loading = 0,
+  Success = 1,
+  Error = 2,
+}
 
 const ImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
   return (
@@ -28,19 +34,53 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
   const setNormal = () => setCls('max-w-full max-h-full')
   const setWFull = () => setCls('max-w-full')
   const setHFull = () => setCls('max-h-full')
+  const [loadStatus, setLoadStatus] = createSignal(ImageLoadingStatus.Loading)
 
   return (
     <Dialog>
       <DialogTrigger
         as={(_props: DialogTriggerProps) => (
-          // @ts-ignore cast html element to image element
-          <img
-            src={props.m.data.url}
-            alt="图片"
-            referrerPolicy="no-referrer"
-            class="max-w-400px max-h-400px block cursor-zoom-in"
-            {..._props}
-          />
+          // <Show
+          //   when={loadStatus() === ImageLoadingStatus.Success}
+          //   fallback={
+          //     <Button variant="outline" onClick={() => setLoadStatus(ImageLoadingStatus.Loading)}>
+          //       图片加载失败
+          //     </Button>
+          //   }
+          // >
+          //   {/* @ts-ignore cast html element to image element */}
+          //   <img
+          //     src={props.m.data.url}
+          //     alt="图片"
+          //     referrerPolicy="no-referrer"
+          //     class="max-w-400px max-h-400px block cursor-zoom-in"
+          //     {..._props}
+          //     onError={() => setLoadStatus(ImageLoadingStatus.Error)}
+          //     onLoad={() => {setLoadStatus(ImageLoadingStatus.Success)}}
+          //   />
+          // </Show>
+          <Switch>
+            <Match when={loadStatus() === ImageLoadingStatus.Success}>
+              {/* @ts-ignore cast html element to image element */}
+              <img
+                src={props.m.data.url}
+                alt="图片"
+                referrerPolicy="no-referrer"
+                class="max-w-400px max-h-400px block cursor-zoom-in"
+                {..._props}
+                onError={() => setLoadStatus(ImageLoadingStatus.Error)}
+                onLoad={() => {
+                  setLoadStatus(ImageLoadingStatus.Success)
+                }}
+              />
+            </Match>
+            <Match when={loadStatus() === ImageLoadingStatus.Error}>
+              [图片加载失败]
+            </Match>
+            <Match when={loadStatus() === ImageLoadingStatus.Loading}>
+              [图片加载中]
+            </Match>
+          </Switch>
         )}
       />
       <DialogContent class="max-w-[1280px] of-y-auto">

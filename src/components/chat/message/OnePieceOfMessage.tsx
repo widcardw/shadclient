@@ -3,7 +3,7 @@ import type { MultiTypeReceivedMessage as MultiTypeMsg } from '@/libs/types/mess
 import type { CommonMessageWsObject } from '@/libs/types/ws/message/common-message-ws-object'
 import type { GroupMessageWsObject } from '@/libs/types/ws/message/group-message-ws-object'
 import type { PrivateMessageWsObject } from '@/libs/types/ws/message/private-message-ws-object'
-import { type Component, For, Match, Show, Switch } from 'solid-js'
+import { type Component, For, Match, Show, Switch, splitProps } from 'solid-js'
 import { UnifiedMessage } from './UnifiedMessage'
 
 import './icon.css'
@@ -62,12 +62,16 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   }
 
   return (
-    <div class="one-piece">
+    <div class="one-piece" id={props.m.message_id.toString()}>
       <div title="user info" class="flex items-center gap-2">
-        <span class="op-70">
-          {props.m.sender.remark || props.m.sender.nickname}{' '}
-          {props.m.deleted && '[已撤回]'}
-          <span class="icon text-0.875rem font-mono">{timeToHourMinute(props.m.time)}</span>
+        <span class="op-70 flex justify-center">
+          {props.m.sender.remark || props.m.sender.nickname}
+          <Show when={props.m.deleted}>
+            <Badge variant="outline">已撤回</Badge>
+          </Show>
+          <span class="icon text-0.875rem font-mono">
+            {timeToHourMinute(props.m.time)}
+          </span>
         </span>
         <Button
           variant="link"
@@ -154,49 +158,53 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
   }
 
   return (
-    <div class="one-piece">
+    <div class="one-piece space-y-1" id={(props.m?.message_id || 0).toString()}>
       <div title="user info" class="flex items-center gap-2">
         <span class="text-secondary-foreground/50">
-          {props.m.sender.card || props.m.sender.nickname}{' '}
-          {props.m.deleted && '[已撤回] '}
+          {props.m?.sender?.card || props.m?.sender?.nickname}
         </span>
-        <Badge variant={roleToVariant(props.m.sender.role)}>
-          {props.m.self_id === props.m.sender.user_id
-            ? 'me'
-            : props.m.sender.role}
-        </Badge>
-        <span class="icon font-mono text-0.875rem text-secondary-foreground/50">{timeToHourMinute(props.m.time)}</span>
-        <Button
-          variant="link"
-          class="icon px-0 hover:text-blue"
+        <Show when={props.m?.deleted}>
+          <Badge variant="secondary">已撤回</Badge>
+        </Show>
+        <Show
+          when={
+            props.m?.sender?.role === 'admin' ||
+            props.m?.sender?.role === 'owner' ||
+            props.m?.sender?.user_id === props.m?.self_id
+          }
+        >
+          <Badge variant={roleToVariant(props.m?.sender?.role)}>
+            {props.m?.self_id === props.m?.sender?.user_id
+              ? 'me'
+              : props.m?.sender?.role}
+          </Badge>
+        </Show>
+        <span class="icon font-mono text-0.875rem text-secondary-foreground/50">
+          {timeToHourMinute(props.m?.time)}
+        </span>
+        <div
+          class="i-teenyicons:at-outline icon px-0 hover:text-blue"
           onClick={addAt}
-        >
-          <div class="i-teenyicons:at-outline" />
-        </Button>
-        <Button
-          variant="link"
-          class="icon px-0 hover:text-blue"
+        />
+        <div
+          class="i-teenyicons:attach-outline icon px-0 hover:text-blue"
           onClick={addMention}
-        >
-          <div class="i-teenyicons:attach-outline" />
-        </Button>
+        />
         {/* 自己发送的消息可撤回 */}
         <Show
           when={
-            props.m.self_id === props.m.sender.user_id &&
-            props.m.deleted !== true
+            props.m?.self_id === props.m?.sender?.user_id &&
+            props.m?.deleted !== true
           }
         >
           <AlertDialog>
             <AlertDialogTrigger
               as={(props: AlertDialogTriggerProps) => (
-                <Button
-                  variant="link"
-                  class="icon px-0 hover:accent-red"
+                // @ts-ignore pass props to div
+                <div
+                  class="i-teenyicons:bin-outline icon px-0 hover:accent-red"
                   {...props}
-                >
-                  <div class="i-teenyicons:bin-outline" />
-                </Button>
+                />
               )}
             />
             <AlertDialogContent>
@@ -217,10 +225,10 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
       </div>
       <div class="max-w-800px">
         <Show
-          when={Array.isArray(props.m.message)}
-          fallback={<UnifiedMessage m={props.m.message as MultiTypeMsg} />}
+          when={Array.isArray(props.m?.message)}
+          fallback={<pre>{JSON.stringify(props.m)}</pre>}
         >
-          <For each={props.m.message as MultiTypeMsg[]}>
+          <For each={props.m?.message as MultiTypeMsg[]}>
             {(i) => <UnifiedMessage m={i} />}
           </For>
         </Show>

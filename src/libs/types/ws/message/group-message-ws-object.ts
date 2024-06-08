@@ -29,7 +29,7 @@ interface GroupMessageWsObject extends CommonMessageWsObject {
 function getGroupName(group_id: number): string {
   return (
     allGroups()?.find((g) => g.group_id === group_id)?.group_name ||
-    `群聊-${group_id}`
+    `群聊 ${group_id}`
   )
 }
 

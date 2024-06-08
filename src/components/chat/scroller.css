@@ -1,0 +1,9 @@
+.scroller {
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+}
+
+.scroller>div:last-child {
+    scroll-snap-align: end;
+    padding-bottom: 0.5rem;
+}

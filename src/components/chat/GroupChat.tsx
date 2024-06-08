@@ -6,6 +6,7 @@ import {
 import {
   activeId,
   activeType,
+  cleanUpGroupHistoryTo,
   groupConvStore,
   setGroupConvStore,
 } from '@/libs/states/sessions'
@@ -18,16 +19,26 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  on,
   onMount,
 } from 'solid-js'
-import { useIntersectionObserver, useStorage } from 'solidjs-use'
+import {
+  toAccessor,
+  useIntersectionObserver,
+  useScroll,
+  useStorage,
+  whenever,
+} from 'solidjs-use'
 import { allGroups } from '../conversation-list/group-list'
+import { CarbonClean } from '../icons/cleanup-icon'
 import { Button } from '../ui/button'
 import { Resizable, ResizableHandle, ResizablePanel } from '../ui/resizable'
 import { Separator } from '../ui/separator'
 import { InputArea } from './InputArea'
 import { GroupFsDialog } from './fs/GroupFsDialog'
 import { OnePieceOfGroupMessage } from './message/OnePieceOfMessage'
+
+import './scroller.css'
 
 const GroupChat: Component<{ gid: number }> = (props) => {
   const group = createMemo(() =>
@@ -48,29 +59,9 @@ const GroupChat: Component<{ gid: number }> = (props) => {
     })
   }
 
-  // clamp messages
-  const [singleClampSize] = useStorage('clamp-size', 100)
-  const [clampIds, setClampIds] = createSignal(
-    Array.from({ length: singleClampSize() }, (_, i) => i),
-  )
-  const [topEl, setTopEl] = createSignal<HTMLDivElement>()
-  useIntersectionObserver(topEl, ([{ isIntersecting }]) => {
-    if (isIntersecting) {
-      const length = Math.min(clampIds().length + 20)
-      setClampIds(Array.from({ length }, (_, i) => i))
-    }
-  })
-
-  // unread
-  const [bottomEl, setBottomEl] = createSignal<HTMLDivElement>()
-  useIntersectionObserver(bottomEl, ([{ isIntersecting }]) => {
-    if (isIntersecting) {
-      setGroupConvStore(props.gid, 'unread', 0)
-    }
-  })
-
   // scroll to bottom when enter
   const [scrollerArea, setScrollerArea] = createSignal<HTMLElement>()
+  const { arrivedState, directions } = useScroll(scrollerArea)
   const toBottom = () => {
     const el = scrollerArea()
     if (el) {
@@ -79,12 +70,23 @@ const GroupChat: Component<{ gid: number }> = (props) => {
   }
 
   onMount(() => {
-    createEffect(() => {
-      if (props.gid) {
-        toBottom()
-      }
-    })
+    // move to bottom when entering
+    whenever(
+      toAccessor(() => props.gid),
+      toBottom,
+      { defer: true },
+    )
+    // set unread count
+    whenever(
+      toAccessor(() => arrivedState.bottom && directions.bottom),
+      () => {
+        if (groupConvStore[props.gid]) setGroupConvStore(props.gid, 'unread', 0)
+      },
+      { defer: true },
+    )
   })
+
+  const [clampSize] = useStorage('clamp-size', 100)
 
   return (
     <Show when={group() !== undefined}>
@@ -102,6 +104,9 @@ const GroupChat: Component<{ gid: number }> = (props) => {
           >
             <div class="i-teenyicons:history-outline" />
           </Button>
+          <Button variant="ghost" onClick={() => cleanUpGroupHistoryTo(props.gid, clampSize())}>
+            <CarbonClean />
+          </Button>
           <GroupFsDialog gid={activeId()} />
           <Button variant="ghost" onClick={toBottom}>
             <div class="i-teenyicons:arrow-down-circle-outline" />
@@ -116,32 +121,18 @@ const GroupChat: Component<{ gid: number }> = (props) => {
             ref={(r: HTMLElement) => setScrollerArea(r)}
             initialSize={0.6}
             class={clsx(
-              'flex-grow of-y-auto of-hidden flex flex-col space-y-2 p-2',
+              'flex-grow of-y-auto of-hidden flex flex-col space-y-3 p-2',
+              'scroller',
             )}
           >
-            <div class="w-full h-1px m-0" ref={(r) => setTopEl(r)} />
-            <For
-              each={clampIds().slice(
-                0,
-                groupConvStore[group()?.group_id || 0].list.length || 0,
-              )}
-            >
-              {(i) => {
-                const l = groupConvStore[group()?.group_id || 0].list.length
-                const idx = l - Math.min(clampIds().length, l) + i
-                return (
-                  <OnePieceOfGroupMessage
-                    m={groupConvStore[group()?.group_id || 0]?.list[idx]}
-                  />
-                )
-              }}
+            <For each={groupConvStore[group()?.group_id || 0].list}>
+              {(i) => <OnePieceOfGroupMessage m={i} />}
             </For>
-            <pre class="hidden">
+            {/* <pre class="hidden">
               <For each={Object.keys(groupConvStore[group()!.group_id].list)}>
                 {(i) => <>i: {i}</>}
               </For>
-            </pre>
-            <div class="w-full h-1px m-0" ref={(r) => setBottomEl(r)} />
+            </pre> */}
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel initialSize={0.4}>

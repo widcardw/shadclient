@@ -79,8 +79,9 @@ interface GroupFileUrlEchoCarried extends EchoedObject {
 
 function dispatchGroupFileUrlEcho(data: GroupFileUrlEcho) {
   const url = data.data.url
-  toast('Download will start in 5s.', {
-    duration: 5000,
+  toast('Download will start in 3s.', {
+    duration: 3000,
+    description: 'Notice that the target site may be blocked. Please allow to access the site to download the file.',
     onAutoClose: () => {
       if (typeof window === 'undefined') {
         toast('Download failed since window is not available.')
