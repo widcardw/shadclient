@@ -66,8 +66,8 @@ const SettingsDialog: Component = () => {
               options={['Ctrl Enter', 'Enter']}
               defaultValue={sendBy()}
               required
-              itemComponent={(props) => (
-                <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>
+              itemComponent={(_props) => (
+                <SelectItem item={_props.item}>{_props.item.rawValue}</SelectItem>
               )}
               onChange={setSendBy}
             >

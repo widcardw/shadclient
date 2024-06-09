@@ -34,14 +34,19 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
   const setNormal = () => setCls('max-w-full max-h-full')
   const setWFull = () => setCls('max-w-full')
   const setHFull = () => setCls('max-h-full')
-  const [loadStatus, setLoadStatus] = createSignal(ImageLoadingStatus.Loading)
+  const [loadStatus, setLoadStatus] = createSignal(ImageLoadingStatus.Success)
 
   return (
     <Dialog>
       <DialogTrigger
         as={(_props: DialogTriggerProps) => (
           <Switch>
-            <Match when={loadStatus() === ImageLoadingStatus.Success}>
+            <Match
+              when={
+                loadStatus() === ImageLoadingStatus.Success ||
+                loadStatus() === ImageLoadingStatus.Loading
+              }
+            >
               {/* @ts-ignore cast html element to image element */}
               <img
                 src={props.m.data.url}
@@ -56,10 +61,12 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
               />
             </Match>
             <Match when={loadStatus() === ImageLoadingStatus.Error}>
-              [图片加载失败]
-            </Match>
-            <Match when={loadStatus() === ImageLoadingStatus.Loading}>
-              [图片加载中]
+              <Button
+                variant="outline"
+                onClick={() => setLoadStatus(ImageLoadingStatus.Loading)}
+              >
+                图片加载失败
+              </Button>
             </Match>
           </Switch>
         )}
