@@ -110,6 +110,14 @@ const InputArea: Component = () => {
     setFilePathToUpload('')
     setFilePathVisible(false)
   }
+  const handleFileUploadToolTip = () => {
+    toast('提示', {
+      description:
+        'Windows 端使用“Shift 右键”复制文件路径\nmacOS 端使用“Cmd+Option+C”复制文件路径',
+      descriptionClass: 'whitespace-pre-wrap',
+      duration: 10000,
+    })
+  }
 
   const sendSimpleMessage = () => {
     if (sendEl() === undefined) {
@@ -292,20 +300,26 @@ const InputArea: Component = () => {
         </ToggleButton>
         {/* 中间备用栏，用于发送图片，文件等 */}
         <div class="flex-grow flex justify-center gap-1 items-center">
+          {/* 图片发送 */}
           <Show when={bufferedImgs().length > 0}>
             <div>
               Buffered {bufferedImgs().length} image
               {bufferedImgs().length > 1 && 's'}
             </div>
-            <Button variant="secondary" onClick={handleSendImages}>
-              Send
+            <Button variant="secondary" class="px-3" onClick={handleSendImages}>
+              <div class="i-teenyicons:send-outline" />
             </Button>
-            <Button variant="destructive" onClick={() => setBufferedImgs([])}>
-              Discard
+            <Button
+              variant="destructive"
+              class="px-3"
+              onClick={() => setBufferedImgs([])}
+            >
+              <div class="i-teenyicons:bin-outline" />
             </Button>
           </Show>
+          {/* 文件发送 */}
           <Show when={filePathVisible()}>
-            <TextFieldRoot>
+            <TextFieldRoot class="w-60% max-w-800px">
               <TextField
                 placeholder="填入本地文件路径"
                 onChange={(e: Event) => {
@@ -313,11 +327,22 @@ const InputArea: Component = () => {
                 }}
               />
             </TextFieldRoot>
-            <Button variant="secondary" onClick={handleFileUpload}>
-              Send
+            <Button variant="secondary" class="px-3" onClick={handleFileUpload}>
+              <div class="i-teenyicons:send-outline" />
             </Button>
-            <Button variant="destructive" onClick={handleFileUploadCancel}>
-              Cancel
+            <Button
+              variant="destructive"
+              class="px-3"
+              onClick={handleFileUploadCancel}
+            >
+              <div class="i-teenyicons:bin-outline" />
+            </Button>
+            <Button
+              variant="outline"
+              class="px-3"
+              onClick={handleFileUploadToolTip}
+            >
+              <div class="i-teenyicons:question-outline" />
             </Button>
           </Show>
         </div>
