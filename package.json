@@ -18,6 +18,7 @@
     "@internationalized/date": "3.5.2",
     "@internationalized/number": "3.5.1",
     "@solidjs/meta": "^0.29.4",
+    "nanoid": "^5.0.7",
     "solidjs-use": "^2.3.0",
     "typescript": "^5.4.5",
     "unocss": "^0.60.4",

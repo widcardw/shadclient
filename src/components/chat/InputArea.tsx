@@ -13,6 +13,7 @@ import { u8toBase64 } from '@/libs/utils/u8Tob64'
 import { WsActions } from '@/libs/ws/websocket'
 import type { PopoverTriggerProps } from '@kobalte/core/popover'
 import clsx from 'clsx'
+import { nanoid } from 'nanoid'
 import { type Component, For, Show, createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
 import { useFileDialog, useStorage, whenever } from 'solidjs-use'
@@ -44,12 +45,13 @@ const [bufferedImgs, setBufferedImgs] = createSignal<CommonImageMessage[]>([])
 
 const InputArea: Component = () => {
   const [sendBy] = useStorage('sendBy', 'Ctrl Enter')
+
+  // 使用 toolbar 上的按钮选择图片
   const {
     files: selectedImgs,
     open: openImgDlg,
     reset: resetImgs,
   } = useFileDialog({ accept: 'image/*' })
-
   whenever(
     selectedImgs,
     async () => {
@@ -69,6 +71,7 @@ const InputArea: Component = () => {
     { defer: true },
   )
 
+  // 选择 toolbar 上的按钮填入文件路径
   const [filePathVisible, setFilePathVisible] = createSignal(false)
   const [filePathToUpload, setFilePathToUpload] = createSignal('')
   const handleFilePathVisibility = (v: boolean) => {
@@ -88,7 +91,7 @@ const InputArea: Component = () => {
         {
           user_id: activeId(),
           file: path,
-          name: path.split('/').pop() || 'file',
+          name: path.split('/').pop() || `file_${nanoid(10)}`,
         },
         {},
       )
@@ -98,7 +101,7 @@ const InputArea: Component = () => {
         {
           group_id: activeId(),
           file: path,
-          name: path.split('/').pop() || 'file',
+          name: path.split('/').pop() || `file_${nanoid(10)}`,
         },
         {},
       )
@@ -119,6 +122,7 @@ const InputArea: Component = () => {
     })
   }
 
+  // 仅发送文本消息
   const sendSimpleMessage = () => {
     if (sendEl() === undefined) {
       toast.error('未找到聊天窗口')
