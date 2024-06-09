@@ -8,7 +8,6 @@ import {
   createTextMessage,
 } from '@/libs/types/messages/sent-message'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
-import { buildMessage } from '@/libs/utils/message_builder'
 import { msgContentToSvg, transformTex } from '@/libs/utils/transform-tex'
 import { u8toBase64 } from '@/libs/utils/u8Tob64'
 import { WsActions } from '@/libs/ws/websocket'
@@ -49,6 +48,9 @@ const [bufferedImgs, setBufferedImgs] = createSignal<CommonImageMessage[]>([])
 const InputArea: Component = () => {
   const [sendBy] = useStorage('sendBy', 'Ctrl Enter')
   const [enableTex, setEnableTex] = useStorage('enable-tex', true)
+  const [isIMEComposing, setIsIMEComposing] = createSignal(false)
+  const startIME = () => setIsIMEComposing(true)
+  const stopIME = () => setTimeout(() => setIsIMEComposing(false), 50)
 
   // 使用 toolbar 上的按钮选择图片
   const {
@@ -238,7 +240,7 @@ const InputArea: Component = () => {
 
   // 用于监听快捷键发送
   const handleKeyDown = (e: TextareaElKeyboardEvent) => {
-    if (e.isComposing) return
+    if (isIMEComposing()) return
     console.log(e.key, e.shiftKey, e.ctrlKey)
     if (sendBy() === 'Ctrl Enter') {
       if (e.ctrlKey && e.key === 'Enter') {
@@ -422,6 +424,8 @@ const InputArea: Component = () => {
           }
           onPaste={onPasteImg}
           onKeyDown={handleKeyDown}
+          onCompositionStart={startIME}
+          onCompositionEnd={stopIME}
         />
       </div>
     </div>
