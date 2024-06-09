@@ -40,25 +40,6 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
     <Dialog>
       <DialogTrigger
         as={(_props: DialogTriggerProps) => (
-          // <Show
-          //   when={loadStatus() === ImageLoadingStatus.Success}
-          //   fallback={
-          //     <Button variant="outline" onClick={() => setLoadStatus(ImageLoadingStatus.Loading)}>
-          //       图片加载失败
-          //     </Button>
-          //   }
-          // >
-          //   {/* @ts-ignore cast html element to image element */}
-          //   <img
-          //     src={props.m.data.url}
-          //     alt="图片"
-          //     referrerPolicy="no-referrer"
-          //     class="max-w-400px max-h-400px block cursor-zoom-in"
-          //     {..._props}
-          //     onError={() => setLoadStatus(ImageLoadingStatus.Error)}
-          //     onLoad={() => {setLoadStatus(ImageLoadingStatus.Success)}}
-          //   />
-          // </Show>
           <Switch>
             <Match when={loadStatus() === ImageLoadingStatus.Success}>
               {/* @ts-ignore cast html element to image element */}

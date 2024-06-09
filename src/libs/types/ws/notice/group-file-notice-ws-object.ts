@@ -1,6 +1,13 @@
-import { groupConvStore, setGroupConvStore } from '@/libs/states/sessions'
+import {
+  groupConvStore,
+  groupMemberCard,
+  setGroupConvStore,
+} from '@/libs/states/sessions'
 import { _createFileMessage } from '../../messages/sent-message'
-import { type GroupMessageWsObject, getGroupName } from '../message/group-message-ws-object'
+import {
+  type GroupMessageWsObject,
+  getGroupName,
+} from '../message/group-message-ws-object'
 import type { CommonNoticeWsObject } from './common-notice-ws-object'
 import type { FileNotice } from './file-notice'
 
@@ -23,25 +30,27 @@ function dispatch(data: GroupFileNoticeWsObject) {
     group_id,
     user_id,
     anonymous: null,
-    message: [_createFileMessage({ name: file.name, file: file.url, size: file.size })],
+    message: [
+      _createFileMessage({ name: file.name, file: file.url, size: file.size }),
+    ],
     raw_message: '',
     font: 0,
     sender: {
       user_id,
       nickname: '',
-      card: '', // TODO
+      card: groupMemberCard[group_id]?.[user_id] || user_id.toString(), // TODO
       sex: '',
       age: 0,
       area: '',
       level: '',
-      role: 'member' // TODO
+      role: 'member', // TODO
     },
     time,
-    self_id: -1
+    self_id: -1,
   }
   const session = groupConvStore[group_id]
   if (session) {
-    setGroupConvStore(group_id, 'list', prev => [...prev, groupMsgWsObject])
+    setGroupConvStore(group_id, 'list', (prev) => [...prev, groupMsgWsObject])
     return
   }
 
@@ -49,7 +58,7 @@ function dispatch(data: GroupFileNoticeWsObject) {
     type: 'group',
     nick: getGroupName(group_id),
     list: [groupMsgWsObject],
-    id: group_id
+    id: group_id,
   })
 }
 

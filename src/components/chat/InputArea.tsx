@@ -9,16 +9,18 @@ import {
 } from '@/libs/types/messages/sent-message'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { buildMessage } from '@/libs/utils/message_builder'
+import { u8toBase64 } from '@/libs/utils/u8Tob64'
 import { WsActions } from '@/libs/ws/websocket'
 import type { PopoverTriggerProps } from '@kobalte/core/popover'
 import clsx from 'clsx'
 import { type Component, For, Show, createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
-import { useStorage } from 'solidjs-use'
+import { useFileDialog, useStorage, whenever } from 'solidjs-use'
 import { FormulaFx } from '../icons/math-icon'
 import { Button } from '../ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Separator } from '../ui/separator'
+import { TextField, TextFieldRoot } from '../ui/textfield'
 import { ToggleButton } from '../ui/toggle'
 import { CQ_FACE_IDS, KOISHI_QFACE_BASE_URL } from './message/FaceMessage'
 
@@ -38,10 +40,76 @@ type TextareaElClipboardEvent = ClipboardEvent & {
 }
 
 const [sendEl, setSendEl] = createSignal<HTMLTextAreaElement>()
-const [pastedImgs, setPastedImgs] = createSignal<CommonImageMessage[]>([])
+const [bufferedImgs, setBufferedImgs] = createSignal<CommonImageMessage[]>([])
 
 const InputArea: Component = () => {
   const [sendBy] = useStorage('sendBy', 'Ctrl Enter')
+  const {
+    files: selectedImgs,
+    open: openImgDlg,
+    reset: resetImgs,
+  } = useFileDialog({ accept: 'image/*' })
+
+  whenever(
+    selectedImgs,
+    async () => {
+      console.log('triggle selected image change')
+      const fs = selectedImgs()
+      if (!fs) return
+      const imgMsgs = await Promise.all(
+        Array.from(fs).map(async (f) => {
+          const bytes = new Uint8Array(await f.arrayBuffer())
+          const b64 = u8toBase64(bytes)
+          return createImageMessage(b64)
+        }),
+      )
+      setBufferedImgs((prev) => [...prev, ...imgMsgs])
+      resetImgs()
+    },
+    { defer: true },
+  )
+
+  const [filePathVisible, setFilePathVisible] = createSignal(false)
+  const [filePathToUpload, setFilePathToUpload] = createSignal('')
+  const handleFilePathVisibility = (v: boolean) => {
+    if (v && bufferedImgs().length) {
+      toast('请现将图片发送或先取消发送')
+      return
+    }
+    setFilePathVisible(v)
+  }
+  const handleFileUpload = () => {
+    const path = filePathToUpload()
+    console.log('ready to upload', path)
+    if (path.trim() === '') return
+    if (activeType() === UnifyInfoType.Private) {
+      ws()?.send(
+        WsActions.UploadPrivateFile,
+        {
+          user_id: activeId(),
+          file: path,
+          name: path.split('/').pop() || 'file',
+        },
+        {},
+      )
+    } else if (activeType() === UnifyInfoType.Group) {
+      ws()?.send(
+        WsActions.UploadGroupFile,
+        {
+          group_id: activeId(),
+          file: path,
+          name: path.split('/').pop() || 'file',
+        },
+        {},
+      )
+    }
+    toast('文件已发送，请在其他终端确认发送情况')
+    setFilePathVisible(false)
+  }
+  const handleFileUploadCancel = () => {
+    setFilePathToUpload('')
+    setFilePathVisible(false)
+  }
 
   const sendSimpleMessage = () => {
     if (sendEl() === undefined) {
@@ -77,8 +145,10 @@ const InputArea: Component = () => {
     }
   }
 
+  // 在 textarea 粘贴图片时，将图片添加到 buffered images 中
   const onPasteImg = async (e: TextareaElClipboardEvent) => {
     if (activeType() === UnifyInfoType.None) return
+    if (filePathVisible()) return
     const clipboardData = e.clipboardData
     if (!clipboardData) return
     const pasted = await Promise.all(
@@ -96,7 +166,7 @@ const InputArea: Component = () => {
             if (reader.result && typeof reader.result === 'string') {
               // biome-ignore lint/style/useTemplate: template may cause ts error
               const b64 = 'base64://' + reader.result.split(',')[1]
-              setPastedImgs((p) => [...p, createImageMessage(b64)])
+              setBufferedImgs((p) => [...p, createImageMessage(b64)])
               resolve('')
             }
           }
@@ -109,14 +179,15 @@ const InputArea: Component = () => {
     if (el) el.value += pasted.join('\n')
   }
 
+  // 将缓存的图片发送出去
   const handleSendImages = () => {
-    if (pastedImgs().length === 0) return
+    if (bufferedImgs().length === 0) return
     if (activeType() === UnifyInfoType.Group) {
       ws()?.send(
         WsActions.SendGroupMsg,
         {
           group_id: activeId(),
-          message: pastedImgs(),
+          message: bufferedImgs(),
         },
         {},
       )
@@ -125,14 +196,15 @@ const InputArea: Component = () => {
         WsActions.SendPrivateMsg,
         {
           user_id: activeId(),
-          message: pastedImgs(),
+          message: bufferedImgs(),
         },
         {},
       )
     }
-    setPastedImgs([])
+    setBufferedImgs([])
   }
 
+  // 用于监听快捷键发送
   const handleKeyDown = (e: TextareaElKeyboardEvent) => {
     if (e.isComposing) return
     console.log(e.key, e.shiftKey, e.ctrlKey)
@@ -166,12 +238,21 @@ const InputArea: Component = () => {
     <div class="flex flex-col h-full">
       <div title="toolbar" class="flex p-1 gap-1">
         {/* 左侧工具栏 */}
-        <Button variant="ghost" class="px-3">
+        <Button
+          variant="ghost"
+          disabled={filePathVisible()}
+          class="px-3"
+          onClick={() => openImgDlg()}
+        >
           <div class="i-teenyicons:image-outline" />
         </Button>
-        <Button variant="ghost" class="px-3">
+        <ToggleButton
+          disabled={bufferedImgs().length > 0}
+          pressed={filePathVisible()}
+          onChange={handleFilePathVisibility}
+        >
           <div class="i-teenyicons:attachment-outline" />
-        </Button>
+        </ToggleButton>
         <Popover>
           <PopoverTrigger
             as={(_props: PopoverTriggerProps) => (
@@ -205,25 +286,48 @@ const InputArea: Component = () => {
         <ToggleButton>
           <FormulaFx />
         </ToggleButton>
+
         <ToggleButton>
           <div class="i-teenyicons:code-outline" />
         </ToggleButton>
         {/* 中间备用栏，用于发送图片，文件等 */}
         <div class="flex-grow flex justify-center gap-1 items-center">
-          <Show when={pastedImgs().length > 0}>
+          <Show when={bufferedImgs().length > 0}>
             <div>
-              Pasted {pastedImgs().length} image{pastedImgs().length > 1 && 's'}
+              Buffered {bufferedImgs().length} image
+              {bufferedImgs().length > 1 && 's'}
             </div>
             <Button variant="secondary" onClick={handleSendImages}>
               Send
             </Button>
-            <Button variant="destructive" onClick={() => setPastedImgs([])}>
+            <Button variant="destructive" onClick={() => setBufferedImgs([])}>
               Discard
+            </Button>
+          </Show>
+          <Show when={filePathVisible()}>
+            <TextFieldRoot>
+              <TextField
+                placeholder="填入本地文件路径"
+                onChange={(e: Event) => {
+                  setFilePathToUpload((e.target as HTMLInputElement).value)
+                }}
+              />
+            </TextFieldRoot>
+            <Button variant="secondary" onClick={handleFileUpload}>
+              Send
+            </Button>
+            <Button variant="destructive" onClick={handleFileUploadCancel}>
+              Cancel
             </Button>
           </Show>
         </div>
         {/* 右侧发送，恢复按钮 */}
-        <Button variant="ghost" class="px-3" onClick={sendSimpleMessage}>
+        <Button
+          variant="ghost"
+          disabled={isSending()}
+          class="px-3"
+          onClick={sendSimpleMessage}
+        >
           <div class="i-teenyicons:send-outline" />
         </Button>
         <Button

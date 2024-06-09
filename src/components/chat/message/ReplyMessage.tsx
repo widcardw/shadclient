@@ -38,9 +38,7 @@ const ReplyMessage: Component<{ m: CommonReplyMessage }> = (props) => {
         </div>
         <div>
           <For
-            each={(foundMsg()?.message as MultiTypeReceivedMessage[]).filter(
-              (i) => i.type !== 'reply',
-            )}
+            each={foundMsg()?.message as MultiTypeReceivedMessage[]}
           >
             {(i) => <UnifiedMessage m={i} />}
           </For>

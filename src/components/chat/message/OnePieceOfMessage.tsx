@@ -161,7 +161,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
     <div class="one-piece space-y-1" id={(props.m?.message_id || 0).toString()}>
       <div title="user info" class="flex items-center gap-2">
         <span class="text-secondary-foreground/50">
-          {props.m?.sender?.card || props.m?.sender?.nickname}
+          {props.m?.sender?.card || props.m?.sender?.nickname || props.m?.user_id}
         </span>
         <Show when={props.m?.deleted}>
           <Badge variant="secondary">已撤回</Badge>
