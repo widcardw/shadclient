@@ -9,17 +9,19 @@ import {
 } from '@/libs/types/messages/sent-message'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { buildMessage } from '@/libs/utils/message_builder'
-import { transformTex } from '@/libs/utils/transform-tex'
+import { msgContentToSvg, transformTex } from '@/libs/utils/transform-tex'
 import { u8toBase64 } from '@/libs/utils/u8Tob64'
 import { WsActions } from '@/libs/ws/websocket'
+import type { HoverCardTriggerProps } from '@kobalte/core/hover-card'
 import type { PopoverTriggerProps } from '@kobalte/core/popover'
 import clsx from 'clsx'
 import { nanoid } from 'nanoid'
 import { type Component, For, Show, createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
-import { useFileDialog, useStorage, whenever } from 'solidjs-use'
+import { useDebounceFn, useFileDialog, useStorage, whenever } from 'solidjs-use'
 import { FormulaFx } from '../icons/math-icon'
 import { Button } from '../ui/button'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Separator } from '../ui/separator'
 import { TextField, TextFieldRoot } from '../ui/textfield'
@@ -123,6 +125,17 @@ const InputArea: Component = () => {
       duration: 10000,
     })
   }
+
+  // 预览公式
+  const [texPreview, setTexPreview] = createSignal('Nothing to preview.')
+  const debouncedPreview = useDebounceFn(() => {
+    const el = sendEl()
+    if (!enableTex() || !el) return
+    const msg = el.value
+    console.log('debounced tex', msg)
+    if (!msg.startsWith('/am') || msg.startsWith('/tex')) return
+    setTexPreview(msgContentToSvg(msg))
+  }, 800)
 
   // 仅发送文本消息
   const handlePreprocess = async (msg: string) => {
@@ -240,6 +253,7 @@ const InputArea: Component = () => {
         return
       }
     }
+    debouncedPreview()
   }
 
   const handleAddFace = (id: number) => {
@@ -302,11 +316,25 @@ const InputArea: Component = () => {
           </PopoverContent>
         </Popover>
 
-        <ToggleButton pressed={enableTex()} onChange={(b) => setEnableTex(b)}>
-          <FormulaFx />
-        </ToggleButton>
+        <HoverCard placement="top" fitViewport>
+          <HoverCardTrigger
+            as={(_props: HoverCardTriggerProps) => (
+              // @ts-ignore cast button to element
+              <ToggleButton
+                pressed={enableTex()}
+                onChange={(b) => setEnableTex(b)}
+                {..._props}
+              >
+                <FormulaFx />
+              </ToggleButton>
+            )}
+          />
+          <HoverCardContent class="of-x-auto of-hidden">
+            <div class="block mx-auto" innerHTML={texPreview()} />
+          </HoverCardContent>
+        </HoverCard>
 
-        <ToggleButton>
+        <ToggleButton disabled>
           <div class="i-teenyicons:code-outline" />
         </ToggleButton>
         {/* 中间备用栏，用于发送图片，文件等 */}
@@ -383,6 +411,7 @@ const InputArea: Component = () => {
             'm0 p4 flex-1 leading-loose',
             'bg-background',
             'disabled:bg-secondary/50',
+            'break-all',
           )}
           ref={(r) => setSendEl(r)}
           placeholder={`${sendBy()} 发送消息`}

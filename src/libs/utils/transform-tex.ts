@@ -49,4 +49,4 @@ async function transformTex(msg: string) {
   return [createImageMessage(b64), createTextMessage(msg)]
 }
 
-export { transformTex }
+export { transformTex, msgContentToSvg }
