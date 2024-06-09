@@ -9,6 +9,7 @@ import type {
   CommonRecordMessage,
   CommonReplyMessage,
   CommonTextMessage,
+  CommonVideoMessage,
 } from '@/libs/types/messages/common-message'
 import type { MultiTypeReceivedMessage } from '@/libs/types/messages/received-message'
 import { type Component, Match, Switch } from 'solid-js'
@@ -22,6 +23,7 @@ import { RecordMessage } from './RecordMessage'
 import { ReplyMessage } from './ReplyMessage'
 import { TextMessage } from './TextMessage'
 import { UnsupportedMessage } from './UnsupportedMessage'
+import { VideoMessage } from './VideoMessage'
 
 const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
   return (
@@ -55,6 +57,9 @@ const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
       </Match>
       <Match when={props.m?.type === 'forward'}>
         <ForwardMessageFolded m={props.m as CommonForwardMessage} />
+      </Match>
+      <Match when={props.m?.type === 'video'}>
+        <VideoMessage m={props.m as CommonVideoMessage} />
       </Match>
     </Switch>
   )

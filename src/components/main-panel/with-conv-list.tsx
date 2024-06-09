@@ -17,7 +17,7 @@ const WithConvList: Component = () => {
       {/* 聊天主面板 */}
       <ResizablePanel initialSize={0.8}>
         <div class="hidden">{activeId()}, type: {activeType()}</div>
-        <Switch fallback={<div class="p4">No chat selected</div>}>
+        <Switch fallback={<div class="p4">No chat selected.</div>}>
           <Match when={activeType() === UnifyInfoType.Private}>
             <PrivateChat uid={activeId()} />
           </Match>

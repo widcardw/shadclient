@@ -14,7 +14,7 @@ const UnsupportedMessage: Component<{ m: MultiTypeReceivedMessage }> = (
   })
   return (
     <details>
-      <summary>[不支持的消息类型: {props.m?.type}]</summary>
+      <summary>[Unsupported Message: {props.m?.type}]</summary>
       <pre class="whitespace-pre-wrap break-all">
         {transformLink(content())}
       </pre>

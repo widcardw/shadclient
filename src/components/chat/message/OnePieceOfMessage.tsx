@@ -164,7 +164,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
           {props.m?.sender?.card || props.m?.sender?.nickname || props.m?.user_id}
         </span>
         <Show when={props.m?.deleted}>
-          <Badge variant="secondary">已撤回</Badge>
+          <Badge variant="secondary">Recalled</Badge>
         </Show>
         <Show
           when={

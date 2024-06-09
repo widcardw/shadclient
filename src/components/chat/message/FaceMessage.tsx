@@ -12,7 +12,7 @@ const FaceMessage: Component<{ m: CommonFaceMessage }> = (props) => {
   const [imgShown, setImgShown] = createSignal(true)
 
   return (
-    <Show when={imgShown()} fallback={<>[表情:${props.m.data.id}]</>}>
+    <Show when={imgShown()} fallback={<>[Face:${props.m.data.id}]</>}>
       <img
         class="w-5 h-5 inline-block vertical-baseline"
         src={`${KOISHI_QFACE_BASE_URL}${props.m.data.id}.gif`}

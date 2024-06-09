@@ -12,7 +12,7 @@ const FileMessage: Component<{ m: CommonFileMessage }> = (props) => {
       download={props.m.data.name}
       rel="noreferrer"
     >
-      [文件] {props.m.data.name} {size}
+      [File] {props.m.data.name} {size}
     </a>
   )
 }

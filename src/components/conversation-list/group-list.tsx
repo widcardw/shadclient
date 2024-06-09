@@ -77,7 +77,7 @@ const GroupList: Component = () => {
               >
                 {group?.group_memo ||
                   group?.group_name ||
-                  `群聊 ${group.group_id}`}
+                  `Group Chat ${group.group_id}`}
               </Button>
             )}
           </For>

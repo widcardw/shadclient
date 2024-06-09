@@ -35,7 +35,7 @@ interface CommonImageMessage extends CommonMessageType {
     /**
      * 可能是冗余字段？
      */
-    url?: string
+    url: string
   }
 }
 

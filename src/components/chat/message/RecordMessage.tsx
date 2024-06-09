@@ -5,7 +5,7 @@ const RecordMessage: Component<{ m: CommonRecordMessage }> = (props) => {
   return (
     <div class="flex items-center gap-2">
       <a href={props.m.data.url} target="_blank" rel="noreferrer">
-        [语音消息]
+        [Record Message]
       </a>
     </div>
   )

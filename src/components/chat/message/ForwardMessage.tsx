@@ -49,14 +49,14 @@ const ForwardedDialog: Component<{ id: string }> = (props) => {
 
           return (
             <Button variant="outline" {..._props} onClick={click}>
-              [合并转发消息]
+              [Forward Message]
             </Button>
           )
         }}
       />
       <DialogContent class="sm:max-w-[800px]" onInteractOutside={ev => ev.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>合并转发消息</DialogTitle>
+          <DialogTitle>Forward Message</DialogTitle>
         </DialogHeader>
         <div class="max-h-80vh of-y-auto of-hidden flex flex-col gap-2">
           <Show when={forwardStore[props.id]} fallback="加载中">

@@ -416,7 +416,7 @@ const InputArea: Component = () => {
             'break-all',
           )}
           ref={(r) => setSendEl(r)}
-          placeholder={`${sendBy()} 发送消息`}
+          placeholder={`Press ${sendBy()} to send a message.`}
           disabled={
             ws() === undefined ||
             isSending() ||
