@@ -9,6 +9,7 @@ import {
 } from '@/libs/types/messages/sent-message'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { buildMessage } from '@/libs/utils/message_builder'
+import { transformTex } from '@/libs/utils/transform-tex'
 import { u8toBase64 } from '@/libs/utils/u8Tob64'
 import { WsActions } from '@/libs/ws/websocket'
 import type { PopoverTriggerProps } from '@kobalte/core/popover'
@@ -45,6 +46,7 @@ const [bufferedImgs, setBufferedImgs] = createSignal<CommonImageMessage[]>([])
 
 const InputArea: Component = () => {
   const [sendBy] = useStorage('sendBy', 'Ctrl Enter')
+  const [enableTex, setEnableTex] = useStorage('enable-tex', true)
 
   // 使用 toolbar 上的按钮选择图片
   const {
@@ -123,7 +125,12 @@ const InputArea: Component = () => {
   }
 
   // 仅发送文本消息
-  const sendSimpleMessage = () => {
+  const handlePreprocess = async (msg: string) => {
+    if (enableTex() && msg && (msg.startsWith('/am') || msg.startsWith('/tex')))
+      return await transformTex(msg)
+    return msg
+  }
+  const sendSimpleMessage = async () => {
     if (sendEl() === undefined) {
       toast.error('未找到聊天窗口')
       return
@@ -140,7 +147,7 @@ const InputArea: Component = () => {
         WsActions.SendGroupMsg,
         {
           group_id: activeId(),
-          message: msg, // buildMessage(msg),
+          message: await handlePreprocess(msg), // buildMessage(msg),
         },
         {},
       )
@@ -150,7 +157,7 @@ const InputArea: Component = () => {
         WsActions.SendPrivateMsg,
         {
           user_id: activeId(),
-          message: msg, // buildMessage(msg),
+          message: await handlePreprocess(msg), // buildMessage(msg),
         },
         {},
       )
@@ -295,7 +302,7 @@ const InputArea: Component = () => {
           </PopoverContent>
         </Popover>
 
-        <ToggleButton>
+        <ToggleButton pressed={enableTex()} onChange={(b) => setEnableTex(b)}>
           <FormulaFx />
         </ToggleButton>
 
