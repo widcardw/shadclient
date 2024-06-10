@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { CommonImageMessage } from '@/libs/types/messages/common-message'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
 import clsx from 'clsx'
@@ -58,11 +59,7 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
         as={(_props: DialogTriggerProps) => (
           <Show
             when={!isLoading()}
-            fallback={
-              <div class="flex items-center justify-center shadow">
-                <div class="i-teenyicons:loader-outline animate-spin" />
-              </div>
-            }
+            fallback={<Skeleton class="w-200px h-150px" />}
           >
             <Show
               when={!error()}
@@ -94,8 +91,12 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
                   }}
                 />
                 <Show when={isLongImg()}>
-                  <Badge variant="secondary" class="absolute bottom-0 left-0 gap-1">
-                    Long Image <div class="i-teenyicons:double-caret-down-circle-outline" />
+                  <Badge
+                    variant="secondary"
+                    class="absolute bottom-0 left-0 gap-1"
+                  >
+                    Long Image{' '}
+                    <div class="i-teenyicons:double-caret-down-circle-outline" />
                   </Badge>
                 </Show>
               </div>
