@@ -1,24 +1,38 @@
+import { Skeleton } from '@/components/ui/skeleton'
 import type {
   CommonFaceMessage,
   CommonMarketFaceMessage,
 } from '@/libs/types/messages/common-message'
 import { type Component, Show, createSignal } from 'solid-js'
+import { useImage } from 'solidjs-use'
 
 const CQ_FACE_BASE_URL =
   'https://cdn.jsdelivr.net/gh/Yan-Zero/QFace@master/gif/s'
 const KOISHI_QFACE_BASE_URL = 'https://koishi.js.org/QFace/gif/s'
 
 const FaceMessage: Component<{ m: CommonFaceMessage }> = (props) => {
-  const [imgShown, setImgShown] = createSignal(true)
+  const [imgOptions] = createSignal({
+    src: `${KOISHI_QFACE_BASE_URL}${props.m.data.id}.gif`,
+  })
+  const { isLoading, error } = useImage(imgOptions)
 
   return (
-    <Show when={imgShown()} fallback={<>[Face:${props.m.data.id}]</>}>
-      <img
-        class="w-5 h-5 inline-block vertical-baseline"
-        src={`${KOISHI_QFACE_BASE_URL}${props.m.data.id}.gif`}
-        alt={`[表情:${props.m.data.id}]`}
-        onError={() => setImgShown(false)}
-      />
+    <Show
+      when={!isLoading()}
+      fallback={
+        <Skeleton
+          class="w-5 h-5 rounded-full inline-block"
+          style={{ 'box-sizing': 'border-box' }}
+        />
+      }
+    >
+      <Show when={!error()} fallback={<>[表情:{props.m.data.id}]</>}>
+        <img
+          class="w-5 h-5 inline-block"
+          style={{ 'box-sizing': 'border-box' }}
+          src={imgOptions().src}
+        />
+      </Show>
     </Show>
   )
 }

@@ -17,12 +17,20 @@ import clsx from 'clsx'
 import { nanoid } from 'nanoid'
 import { type Component, For, Show, createSignal } from 'solid-js'
 import { toast } from 'solid-sonner'
-import { useDebounceFn, useFileDialog, useStorage, whenever } from 'solidjs-use'
+import {
+  useDebounceFn,
+  useFileDialog,
+  useImage,
+  useStorage,
+  whenever,
+} from 'solidjs-use'
+import { IcOutlineBrokenImage } from '../icons/image-broken'
 import { FormulaFx } from '../icons/math-icon'
 import { Button } from '../ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Separator } from '../ui/separator'
+import { Skeleton } from '../ui/skeleton'
 import { TextField, TextFieldRoot } from '../ui/textfield'
 import { ToggleButton } from '../ui/toggle'
 import { CQ_FACE_IDS, KOISHI_QFACE_BASE_URL } from './message/FaceMessage'
@@ -301,19 +309,33 @@ const InputArea: Component = () => {
             class="grid grid-cols-6 gap-2 max-h-[400px] max-w-[400px] of-y-auto of-hidden"
           >
             <For each={CQ_FACE_IDS}>
-              {(id) => (
-                <Button
-                  variant="ghost"
-                  class="px-3"
-                  onClick={() => handleAddFace(id)}
-                >
-                  <img
-                    class="w-5 h-5"
-                    src={`${KOISHI_QFACE_BASE_URL}${id}.gif`}
-                    alt={`[表情:${id}]`}
-                  />
-                </Button>
-              )}
+              {(id) => {
+                const [imgOptions] = createSignal({
+                  src: `${KOISHI_QFACE_BASE_URL}${id}.gif`,
+                })
+                const { isLoading, error } = useImage(imgOptions)
+                return (
+                  <Button
+                    variant="ghost"
+                    class="px-3 block"
+                    onClick={() => handleAddFace(id)}
+                  >
+                    <Show
+                      when={!isLoading()}
+                      fallback={<Skeleton class="w-5 h-5" />}
+                    >
+                      <Show
+                        when={!error()}
+                        fallback={
+                          <div class="i-teenyicons:mood-laugh-outline w-5 h-5" />
+                        }
+                      >
+                        <img src={imgOptions().src} class="w-5 h-5" />
+                      </Show>
+                    </Show>
+                  </Button>
+                )
+              }}
             </For>
           </PopoverContent>
         </Popover>

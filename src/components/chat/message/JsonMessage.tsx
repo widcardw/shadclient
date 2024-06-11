@@ -1,6 +1,9 @@
+import { IcOutlineBrokenImage } from '@/components/icons/image-broken'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { CommonJsonCardMessage } from '@/libs/types/messages/common-message'
 import { transformLink } from '@/libs/utils/transform-link'
-import { type Component, For, Show } from 'solid-js'
+import { type Component, For, Show, createSignal } from 'solid-js'
+import { useImage } from 'solidjs-use'
 
 interface JsonCardDetail {
   appid: string
@@ -35,6 +38,13 @@ function formatPreviewUrl(url: string) {
 }
 
 const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
+  const { isLoading: icoLoading, error: icoError } = useImage({
+    src: props.card.icon,
+  })
+  const { isLoading: prevLoading, error: prevError } = useImage({
+    src: formatPreviewUrl(props.card.preview),
+  })
+
   return (
     <a
       href={props.card.qqdocurl}
@@ -43,22 +53,41 @@ const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
       class="block text-primary bg-muted rounded-md px-4 py-2 space-y-1 !decoration-none"
       style={{ width: 'max-content' }}
     >
-      <div class="flex items-center gap-2">
-        <img
-          class="w-4 h-4 rounded-2px"
-          src={props.card.icon}
-          alt="[miniapp]"
-          referrerPolicy="no-referrer"
-        />
-        <div class="font-bold text-sm text-foreground/70">{props.card.title}</div>
+      <div class="flex items-center space-x-2">
+        <Show when={!icoLoading()} fallback={<Skeleton class="w-4 h-4" />}>
+          <Show
+            when={!icoError()}
+            fallback={<IcOutlineBrokenImage class="w-4 h-4" />}
+          >
+            <img
+              class="w-4 h-4 rounded-2px"
+              src={props.card.icon}
+              alt="[miniapp]"
+              referrerPolicy="no-referrer"
+            />
+          </Show>
+        </Show>
+        <div class="font-bold text-sm text-foreground/70">
+          {props.card.title}
+        </div>
       </div>
-      <div>{props.card.desc.trim()}</div>
-      <img
-        src={formatPreviewUrl(props.card.preview)}
-        alt="[preview]"
-        referrerPolicy="no-referrer"
-        class="max-w-400px rounded"
-      />
+      <div>{props.card.desc}</div>
+      <Show
+        when={!prevLoading()}
+        fallback={<Skeleton class="w-300px h-200px" />}
+      >
+        <Show
+          when={!prevError()}
+          fallback={<Skeleton class="w-300px h-200px animate-none" />}
+        >
+          <img
+            src={formatPreviewUrl(props.card.preview)}
+            alt="[preview]"
+            referrerPolicy="no-referrer"
+            class="max-w-400px rounded"
+          />
+        </Show>
+      </Show>
     </a>
   )
 }
