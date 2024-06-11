@@ -36,9 +36,11 @@ const ReplyMessage: Component<{ m: CommonReplyMessage }> = (props) => {
           <div class="i-teenyicons:quote-outline" />
           <div class="text-foreground/50">{foundMsg()?.sender.nickname}</div>
         </div>
-        <div>
+        <div class="min-w-100px max-w-800px whitespace-pre-wrap break-all">
           <For
-            each={foundMsg()?.message as MultiTypeReceivedMessage[]}
+            each={(foundMsg()?.message as MultiTypeReceivedMessage[]).filter(
+              (i) => i.type !== 'reply',
+            )}
           >
             {(i) => <UnifiedMessage m={i} />}
           </For>
