@@ -21,14 +21,14 @@ const FaceMessage: Component<{ m: CommonFaceMessage }> = (props) => {
       when={!isLoading()}
       fallback={
         <Skeleton
-          class="w-5 h-5 rounded-full inline-block"
+          class="w-5 h-5 rounded-full inline-block vertical-middle"
           style={{ 'box-sizing': 'border-box' }}
         />
       }
     >
       <Show when={!error()} fallback={<>[表情:{props.m.data.id}]</>}>
         <img
-          class="w-5 h-5 inline-block"
+          class="w-5 h-5 inline-block vertical-middle"
           style={{ 'box-sizing': 'border-box' }}
           src={imgOptions().src}
         />

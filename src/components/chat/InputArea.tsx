@@ -317,7 +317,7 @@ const InputArea: Component = () => {
                 return (
                   <Button
                     variant="ghost"
-                    class="px-3 block"
+                    class="p-0"
                     onClick={() => handleAddFace(id)}
                   >
                     <Show
