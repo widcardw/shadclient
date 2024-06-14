@@ -8,7 +8,7 @@ import {
 import { produce } from 'solid-js/store'
 import type { CqReceivedMessage } from '../../messages/received-message'
 import type { GroupUser } from '../group-user'
-import type { CommonMessageWsObject } from './common-message-ws-object'
+import { type CommonMessageWsObject, dedupAtMessage } from './common-message-ws-object'
 
 interface GroupMessageWsObject extends CommonMessageWsObject {
   message_type: 'group'
@@ -46,6 +46,8 @@ function dispatch(data: GroupMessageWsObject) {
   }
 
   const session = groupConvStore[group_id]
+  data.message = dedupAtMessage(data.message)
+
   if (session) {
     // // 处理群聊名称，但每次有消息进来的时候都处理一次有点逆天，不知道有没有什么好的办法
     // if (!session.nick || session.nick?.startsWith('群聊')) {

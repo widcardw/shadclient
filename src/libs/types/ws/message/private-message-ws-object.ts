@@ -3,7 +3,7 @@ import { friendConvStore, setFriendConvStore } from '@/libs/states/sessions'
 import { produce } from 'solid-js/store'
 import type { CqReceivedMessage } from '../../messages/received-message'
 import type { SingleFriendInfo } from '../private-user-info'
-import type { CommonMessageWsObject } from './common-message-ws-object'
+import { type CommonMessageWsObject, dedupAtMessage } from './common-message-ws-object'
 
 interface PrivateMessageWsObject extends CommonMessageWsObject {
   message_type: 'private'
@@ -31,6 +31,8 @@ function dispatch(data: PrivateMessageWsObject) {
   if (raw_message.trim() === '') return
 
   const session = friendConvStore[user_id]
+
+  data.message = dedupAtMessage(data.message)
   if (session) {
     // setFriendConvStore(user_id, 'list', prev => [...prev, data])
     setFriendConvStore(
