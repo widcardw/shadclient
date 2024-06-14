@@ -34,7 +34,9 @@ function getGroupName(group_id: number): string {
 }
 
 function dispatch(data: GroupMessageWsObject) {
-  const { group_id, sender } = data
+  const { group_id, sender, raw_message } = data
+  // 屏蔽空消息
+  if (raw_message.trim() === '') return
 
   // 缓存已经发送过消息的用户的 card/nickname，用于被 @ 时将他显示出来
   if (!groupMemberCard[group_id]?.[sender.user_id]) {

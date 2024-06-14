@@ -26,7 +26,10 @@ function getPrivateName(user_id: number) {
 }
 
 function dispatch(data: PrivateMessageWsObject) {
-  const { user_id } = data
+  const { user_id, raw_message } = data
+  // 屏蔽空消息
+  if (raw_message.trim() === '') return
+
   const session = friendConvStore[user_id]
   if (session) {
     // setFriendConvStore(user_id, 'list', prev => [...prev, data])
