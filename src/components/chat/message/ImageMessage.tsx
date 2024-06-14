@@ -142,7 +142,7 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
           </Show>
         )}
       />
-      <DialogContent class=" of-y-auto">
+      <DialogContent class="max-w-1280px of-y-auto">
         <DialogHeader>
           <DialogTitle>Image Details</DialogTitle>
         </DialogHeader>
