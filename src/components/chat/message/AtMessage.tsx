@@ -7,11 +7,11 @@ const AtMessage: Component<{ m: CommonAtMessage }> = (props) => {
   return (
     <>
       {activeType() === UnifyInfoType.Group
-        ? props.m.data.qq === 0
-          ? 'all'
-          : `@${
+        ? Number(props.m.data.qq) !== 0
+          ? `@${
               groupMemberCard[activeId()]?.[props.m.data.qq] || props.m.data.qq
             }`
+          : '@all'
         : ''}
     </>
   )
