@@ -12,6 +12,7 @@ This a web client for tencent.
 - unocss (with preset icons)
 - iconify-json/teenyicons
 - solid-js/use
+- zoom-image
 
 ## Status
 

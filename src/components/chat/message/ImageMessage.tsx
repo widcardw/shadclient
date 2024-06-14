@@ -1,3 +1,4 @@
+import { CarbonRotateClockwiseAlt } from '@/components/icons/rotate-icon'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,12 +12,14 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import type { CommonImageMessage } from '@/libs/types/messages/common-message'
 import type { DialogTriggerProps } from '@kobalte/core/dialog'
+import { useZoomImageWheel } from '@zoom-image/solid'
 import clsx from 'clsx'
 import {
   type Component,
   Match,
   Show,
   Switch,
+  createEffect,
   createMemo,
   createSignal,
 } from 'solid-js'
@@ -34,10 +37,10 @@ const ImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
 }
 
 const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
-  const [cls, setCls] = createSignal('max-w-full max-h-full')
-  const setNormal = () => setCls('max-w-full max-h-full')
-  const setWFull = () => setCls('max-w-full')
-  const setHFull = () => setCls('max-h-full')
+  // const [cls, setCls] = createSignal('max-w-full max-h-full')
+  // const setNormal = () => setCls('max-w-full max-h-full')
+  // const setWFull = () => setCls('max-w-full')
+  // const setHFull = () => setCls('max-h-full')
   const [imgOptions] = createSignal({
     src: props.m.data.url,
     referrerPolicy: 'no-referrer',
@@ -52,6 +55,41 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
     if (!w || !h) return
     if (w > 400 && h > 400 && h / w > 1.5) return true
   })
+
+  const [imgWheelContainer, setImgWheelContainer] =
+    createSignal<HTMLDivElement>()
+  const { createZoomImage, zoomImageState, setZoomImageState } =
+    useZoomImageWheel()
+
+  createEffect(() => {
+    const container = imgWheelContainer()
+    if (container) createZoomImage(container)
+  })
+
+  const zoomInWheel = () => {
+    setZoomImageState({
+      currentZoom: zoomImageState.currentZoom + 0.5,
+    })
+  }
+
+  const zoomOutWheel = () => {
+    setZoomImageState({
+      currentZoom: zoomImageState.currentZoom - 0.5,
+    })
+  }
+
+  const rotate = () => {
+    setZoomImageState({
+      currentRotation: zoomImageState.currentRotation + 90,
+    })
+  }
+
+  const reset = () => {
+    setZoomImageState({
+      currentZoom: 1,
+      currentRotation: 0,
+    })
+  }
 
   return (
     <Dialog>
@@ -77,7 +115,7 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
               }
             >
               {/* @ts-ignore cast html element to button element */}
-              <div class="relative cursor-zoom-in" {..._props}>
+              <div class="relative cursor-zoom-in" style={{width: 'fit-content'}} {..._props}>
                 <img
                   src={imgOptions().src}
                   alt="图片"
@@ -104,32 +142,44 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
           </Show>
         )}
       />
-      <DialogContent class="max-w-[1280px] of-y-auto">
+      <DialogContent class=" of-y-auto">
         <DialogHeader>
           <DialogTitle>Image Details</DialogTitle>
         </DialogHeader>
-        <div class="max-h-70vh overflow-auto">
+        <div
+          class="max-h-70vh cursor-grab overflow-y-auto"
+          ref={(r) => setImgWheelContainer(r)}
+        >
           <img
             src={imgOptions().src}
             alt="图片"
             referrerPolicy="no-referrer"
-            class={clsx('block mx-auto', cls())}
+            class={clsx('block mx-auto', 'max-w-full max-h-full')}
           />
         </div>
 
         <DialogFooter>
-          <Button onClick={setNormal}>Normal</Button>
-          <Button onClick={setWFull}>Width Full</Button>
-          <Button onClick={setHFull}>Height Full</Button>
+          <Button variant="ghost" onClick={reset}>
+            {Math.round(zoomImageState.currentZoom * 100)}%
+          </Button>
+          <Button variant="ghost" onClick={zoomInWheel}>
+            <div class="i-teenyicons:zoom-in-outline" />
+          </Button>
+          <Button variant="ghost" onClick={zoomOutWheel}>
+            <div class="i-teenyicons:zoom-out-outline" />
+          </Button>
+          <Button variant="ghost" onClick={rotate}>
+            <CarbonRotateClockwiseAlt />
+          </Button>
           <Button
             as={'a'}
-            class="!underline-none"
+            variant="ghost"
             href={props.m.data.url}
             target="_blank"
             rel="noopener noreferrer"
             download={props.m.data.file}
           >
-            Download
+            <div class="i-teenyicons:download-outline" />
           </Button>
         </DialogFooter>
       </DialogContent>

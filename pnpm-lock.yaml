@@ -17,6 +17,12 @@ importers:
       '@kobalte/utils':
         specifier: ^0.9.0
         version: 0.9.0(solid-js@1.8.17)
+      '@zoom-image/core':
+        specifier: ^0.36.2
+        version: 0.36.2
+      '@zoom-image/solid':
+        specifier: ^0.2.19
+        version: 0.2.19(solid-js@1.8.17)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -603,6 +609,9 @@ packages:
     peerDependencies:
       solid-js: ^1.7.11
 
+  '@namnode/store@0.1.0':
+    resolution: {integrity: sha512-4NGTldxKcmY0UuZ7OEkvCjs8ZEoeYB6M2UwMu74pdLiFMKxXbj9HdNk1Qn213bxX1O7bY5h+PLh5DZsTURZkYA==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -874,6 +883,14 @@ packages:
     resolution: {integrity: sha512-af9hhtW11geF56cotKUE16Fr+FirTdV/Al/usjKJ6P5hnCEQnqSHXQDFXL5Y6vXwcvLDmOhHYNrVR8duKgC8Mw==}
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0
+
+  '@zoom-image/core@0.36.2':
+    resolution: {integrity: sha512-NtqIA82xJUtTS8RMey3VUGF/q1tjkFZZUAR6edGdtiy43xIV7a239uuxomuU94WBkBtFztXL/ieyxxL8iPiyFg==}
+
+  '@zoom-image/solid@0.2.19':
+    resolution: {integrity: sha512-47clIEl6bGqMYioxqTpVKgQ+ETQeWdNodAJyvYwZB41nS+y9DrXmI/VDcJIAFLyUceETkYJ9qqzmJsTY53vqiA==}
+    peerDependencies:
+      solid-js: ^1.0.0
 
   acorn@8.11.3:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
@@ -2111,6 +2128,8 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
+  '@namnode/store@0.1.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -2423,6 +2442,15 @@ snapshots:
       vite: 5.2.12
     transitivePeerDependencies:
       - rollup
+
+  '@zoom-image/core@0.36.2':
+    dependencies:
+      '@namnode/store': 0.1.0
+
+  '@zoom-image/solid@0.2.19(solid-js@1.8.17)':
+    dependencies:
+      '@zoom-image/core': 0.36.2
+      solid-js: 1.8.17
 
   acorn@8.11.3: {}
 
