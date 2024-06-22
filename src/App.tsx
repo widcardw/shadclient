@@ -17,7 +17,7 @@ const App: Component = () => {
             <NoticePanel />
           </Match>
           <Match when={selectedList() === SelectedList.None}>
-            <div class="p-4">
+            <div class="p-4 text-muted-foreground">
               Empty here.
             </div>
           </Match>

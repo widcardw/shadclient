@@ -64,7 +64,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   return (
     <div class="one-piece" id={props.m.message_id.toString()}>
       <div title="user info" class="flex items-center gap-2">
-        <span class="op-70 flex justify-center">
+        <span class="text-muted-foreground flex justify-center">
           {props.m.sender.remark || props.m.sender.nickname}
           <Show when={props.m.deleted}>
             <Badge variant="outline">已撤回</Badge>
@@ -117,9 +117,9 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
       <div>
         <Show
           when={Array.isArray(props.m.message)}
-          fallback={<UnifiedMessage m={props.m.message as MultiTypeMsg} />}
+          fallback={<UnifiedMessage m={props.m.message as unknown as MultiTypeMsg} />}
         >
-          <For each={props.m.message as MultiTypeMsg[]}>
+          <For each={props.m.message}>
             {(i) => <UnifiedMessage m={i} />}
           </For>
         </Show>
@@ -160,7 +160,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
   return (
     <div class="one-piece space-y-1" id={(props.m?.message_id || 0).toString()}>
       <div title="user info" class="flex items-center gap-2">
-        <span class="text-secondary-foreground/50">
+        <span class="text-muted-foreground">
           {props.m?.sender?.card || props.m?.sender?.nickname || props.m?.user_id}
         </span>
         <Show when={props.m?.deleted}>
@@ -179,7 +179,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
               : props.m?.sender?.role}
           </Badge>
         </Show>
-        <span class="icon font-mono text-0.875rem text-secondary-foreground/50">
+        <span class="icon font-mono text-0.875rem text-muted-foreground">
           {timeToHourMinute(props.m?.time)}
         </span>
         <div

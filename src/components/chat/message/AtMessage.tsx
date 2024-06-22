@@ -5,7 +5,7 @@ import type { Component } from 'solid-js'
 
 const AtMessage: Component<{ m: CommonAtMessage }> = (props) => {
   return (
-    <>
+    <span class="text-muted-foreground">
       {activeType() === UnifyInfoType.Group
         ? Number(props.m.data.qq) !== 0
           ? `@${
@@ -13,7 +13,7 @@ const AtMessage: Component<{ m: CommonAtMessage }> = (props) => {
             }`
           : '@all'
         : ''}
-    </>
+    </span>
   )
 }
 

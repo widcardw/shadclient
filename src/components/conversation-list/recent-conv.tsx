@@ -17,20 +17,9 @@ import type { SingleGroupInfo } from '@/libs/types/ws/group-info'
 import { getGroupName } from '@/libs/types/ws/message/group-message-ws-object'
 import type { SingleFriendInfo } from '@/libs/types/ws/private-user-info'
 import { type UnifyInfo, UnifyInfoType } from '@/libs/types/ws/unify-info'
-import type { AlertDialogTitleProps } from '@kobalte/core/alert-dialog'
 import { type Component, For, Show, createMemo, createSignal } from 'solid-js'
 import { useDebounceFn, useStorage } from 'solidjs-use'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogClose,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import {
   ContextMenu,
@@ -87,9 +76,11 @@ const GroupButton: Component<{ i: SingleGroupInfo }> = (props) => {
       class="block w-full flex justify-between gap-2"
       onClick={() => changeTab(props.i)}
     >
-      {props.i.group_memo || props.i.group_name || `群聊 ${props.i.group_id}`}
+      <span class="of-x-hidden text-ellipsis">
+        {props.i.group_memo || props.i.group_name || `群聊 ${props.i.group_id}`}
+      </span>
       <Show when={groupConvStore[props.i.group_id].unread}>
-        <span class="text-gray">{groupConvStore[props.i.group_id].unread}</span>
+        <Badge variant="default">{groupConvStore[props.i.group_id].unread}</Badge>
       </Show>
     </Button>
   )
