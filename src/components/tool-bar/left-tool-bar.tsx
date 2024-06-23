@@ -32,7 +32,7 @@ const LeftToolBar: Component = () => {
     >
       <Button
         variant={selectedList() === SelectedList.Recent ? 'secondary' : 'ghost'}
-        class="px-3"
+        size="icon"
         onClick={() => setSelectedList(SelectedList.Recent)}
       >
         <div class="i-teenyicons:message-text-alt-outline" />
@@ -41,14 +41,14 @@ const LeftToolBar: Component = () => {
         variant={
           selectedList() === SelectedList.Friends ? 'secondary' : 'ghost'
         }
-        class="px-3"
+        size="icon"
         onClick={() => setSelectedList(SelectedList.Friends)}
       >
         <div class="i-teenyicons:user-circle-solid" />
       </Button>
       <Button
         variant={selectedList() === SelectedList.Groups ? 'secondary' : 'ghost'}
-        class="px-3"
+        size="icon"
         onClick={() => setSelectedList(SelectedList.Groups)}
       >
         <div class="i-teenyicons:users-outline" />
@@ -56,7 +56,7 @@ const LeftToolBar: Component = () => {
 
       <Button
         variant={selectedList() === SelectedList.Notice ? 'secondary' : 'ghost'}
-        class="px-3"
+        size="icon"
         onClick={() => setSelectedList(SelectedList.Notice)}
       >
         <div class="i-teenyicons:bell-outline" />
@@ -79,7 +79,7 @@ const LeftToolBar: Component = () => {
       <ConnectWsButton />
       <Button
         variant="ghost"
-        class="px-3"
+        size="icon"
         onClick={() => setConnection({ connect: false })}
       >
         <div class="i-teenyicons:link-remove-outline" />

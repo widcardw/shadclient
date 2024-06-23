@@ -18,7 +18,7 @@ const InfoDialog: Component = () => {
     <AlertDialog>
       <AlertDialogTrigger
         as={(props: AlertDialogTriggerProps) => (
-          <Button variant="ghost" class="px-3" {...props}>
+          <Button variant="ghost" size="icon" {...props}>
             <div class="i-teenyicons:info-circle-outline" />
           </Button>
         )}

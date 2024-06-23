@@ -36,7 +36,7 @@ const SettingsDialog: Component = () => {
     <Dialog open={open()} onOpenChange={setOpen}>
       <DialogTrigger
         as={(props: DialogTriggerProps) => (
-          <Button variant="ghost" class="px-3" {...props}>
+          <Button variant="ghost" size="icon" {...props}>
             <div class="i-teenyicons:cog-outline" />
           </Button>
         )}
@@ -67,7 +67,9 @@ const SettingsDialog: Component = () => {
               defaultValue={sendBy()}
               required
               itemComponent={(_props) => (
-                <SelectItem item={_props.item}>{_props.item.rawValue}</SelectItem>
+                <SelectItem item={_props.item}>
+                  {_props.item.rawValue}
+                </SelectItem>
               )}
               onChange={setSendBy}
             >

@@ -284,7 +284,7 @@ const InputArea: Component = () => {
         <Button
           variant="ghost"
           disabled={filePathVisible()}
-          class="px-3"
+          size="icon"
           onClick={() => openImgDlg()}
         >
           <div class="i-teenyicons:image-outline" />
@@ -299,7 +299,7 @@ const InputArea: Component = () => {
         <Popover>
           <PopoverTrigger
             as={(_props: PopoverTriggerProps) => (
-              <Button variant="ghost" class="px-3" {..._props}>
+              <Button variant="ghost" size="icon" {..._props}>
                 <div class="i-teenyicons:mood-smile-outline" />
               </Button>
             )}
@@ -369,12 +369,12 @@ const InputArea: Component = () => {
               Buffered {bufferedImgs().length} image
               {bufferedImgs().length > 1 && 's'}
             </div>
-            <Button variant="secondary" class="px-3" onClick={handleSendImages}>
+            <Button variant="secondary" size="icon" onClick={handleSendImages}>
               <div class="i-teenyicons:send-outline" />
             </Button>
             <Button
               variant="destructive"
-              class="px-3"
+              size="icon"
               onClick={() => setBufferedImgs([])}
             >
               <div class="i-teenyicons:bin-outline" />
@@ -390,19 +390,19 @@ const InputArea: Component = () => {
                 }}
               />
             </TextFieldRoot>
-            <Button variant="secondary" class="px-3" onClick={handleFileUpload}>
+            <Button variant="secondary" size="icon" onClick={handleFileUpload}>
               <div class="i-teenyicons:send-outline" />
             </Button>
             <Button
               variant="destructive"
-              class="px-3"
+              size="icon"
               onClick={handleFileUploadCancel}
             >
               <div class="i-teenyicons:bin-outline" />
             </Button>
             <Button
               variant="outline"
-              class="px-3"
+              size="icon"
               onClick={handleFileUploadToolTip}
             >
               <div class="i-teenyicons:question-outline" />
@@ -413,16 +413,12 @@ const InputArea: Component = () => {
         <Button
           variant="ghost"
           disabled={isSending()}
-          class="px-3"
+          size="icon"
           onClick={sendSimpleMessage}
         >
           <div class="i-teenyicons:send-outline" />
         </Button>
-        <Button
-          variant="ghost"
-          class="px-3"
-          onClick={() => setIsSending(false)}
-        >
+        <Button variant="ghost" size="icon" onClick={() => setIsSending(false)}>
           <div class="i-teenyicons:anti-clockwise-outline" />
         </Button>
       </div>

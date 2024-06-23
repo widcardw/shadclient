@@ -1,14 +1,14 @@
 import { ToggleButton } from '@/components/ui/toggle'
+import { WSURL } from '@/libs/config'
 import {
   connected,
   isConnecting,
   setConnection,
 } from '@/libs/states/connection'
-import { Show, type Component } from 'solid-js'
-import { Button } from '../ui/button'
-import { useLocalStorage } from 'solidjs-use'
-import { WSURL } from '@/libs/config'
 import clsx from 'clsx'
+import { type Component, Show } from 'solid-js'
+import { useLocalStorage } from 'solidjs-use'
+import { Button } from '../ui/button'
 
 const ConnectWsButton: Component = () => {
   const [wsUrl] = useLocalStorage('wsUrl', WSURL)
@@ -18,7 +18,7 @@ const ConnectWsButton: Component = () => {
       <Show
         when={!isConnecting()}
         fallback={
-          <Button variant="ghost" class="px-3">
+          <Button variant="ghost" size="icon">
             <div class="i-teenyicons:loader-outline animate-spin" />
           </Button>
         }
