@@ -76,12 +76,23 @@ interface CommonFaceMessage extends CommonMessageType {
 }
 
 interface CommonMarketFaceMessage extends CommonMessageType {
-  type :'marketface',
+  type: 'marketface',
   data: {
     summary: string
     face_id: string
     tab_id: string
     key: string
+  }
+}
+
+interface CommonMFaceMessage extends CommonMessageType {
+  type: "mface",
+  data: {
+    url: string,
+    emoji_package_id: number,
+    emoji_id: string,
+    key: string,
+    summary: string
   }
 }
 
@@ -126,6 +137,7 @@ interface CommonMessageSegment extends CommonMessageType {
 export type {
   CommonAtMessage,
   CommonFaceMessage,
+  CommonMFaceMessage,
   CommonFileMessage,
   CommonForwardMessage,
   CommonImageMessage,

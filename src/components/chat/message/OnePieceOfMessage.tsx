@@ -64,7 +64,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   return (
     <div class="one-piece" id={props.m.message_id.toString()}>
       <div title="user info" class="flex items-center gap-2">
-        <span class="text-muted-foreground flex justify-center">
+        <span class="text-muted-foreground flex items-center gap-2">
           {props.m.sender.remark || props.m.sender.nickname}
           <Show when={props.m.deleted}>
             <Badge variant="outline">已撤回</Badge>
@@ -83,7 +83,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
         {/* 自己发送的消息可撤回 */}
         <Show
           when={
-            props.m.self_id === props.m.target_id && props.m.deleted !== true
+            props.m.self_id === props.m.user_id && props.m.deleted !== true
           }
         >
           <AlertDialog>
@@ -114,7 +114,7 @@ const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
           </AlertDialog>
         </Show>
       </div>
-      <div>
+      <div class="max-w-800px rounded p-2 bg-muted" style={{ width: 'fit-content' }}>
         <Show
           when={Array.isArray(props.m.message)}
           fallback={<UnifiedMessage m={props.m.message as unknown as MultiTypeMsg} />}
@@ -223,7 +223,7 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
           </AlertDialog>
         </Show>
       </div>
-      <div class="max-w-800px">
+      <div class="max-w-800px rounded p-2 bg-muted" style={{ width: 'fit-content' }}>
         <Show
           when={Array.isArray(props.m?.message)}
           fallback={<pre>{JSON.stringify(props.m)}</pre>}

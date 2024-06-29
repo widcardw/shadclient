@@ -1,6 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import type {
   CommonFaceMessage,
+  CommonMFaceMessage,
   CommonMarketFaceMessage,
 } from '@/libs/types/messages/common-message'
 import { type Component, Show, createSignal } from 'solid-js'
@@ -43,6 +44,26 @@ const MarketFaceMessage: Component<{ m: CommonMarketFaceMessage }> = (
   return <>{props.m.data.summary}</>
 }
 
+const MFaceMessage: Component<{ m: CommonMFaceMessage }> = (props) => {
+  const [imgOptions] = createSignal({ src: props.m.data.url })
+  const { isLoading, error } = useImage(imgOptions)
+  return (
+    <Show when={!error()} fallback={props.m.data.summary}>
+      <Show
+        when={!isLoading()}
+        fallback={
+          <Skeleton
+            class="w-30 h-30 rounded-full inline-block vertical-middle"
+            style={{ 'box-sizing': 'border-box' }}
+          />
+        }
+      >
+        <img class="w-30 h-30" src={imgOptions().src} style={{ 'box-sizing': 'border-box' }} />
+      </Show>
+    </Show>
+  )
+}
+
 const CQ_FACE_IDS = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 19, 20, 21, 22, 23,
   24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 46, 49,
@@ -66,6 +87,7 @@ const CQ_FACE_IDS = [
 export {
   FaceMessage,
   MarketFaceMessage,
+  MFaceMessage,
   CQ_FACE_BASE_URL,
   KOISHI_QFACE_BASE_URL,
   CQ_FACE_IDS,

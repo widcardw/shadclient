@@ -5,6 +5,7 @@ import type {
   CommonForwardMessage,
   CommonImageMessage,
   CommonJsonCardMessage,
+  CommonMFaceMessage,
   CommonMarketFaceMessage,
   CommonRecordMessage,
   CommonReplyMessage,
@@ -14,7 +15,7 @@ import type {
 import type { MultiTypeReceivedMessage } from '@/libs/types/messages/received-message'
 import { type Component, Match, Switch } from 'solid-js'
 import { AtMessage } from './AtMessage'
-import { FaceMessage, MarketFaceMessage } from './FaceMessage'
+import { FaceMessage, MFaceMessage, MarketFaceMessage } from './FaceMessage'
 import { FileMessage } from './FileMessage'
 import { ForwardMessageFolded } from './ForwardMessage'
 import { ImageMessage } from './ImageMessage'
@@ -51,6 +52,9 @@ const UnifiedMessage: Component<{ m: MultiTypeReceivedMessage }> = (props) => {
       </Match>
       <Match when={props.m?.type === 'marketface'}>
         <MarketFaceMessage m={props.m as CommonMarketFaceMessage} />
+      </Match>
+      <Match when={props.m?.type === 'mface'}>
+        <MFaceMessage m={props.m as CommonMFaceMessage} />
       </Match>
       <Match when={props.m?.type === 'record'}>
         <RecordMessage m={props.m as CommonRecordMessage} />

@@ -29,7 +29,7 @@ const ReplyMessage: Component<{ m: CommonReplyMessage }> = (props) => {
   return (
     <Show when={foundMsg()} fallback="[回复]">
       <div
-        class="bg-muted p-2 rounded-md mb-1 space-y-1 shadow"
+        class="border-l-(4px zinc-500) p-2 rounded-md mb-1 space-y-1 shadow text-sm bg-muteddark"
         style={{ 'box-sizing': 'border-box', width: 'max-content' }}
       >
         <div class="flex items-center space-x-2">

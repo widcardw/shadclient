@@ -50,6 +50,10 @@ export default defineConfig({
         DEFAULT: 'hsl(var(--muted))',
         foreground: 'hsl(var(--muted-foreground))',
       },
+      muteddark: {
+        DEFAULT: 'hsl(var(--muted-dark))',
+        foreground: 'hsl(var(--muted-dark-foreground))',
+      },
       accent: {
         DEFAULT: 'hsl(var(--accent))',
         foreground: 'hsl(var(--accent-foreground))',
