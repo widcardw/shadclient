@@ -53,12 +53,12 @@ const MFaceMessage: Component<{ m: CommonMFaceMessage }> = (props) => {
         when={!isLoading()}
         fallback={
           <Skeleton
-            class="w-30 h-30 rounded-full inline-block vertical-middle"
+            class="w-20 h-20 rounded-full inline-block vertical-middle"
             style={{ 'box-sizing': 'border-box' }}
           />
         }
       >
-        <img class="w-30 h-30" src={imgOptions().src} style={{ 'box-sizing': 'border-box' }} />
+        <img class="w-20 h-20" src={imgOptions().src} style={{ 'box-sizing': 'border-box' }} />
       </Show>
     </Show>
   )

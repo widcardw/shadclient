@@ -30,7 +30,7 @@ const ReplyMessage: Component<{ m: CommonReplyMessage }> = (props) => {
     <Show when={foundMsg()} fallback="[回复]">
       <div
         class="border-l-(4px zinc-500) p-2 rounded-md mb-1 space-y-1 shadow text-sm bg-muteddark"
-        style={{ 'box-sizing': 'border-box', width: 'max-content' }}
+        style={{ 'box-sizing': 'border-box' }}
       >
         <div class="flex items-center space-x-2">
           <div class="i-teenyicons:quote-outline" />
