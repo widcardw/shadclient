@@ -43,6 +43,7 @@ interface CommonAtMessage extends CommonMessageType {
   type: 'at'
   data: {
     qq: number
+    name?: string
   }
 }
 

@@ -5,12 +5,11 @@ import type { Component } from 'solid-js'
 import { groupMemberListStore } from '../GroupMemberList'
 
 const AtMessage: Component<{ m: CommonAtMessage }> = (props) => {
-  const foundGroupUser = groupMemberListStore[activeId()].find(i => i.user_id === props.m.data.qq)
   return (
     <span class="text-blue">
       {activeType() === UnifyInfoType.Group
         ? Number(props.m.data.qq) !== 0
-          ? `@${foundGroupUser?.card || foundGroupUser?.nickname || props.m.data.qq}`
+          ? (props.m.data.name || `@${props.m.data.qq}`)
           : '@all'
         : ''}
     </span>

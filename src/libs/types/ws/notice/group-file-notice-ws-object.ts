@@ -23,7 +23,7 @@ interface GroupFileNoticeWsObject extends CommonNoticeWsObject {
 
 function dispatch(data: GroupFileNoticeWsObject) {
   const { group_id, user_id, file, time } = data
-  const foundGroupMember = groupMemberListStore[group_id].find(i => i.user_id === user_id)
+  const foundGroupMember = groupMemberListStore[group_id].find(i => i.user_id === Number(user_id))
   const groupMsgWsObject: GroupMessageWsObject = {
     post_type: 'message',
     message_type: 'group',

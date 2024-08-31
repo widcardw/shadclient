@@ -16,10 +16,10 @@ function dedupAtMessage(message: MultiTypeReceivedMessage[]): MultiTypeReceivedM
   for (let i = message.length - 1; i >= 0; i--) {
     const item = message[i]
     if (item.type === 'at') {
-      if (atMap.has(item.data.qq)) {
+      if (atMap.has(Number(item.data.qq))) {
         message.splice(i, 1)
       } else {
-        atMap.add(item.data.qq)
+        atMap.add(Number(item.data.qq))
       }
     }
   }
