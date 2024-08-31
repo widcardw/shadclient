@@ -72,7 +72,7 @@ const GroupList: Component = () => {
             {(group) => (
               <Button
                 variant="ghost"
-                class="block w-full text-left  whitespace-nowrap overflow-hidden text-ellipsis"
+                class="block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
                 onClick={() => addToRecent(group)}
               >
                 {group?.group_memo ||

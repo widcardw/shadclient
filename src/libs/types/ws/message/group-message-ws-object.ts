@@ -9,6 +9,9 @@ import { produce } from 'solid-js/store'
 import type { CqReceivedMessage } from '../../messages/received-message'
 import type { GroupUser } from '../group-user'
 import { type CommonMessageWsObject, dedupAtMessage } from './common-message-ws-object'
+import { groupMemberListStore, groupMemberSet, setGroupMemberListStore, setGroupMemberSet } from '@/components/chat/GroupMemberList'
+import { ws } from '@/libs/states/connection'
+import { WsActions } from '@/libs/ws/websocket'
 
 interface GroupMessageWsObject extends CommonMessageWsObject {
   message_type: 'group'
@@ -39,11 +42,29 @@ function dispatch(data: GroupMessageWsObject) {
   if (raw_message.trim() === '') return
 
   // 缓存已经发送过消息的用户的 card/nickname，用于被 @ 时将他显示出来
-  if (!groupMemberCard[group_id]?.[sender.user_id]) {
-    setGroupMemberCard(group_id, {
-      [sender.user_id]: sender.card || sender.nickname,
+  // TODO: 现在可以不用这个了
+  // 接收消息，先查找有没有这个群，没有则发送 echo 来获取群员列表
+  // 有这个群，但没有这个成员（这时会出现一个查询操作，相当耗时），则将这个成员插入到表里面
+  // 有群，有成员，直接跳过
+  if (!groupMemberListStore[group_id]) {
+    ws()?.send(WsActions.GetGroupMemberList, { group_id }, { gid: group_id })
+  }
+  else if (!groupMemberSet[group_id].has(sender.user_id)) {
+    // TODO: add the user, then add the user id to the set
+    setGroupMemberListStore(group_id, groupMemberListStore[group_id].length, {
+      ...sender,
+      last_sent_time: data.time,
+    })
+    setGroupMemberSet(group_id, s => {
+      s.add(sender.user_id)
+      return s
     })
   }
+  // if (!groupMemberCard[group_id]?.[sender.user_id]) {
+  //   setGroupMemberCard(group_id, {
+  //     [sender.user_id]: sender.card || sender.nickname,
+  //   })
+  // }
 
   const session = groupConvStore[group_id]
   data.message = dedupAtMessage(data.message)

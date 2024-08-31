@@ -64,11 +64,25 @@ function suffixToIcon(suffix?: string): string {
     case 'py': {
       return 'i-teenyicons:python-outline'
     }
+    case 'html': {
+      return 'i-teenyicons-html5-outline'
+    }
     case 'js': {
       return 'i-teenyicons:javascript-outline'
     }
     case 'ts': {
       return 'i-teenyicons:typescript-outline'
+    }
+    case 'h':
+    case 'c': {
+      return 'i-teenyicons-c-outline'
+    }
+    case 'cpp': {
+      return 'i-teenyicons-cplusplus-outline'
+    }
+    case 'sh':
+    case 'bash': {
+      return 'i-teenyicons-terminal-outline'
     }
     default: {
       return 'i-teenyicons-file-outline'

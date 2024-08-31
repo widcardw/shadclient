@@ -25,19 +25,7 @@ import { timeToHourMinute } from '@/libs/utils/date-format'
 import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
 import { sendEl } from '../InputArea'
-
-function roleToVariant(role: 'owner' | 'admin' | 'member') {
-  switch (role) {
-    case 'owner':
-      return 'owner'
-    case 'admin':
-      return 'admin'
-    case 'member':
-      return 'secondary'
-    default:
-      return 'outline'
-  }
-}
+import { roleToVariant } from '@/libs/utils/role'
 
 const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   props,

@@ -94,12 +94,12 @@ const PrivateChat: Component<{ uid: number }> = (props) => {
     <Show when={friend() !== undefined}>
       <div class="w-full h-100vh flex flex-col">
         <div
-          class="px-4 py-1 flex items-center"
+          class="p-1 flex items-center"
           title="Group Info and History/File Tool Bar"
         >
-          <div class="font-bold mr-auto flex items-center">
+          <Button variant="ghost" class="font-bold mr-auto flex items-center">
             {friend().remark || friend().nickname} ({friend().user_id})
-          </div>
+          </Button>
           <Button
             variant="ghost"
             disabled={isFetchingHistory()}

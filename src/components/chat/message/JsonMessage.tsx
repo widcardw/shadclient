@@ -50,7 +50,7 @@ const MiniappCard: Component<{ card: JsonCardDetail }> = (props) => {
       href={props.card.qqdocurl}
       target="_blank"
       rel="noreferrer"
-      class="block text-primary bg-muted rounded-md px-4 py-2 space-y-1 !decoration-none"
+      class="block text-primary bg-muted rounded-md space-y-1 !decoration-none"
       style={{ width: 'max-content' }}
     >
       <div class="flex items-center space-x-2">

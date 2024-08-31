@@ -10,6 +10,7 @@ import {
 } from '../message/group-message-ws-object'
 import type { CommonNoticeWsObject } from './common-notice-ws-object'
 import type { FileNotice } from './file-notice'
+import { groupMemberListStore } from '@/components/chat/GroupMemberList'
 
 interface GroupFileNoticeWsObject extends CommonNoticeWsObject {
   notice_type: 'group_upload'
@@ -22,6 +23,7 @@ interface GroupFileNoticeWsObject extends CommonNoticeWsObject {
 
 function dispatch(data: GroupFileNoticeWsObject) {
   const { group_id, user_id, file, time } = data
+  const foundGroupMember = groupMemberListStore[group_id].find(i => i.user_id === user_id)
   const groupMsgWsObject: GroupMessageWsObject = {
     post_type: 'message',
     message_type: 'group',
@@ -38,7 +40,7 @@ function dispatch(data: GroupFileNoticeWsObject) {
     sender: {
       user_id,
       nickname: '',
-      card: groupMemberCard[group_id]?.[user_id] || user_id.toString(), // TODO
+      card: foundGroupMember?.card || foundGroupMember?.nickname || user_id.toString(), // TODO
       sex: '',
       age: 0,
       area: '',

@@ -59,6 +59,7 @@ import type { AllRequestWsObject } from './request/common-request-ws-object'
 import { dispatchFriendAddRequestWsObject } from './request/friend-add-request-ws-object'
 import { dispatchGroupAddRequestWsObject } from './request/group-add-request-ws-object'
 import { UnifyInfoType } from './unify-info'
+import { type GetGroupMemberListEcho, dispatchGetGroupMemberListEcho } from './echo/get-group-member-list'
 
 /**
  * 将接收到的消息发派到各个处理函数上
@@ -165,6 +166,10 @@ function dispatchEchoWsObject(data: AllEchoTypes) {
     case WsActions.SendGroupMsg:
     case WsActions.SendPrivateMsg: {
       dispatchSendMsgEcho(data as SendMsgEcho)
+      break
+    }
+    case WsActions.GetGroupMemberList: {
+      dispatchGetGroupMemberListEcho(data as GetGroupMemberListEcho)
       break
     }
     case WsActions.UploadGroupFile: {

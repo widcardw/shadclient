@@ -103,19 +103,20 @@ const ZommImageMessage: Component<{ m: CommonImageMessage }> = (props) => {
               when={!error()}
               fallback={
                 <Button
-                  variant="outline"
+                  variant="link"
                   as="a"
+                  class="text-red"
                   href={imgOptions().src}
                   target="_blank"
                   referrerPolicy="no-referrer"
                   rel="noreferrer"
                 >
-                  Failed to load image
+                  [Failed to load image]
                 </Button>
               }
             >
               {/* @ts-ignore cast html element to button element */}
-              <div class="relative cursor-zoom-in" style={{width: 'fit-content'}} {..._props}>
+              <div class="relative cursor-zoom-in" style={{ width: 'fit-content' }} {..._props}>
                 <img
                   src={imgOptions().src}
                   alt="图片"

@@ -22,7 +22,9 @@ const NodeMessage: Component<{ m: CommonNodeMessage }> = (props) => {
     <div>
       <div class="text-gray">{props.m.data.nickname}</div>
       {/* Unified Message Segment */}
-      <For each={props.m.data.content}>{(m) => <UnifiedMessage m={m} />}</For>
+      <div class="max-w-800px rounded p-2 bg-muted" style={{ width: 'fit-content' }}>
+        <For each={props.m.data.content}>{(m) => <UnifiedMessage m={m} />}</For>
+      </div>
     </div>
   )
 }
@@ -41,10 +43,10 @@ const ForwardedDialog: Component<{ id: string }> = (props) => {
           const click =
             typeof _props.onClick === 'function'
               ? (ev: MouseEvent) => {
-                  requestForwardedMsg()
-                  /** @ts-ignore merge click events */
-                  _props.onClick?.(ev)
-                }
+                requestForwardedMsg()
+                /** @ts-ignore merge click events */
+                _props.onClick?.(ev)
+              }
               : requestForwardedMsg
 
           return (

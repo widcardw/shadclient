@@ -4,30 +4,22 @@ import {
   setIsFetchingHistory,
 } from '@/libs/states/semaphore'
 import {
-  activeId,
-  activeType,
-  cleanUpGroupHistoryTo,
+  activeId, cleanUpGroupHistoryTo,
   groupConvStore,
-  setGroupConvStore,
+  setGroupConvStore
 } from '@/libs/states/sessions'
 import { WsActions } from '@/libs/ws/websocket'
 import clsx from 'clsx'
 import {
   type Component,
   For,
-  Show,
-  createEffect,
-  createMemo,
-  createSignal,
-  on,
-  onMount,
+  Show, createMemo,
+  createSignal, onMount
 } from 'solid-js'
 import {
-  toAccessor,
-  useIntersectionObserver,
-  useScroll,
+  toAccessor, useScroll,
   useStorage,
-  whenever,
+  whenever
 } from 'solidjs-use'
 import { allGroups } from '../conversation-list/group-list'
 import { CarbonClean } from '../icons/cleanup-icon'
@@ -39,11 +31,13 @@ import { GroupFsDialog } from './fs/GroupFsDialog'
 import { OnePieceOfGroupMessage } from './message/OnePieceOfMessage'
 
 import './scroller.css'
+import { GroupMemberListComp, groupMemberListStore } from './GroupMemberList'
 
 const GroupChat: Component<{ gid: number }> = (props) => {
   const group = createMemo(() =>
     allGroups().find((i) => i.group_id === props.gid),
   )
+  const [groupUsersVis, setGroupUsersVis] = createSignal(false)
 
   const getGroupHistory = () => {
     const first = groupConvStore[group()!.group_id]?.list?.[0]?.message_id
@@ -73,7 +67,10 @@ const GroupChat: Component<{ gid: number }> = (props) => {
     // move to bottom when entering
     whenever(
       toAccessor(() => props.gid),
-      toBottom,
+      () => {
+        toBottom()
+        setGroupUsersVis(false)
+      },
       { defer: true },
     )
     // set unread count
@@ -88,57 +85,80 @@ const GroupChat: Component<{ gid: number }> = (props) => {
 
   const [clampSize] = useStorage('clamp-size', 100)
 
+  const toggleUsersVis = () => {
+    if (!groupMemberListStore[props.gid]) {
+      console.log('try to get group member list')
+      ws()?.send(WsActions.GetGroupMemberList, { group_id: props.gid }, { gid: props.gid })
+    }
+    setGroupUsersVis(v => !v)
+  }
+
   return (
     <Show when={group() !== undefined}>
-      <div class="w-full h-100vh flex flex-col">
-        <div class="px-4 py-1 flex items-center">
-          <div class="font-bold mr-auto flex items-center">
-            {group()?.group_memo || group()?.group_name} (
-            {groupConvStore[group()?.group_id || 0]?.id},{' '}
-            {groupConvStore[group()!.group_id || 0]?.list.length})
+      <div class="w-full h-100vh flex">
+        {/* 群聊主界面 */}
+        <div class="w-full h-100vh flex flex-col">
+          {/* 顶部工具栏 */}
+          <div class="p-1 flex items-center">
+            <Button
+              variant="ghost"
+              class="font-bold mr-auto flex items-center"
+              onClick={toggleUsersVis}
+            >
+              {group()?.group_memo || group()?.group_name} (
+              {groupConvStore[group()?.group_id || 0]?.id},{' '}
+              {groupConvStore[group()!.group_id || 0]?.list.length})
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={isFetchingHistory()}
+              onClick={getGroupHistory}
+            >
+              <div class="i-teenyicons:history-outline" />
+            </Button>
+            <Button variant="ghost" onClick={() => cleanUpGroupHistoryTo(props.gid, clampSize())}>
+              <CarbonClean />
+            </Button>
+            <GroupFsDialog gid={activeId()} />
+            <Button variant="ghost" onClick={toBottom}>
+              <div class="i-teenyicons:arrow-down-circle-outline" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            disabled={isFetchingHistory()}
-            onClick={getGroupHistory}
+          <Separator />
+          {/* 聊天界面 */}
+          <Resizable
+            orientation="vertical"
+            class="flex-grow flex flex-col of-y-auto"
           >
-            <div class="i-teenyicons:history-outline" />
-          </Button>
-          <Button variant="ghost" onClick={() => cleanUpGroupHistoryTo(props.gid, clampSize())}>
-            <CarbonClean />
-          </Button>
-          <GroupFsDialog gid={activeId()} />
-          <Button variant="ghost" onClick={toBottom}>
-            <div class="i-teenyicons:arrow-down-circle-outline" />
-          </Button>
-        </div>
-        <Separator />
-        <Resizable
-          orientation="vertical"
-          class="flex-grow flex flex-col of-y-auto"
-        >
-          <ResizablePanel
-            ref={(r: HTMLElement) => setScrollerArea(r)}
-            initialSize={0.6}
-            class={clsx(
-              'flex-grow of-y-auto of-hidden flex flex-col space-y-3 p-2',
-              'scroller',
-            )}
-          >
-            <For each={groupConvStore[group()?.group_id || 0].list}>
-              {(i) => <OnePieceOfGroupMessage m={i} />}
-            </For>
-            {/* <pre class="hidden">
-              <For each={Object.keys(groupConvStore[group()!.group_id].list)}>
-                {(i) => <>i: {i}</>}
+            {/* 信息 */}
+            <ResizablePanel
+              ref={(r: HTMLElement) => setScrollerArea(r)}
+              initialSize={0.6}
+              class={clsx(
+                'flex-grow of-y-auto of-hidden flex flex-col space-y-3 p-2',
+                'scroller',
+              )}
+            >
+              <For each={groupConvStore[group()?.group_id || 0].list}>
+                {(i) => <OnePieceOfGroupMessage m={i} />}
               </For>
-            </pre> */}
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel initialSize={0.4}>
-            <InputArea />
-          </ResizablePanel>
-        </Resizable>
+              {/* <pre class="hidden">
+                <For each={Object.keys(groupConvStore[group()!.group_id].list)}>
+                  {(i) => <>i: {i}</>}
+                </For>
+              </pre> */}
+            </ResizablePanel>
+            <ResizableHandle />
+            {/* 输入框 */}
+            <ResizablePanel initialSize={0.4}>
+              <InputArea />
+            </ResizablePanel>
+          </Resizable>
+        </div>
+        <Show when={groupUsersVis()}>
+          <Separator orientation="vertical" />
+          <GroupMemberListComp gid={props.gid} />
+        </Show>
       </div>
     </Show>
   )

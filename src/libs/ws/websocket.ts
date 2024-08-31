@@ -39,6 +39,8 @@ enum WsActions {
   SetGroupAddRequest = 16,
   /** 获取群信息 { group_id: number, no_cache: boolean } */
   GetGroupInfo = 17,
+  /** 获取群成员信息 { group_id: number } */
+  GetGroupMemberList = 18,
 }
 
 const WsActionToApi: Record<WsActions, string> = {
@@ -59,6 +61,7 @@ const WsActionToApi: Record<WsActions, string> = {
   [WsActions.SetFriendAddRequest]: 'set_friend_add_request',
   [WsActions.SetGroupAddRequest]: 'set_group_add_request',
   [WsActions.GetGroupInfo]: 'get_group_info',
+  [WsActions.GetGroupMemberList]: 'get_group_member_list',
   [WsActions.Unknown]: ''
 }
 
@@ -75,9 +78,8 @@ class SimpleWebSocket {
       console.error(ev)
       toast.error('Connection error!', {
         duration: Number.POSITIVE_INFINITY,
-        description: `Cannot connect to server at ${
-          (ev.target as WebSocket).url
-        }`,
+        description: `Cannot connect to server at ${(ev.target as WebSocket).url
+          }`,
       })
     })
     this.ws.addEventListener('open', (ev) => {
