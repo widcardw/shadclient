@@ -127,6 +127,12 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
                   </>
                 )}
               </For>
+              <Show when={currentFs()?.folders.length > 0}>
+                <span>{currentFs()?.folders.length} folders</span>
+              </Show>
+              <Show when={currentFs()?.files.length > 0}>
+                <span>{currentFs()?.files.length} files</span>
+              </Show>
             </div>
             <Button
               variant="ghost"
@@ -151,7 +157,7 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
                 <TableHead />
                 <TableHead>Filename</TableHead>
                 <TableHead>Creator</TableHead>
-                <TableHead class="text-right">Size</TableHead>
+                <TableHead class="text-right w-[120px]">Size</TableHead>
                 <TableHead class="text-right">Date</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
@@ -184,6 +190,7 @@ const GroupFsDialog: Component<{ gid: number }> = (props) => {
                       <TableCell>
                         <Button
                           variant="ghost"
+                          title="Enter"
                           onClick={() =>
                             requestGetFolder(
                               props.gid,

@@ -23,6 +23,7 @@ function suffixToIcon(suffix?: string): string {
     case 'mp3':
     case 'wav':
     case 'ogg':
+    case 'mid':
     case 'flac': {
       return 'i-teenyicons-audio-document-outline'
     }
