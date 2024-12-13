@@ -149,9 +149,14 @@ const InputArea: Component = () => {
 
   // 仅发送文本消息
   const handlePreprocess = async (msg: string) => {
-    if (enableTex() && msg && (msg.startsWith('/am') || msg.startsWith('/tex')))
-      return await transformTex(msg)
-    return msg
+    try {
+      if (enableTex() && msg && (msg.startsWith('/am') || msg.startsWith('/tex')))
+        return await transformTex(msg)
+      return msg
+    } catch (e) {
+      console.error(e)
+      toast.error('消息发送失败！', { description: String(e) })
+    }
   }
   const sendSimpleMessage = async () => {
     if (sendEl() === undefined) {

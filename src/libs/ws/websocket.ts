@@ -83,8 +83,8 @@ class SimpleWebSocket {
       })
     })
     this.ws.addEventListener('open', (ev) => {
-      console.log('connection open', ev)
-      toast.success('Connection open!')
+      console.log('connection established', ev)
+      toast.success('Connection established!')
     })
     this.ws.addEventListener('close', function (ev) {
       console.log('connection close', ev)
