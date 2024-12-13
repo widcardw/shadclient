@@ -28,6 +28,11 @@ async function canvasSvgToBase64(
 ): Promise<string> {
   const { padding = 0 } = config || { padding: 0 }
   const canvas = document.createElement('canvas')
+  console.log('svg', svg)
+  const viewBoxMatchObj = svg.match(/viewBox="([^"]+)"/)
+  if (!viewBoxMatchObj) {
+    throw new Error('SVG must have viewBox attribute')
+  }
   const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)![1]
   let [, , w, h] = viewBoxMatch.split(' ').map((i) => Number.parseFloat(i))
 
