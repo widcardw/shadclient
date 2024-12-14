@@ -284,10 +284,11 @@ const InputArea: Component = () => {
 
   return (
     <div class="flex flex-col h-full">
-      <div title="toolbar" class="flex p-1 gap-1">
+      <div class="flex p-1 gap-1">
         {/* 左侧工具栏 */}
         <Button
           variant="ghost"
+          title="选择图片"
           disabled={filePathVisible()}
           size="icon"
           onClick={() => openImgDlg()}
@@ -296,6 +297,7 @@ const InputArea: Component = () => {
         </Button>
         <ToggleButton
           disabled={bufferedImgs().length > 0}
+          title="发送文件"
           pressed={filePathVisible()}
           onChange={handleFilePathVisibility}
         >
@@ -304,7 +306,7 @@ const InputArea: Component = () => {
         <Popover>
           <PopoverTrigger
             as={(_props: PopoverTriggerProps) => (
-              <Button variant="ghost" size="icon" {..._props}>
+              <Button variant="ghost" size="icon" title="插入表情" {..._props}>
                 <div class="i-teenyicons:mood-smile-outline" />
               </Button>
             )}
@@ -352,6 +354,7 @@ const InputArea: Component = () => {
               <ToggleButton
                 pressed={enableTex()}
                 onChange={(b) => setEnableTex(b)}
+                title="发送公式"
                 {..._props}
               >
                 <FormulaFx />
@@ -363,7 +366,7 @@ const InputArea: Component = () => {
           </HoverCardContent>
         </HoverCard>
 
-        <ToggleButton disabled>
+        <ToggleButton disabled title="发送代码（赞不支持）">
           <div class="i-teenyicons:code-outline" />
         </ToggleButton>
         {/* 中间备用栏，用于发送图片，文件等 */}
@@ -374,12 +377,13 @@ const InputArea: Component = () => {
               Buffered {bufferedImgs().length} image
               {bufferedImgs().length > 1 && 's'}
             </div>
-            <Button variant="secondary" size="icon" onClick={handleSendImages}>
+            <Button variant="secondary" size="icon" title="发送" onClick={handleSendImages}>
               <div class="i-teenyicons:send-outline" />
             </Button>
             <Button
               variant="destructive"
               size="icon"
+              title="删除"
               onClick={() => setBufferedImgs([])}
             >
               <div class="i-teenyicons:bin-outline" />
@@ -395,12 +399,13 @@ const InputArea: Component = () => {
                 }}
               />
             </TextFieldRoot>
-            <Button variant="secondary" size="icon" onClick={handleFileUpload}>
+            <Button variant="secondary" size="icon" title="发送" onClick={handleFileUpload}>
               <div class="i-teenyicons:send-outline" />
             </Button>
             <Button
               variant="destructive"
               size="icon"
+              title="取消"
               onClick={handleFileUploadCancel}
             >
               <div class="i-teenyicons:bin-outline" />
@@ -419,11 +424,12 @@ const InputArea: Component = () => {
           variant="ghost"
           disabled={isSending()}
           size="icon"
+          title="发送消息"
           onClick={sendSimpleMessage}
         >
           <div class="i-teenyicons:send-outline" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={() => setIsSending(false)}>
+        <Button variant="ghost" size="icon" title="尝试恢复发送框" onClick={() => setIsSending(false)}>
           <div class="i-teenyicons:anti-clockwise-outline" />
         </Button>
       </div>

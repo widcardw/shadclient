@@ -6,7 +6,6 @@ function timeToHourMinute(time: number): string {
   return new Date(time * 1000).toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
   })
 }
 

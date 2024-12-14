@@ -4,6 +4,7 @@ import {
   type PrivateMessageWsObject,
   getPrivateName,
 } from '../message/private-message-ws-object'
+import { UnifyInfoType } from '../unify-info'
 import type { CommonNoticeWsObject } from './common-notice-ws-object'
 
 interface PrivatePokeNoticeWsObject extends CommonNoticeWsObject {
@@ -30,6 +31,7 @@ function dispatch(data: PrivatePokeNoticeWsObject) {
     sender: {
       user_id,
       nickname,
+      type: UnifyInfoType.Private
     },
     target_id: self_id,
     time,

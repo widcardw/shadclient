@@ -33,6 +33,7 @@ const LeftToolBar: Component = () => {
       <Button
         variant={selectedList() === SelectedList.Recent ? 'secondary' : 'ghost'}
         size="icon"
+        title="最近消息"
         onClick={() => setSelectedList(SelectedList.Recent)}
       >
         <div class="i-teenyicons:message-text-alt-outline" />
@@ -42,6 +43,7 @@ const LeftToolBar: Component = () => {
           selectedList() === SelectedList.Friends ? 'secondary' : 'ghost'
         }
         size="icon"
+        title="好友列表"
         onClick={() => setSelectedList(SelectedList.Friends)}
       >
         <div class="i-teenyicons:user-circle-solid" />
@@ -49,6 +51,7 @@ const LeftToolBar: Component = () => {
       <Button
         variant={selectedList() === SelectedList.Groups ? 'secondary' : 'ghost'}
         size="icon"
+        title="群组列表"
         onClick={() => setSelectedList(SelectedList.Groups)}
       >
         <div class="i-teenyicons:users-outline" />
@@ -57,6 +60,7 @@ const LeftToolBar: Component = () => {
       <Button
         variant={selectedList() === SelectedList.Notice ? 'secondary' : 'ghost'}
         size="icon"
+        title="通知"
         onClick={() => setSelectedList(SelectedList.Notice)}
       >
         <div class="i-teenyicons:bell-outline" />
@@ -80,6 +84,7 @@ const LeftToolBar: Component = () => {
       <Button
         variant="ghost"
         size="icon"
+        title="断开连接"
         onClick={() => setConnection({ connect: false })}
       >
         <div class="i-teenyicons:link-remove-outline" />

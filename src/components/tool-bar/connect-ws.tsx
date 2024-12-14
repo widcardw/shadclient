@@ -28,6 +28,7 @@ const ConnectWsButton: Component = () => {
             'data-[pressed]:text-emerald-500 data-[pressed]:hover:text-emerald-400',
           )}
           pressed={connected()}
+          title={connected() ? '已连接' : '连接到服务器'}
           onChange={(connect) => setConnection({ connect, url: wsUrl() })}
         >
           <div class="i-teenyicons:link-outline" />

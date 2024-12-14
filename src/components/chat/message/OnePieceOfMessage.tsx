@@ -3,7 +3,7 @@ import type { MultiTypeReceivedMessage as MultiTypeMsg } from '@/libs/types/mess
 import type { CommonMessageWsObject } from '@/libs/types/ws/message/common-message-ws-object'
 import type { GroupMessageWsObject } from '@/libs/types/ws/message/group-message-ws-object'
 import type { PrivateMessageWsObject } from '@/libs/types/ws/message/private-message-ws-object'
-import { type Component, For, Match, Show, Switch, splitProps } from 'solid-js'
+import { type Component, For, Match, Show, Switch, createMemo } from 'solid-js'
 import { UnifiedMessage } from './UnifiedMessage'
 
 import './icon.css'
@@ -22,10 +22,10 @@ import { ws } from '@/libs/states/connection'
 import { activeId } from '@/libs/states/sessions'
 import { UnifyInfoType } from '@/libs/types/ws/unify-info'
 import { timeToHourMinute } from '@/libs/utils/date-format'
+import { roleToVariant } from '@/libs/utils/role'
 import { WsActions } from '@/libs/ws/websocket'
 import type { AlertDialogTriggerProps } from '@kobalte/core/alert-dialog'
 import { sendEl } from '../InputArea'
-import { roleToVariant } from '@/libs/utils/role'
 
 const OnePieceOfPrivateMessage: Component<{ m: PrivateMessageWsObject }> = (
   props,
@@ -145,9 +145,26 @@ const OnePieceOfGroupMessage: Component<{ m: GroupMessageWsObject }> = (
     }
   }
 
+  const title = createMemo(() => {
+    const res: string[] =[]
+    if (props.m?.sender?.card) {
+      res.push(props.m.sender.card)
+    } else if (props.m?.sender?.nickname) {
+      res.push(props.m.sender.nickname)
+    } else {
+      res.push(props.m.user_id.toString())
+    }
+
+    if (props.m?.time) {
+      res.push(new Date(props.m.time * 1000).toLocaleString())
+    }
+
+    return res.join(' ')
+  })
+
   return (
     <div class="one-piece space-y-1" id={(props.m?.message_id || 0).toString()}>
-      <div title="user info" class="flex items-center gap-2">
+      <div title={title()} class="flex items-center gap-2">
         <span class="text-muted-foreground">
           {props.m?.sender?.card || props.m?.sender?.nickname || props.m?.user_id}
         </span>
